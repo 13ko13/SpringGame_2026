@@ -4,7 +4,7 @@
 class GameObject
 {
 public:
-	GameObject(int modelHandle,Vector3 pos,Vector3 velocity);
+	GameObject(int modelHandle,Vector3 pos);
 	virtual ~GameObject();
 
 	/// <summary>
@@ -15,7 +15,7 @@ public:
 	/// <summary>
 	/// 描画処理
 	/// </summary>
-	virtual void Draw();
+	virtual void Draw() abstract;
 private:
 
 protected:
