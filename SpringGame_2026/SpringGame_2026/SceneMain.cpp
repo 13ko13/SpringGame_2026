@@ -1,5 +1,7 @@
 #include "SceneMain.h"
-#include "DxLib.h"
+#include <DxLib.h>
+#include <cassert>
+#include "Player.h"
 
 SceneMain::SceneMain() :
 	m_frameCount(0)
@@ -23,6 +25,19 @@ void SceneMain::Init()
 	SetCameraPositionAndTarget_UpVecY(VGet(0.0f, 300.0f, -700.0f), VGet(0.0f, 0.0f, 0.0f));
 	SetupCamera_Perspective(DX_PI_F / 3.0f);
 	SetCameraNearFar(200.0f, 1500.0f);
+
+	//モデルのロード
+	m_modelHandles.push_back(MV1LoadModel("Data/Player.mv1"));//プレイヤーのモデル
+	//TODO:敵のモデルもロードする
+
+	//ロードに失敗した場合はアサートする
+	assert(m_modelHandles[static_cast<int>(ModelType::Player)] != -1);
+	//TODO:敵のモデルも
+
+	//ロードしたモデルのハンドルをMV1DuplicateModel関数に渡して複製して、
+	//複製したモデルのハンドルを渡す
+	MV1DuplicateModel(m_modelHandles[static_cast<int>(ModelType::Player)]);
+	std::make_shared<Player>(m_modelHandles[static_cast<int>(ModelType::Player)]);
 }
 
 void SceneMain::Update()
