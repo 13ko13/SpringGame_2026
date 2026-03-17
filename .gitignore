@@ -2,7 +2,6 @@
 *.obj
 *.exe
 *.dll
-*.lib
 *.pdb
 
 # 一時ファイル
