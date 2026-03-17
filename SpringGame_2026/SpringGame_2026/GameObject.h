@@ -16,13 +16,6 @@ public:
 	/// 描画処理
 	/// </summary>
 	virtual void Draw();
-
-	/// <summary>
-	/// モデルをロードする
-	/// </summary>
-	/// <param name="modelHandle">モデルのハンドル</param>
-	virtual void LoadModel(int modelHandle) abstract;
-
 private:
 
 protected:
