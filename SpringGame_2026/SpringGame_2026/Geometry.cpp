@@ -1,5 +1,4 @@
 #include "Geometry.h"
-#include <DxLib.h>
 #include <cmath>
 /// <summary>
 /// ベクトルの大きさを計算する
@@ -7,7 +6,7 @@
 /// <returns>ベクトルの大きさ</returns>
 float Vector3::Length() const
 {
-	return std::hypot(x, y, z);
+	return std::hypot(m_x, m_y, m_z);
 }
 
 
@@ -17,16 +16,16 @@ void Vector3::Normalize()
 	if (len == 0.0f)
 	{
 		//0除算を避ける
-		x = 0.0f;
-		y = 0.0f;
-		z = 0.0f;
+		m_x = 0.0f;
+		m_y = 0.0f;
+		m_z = 0.0f;
 		return;
 	}
 
 	//xとyをzlenで割ることで正規化する
-	x /= len;
-	y /= len;
-	z /= len;
+	m_x /= len;
+	m_y /= len;
+	m_z /= len;
 }
 
 Vector3 Vector3::Normalized() const
@@ -37,64 +36,70 @@ Vector3 Vector3::Normalized() const
 		//0除算を避ける
 		return { 0.0f,0.0f,0.0f };
 	}
-	return { x / len, y / len,z / len };
+	return { m_x / len, m_y / len,m_z / len };
 }
 
 Vector3 Vector3::operator-() const
 {
 	/// ベクトルを反転したベクトルを返す
-	return { -x,-y ,-z };
+	return { -m_x,-m_y ,-m_z };
 }
 
 void Vector3::operator+=(const Vector3& val)
 {
 	/// ベクトルの加算
-	x += val.x;
-	y += val.y;
-	z += val.z;
+	m_x += val.m_x;
+	m_y += val.m_y;
+	m_z += val.m_z;
 }
 
 void Vector3::operator-=(const Vector3& val)
 {
 	/// ベクトルの減算
-	x -= val.x;
-	y -= val.y;
-	z -= val.z;
+	m_x -= val.m_x;
+	m_y -= val.m_y;
+	m_z -= val.m_z;
 }
 
 void Vector3::operator*=(const float scale)
 {
 	/// ベクトルのスカラー倍
-	x *= scale;
-	y *= scale;
-	z *= scale;
+	m_x *= scale;
+	m_y *= scale;
+	m_z *= scale;
 }
 
 Vector3 Vector3::operator+(const Vector3& val) const
 {
 	/// ベクトルの加算
-	return { x + val.x, y + val.y,z + val.z };
+	return { m_x + val.m_x, m_y + val.m_y,m_z + val.m_z };
 }
 
 Vector3 Vector3::operator-(const Vector3& val) const
 {
 	/// ベクトルの減算
-	return { x - val.x, y - val.y,z - val.z };
+	return { m_x - val.m_x, m_y - val.m_y,m_z - val.m_z };
 }
 
 Vector3 Vector3::operator*(float scale) const
 {
 	/// ベクトルのスカラー倍
-	return { x * scale, y * scale,z * scale };
+	return { m_x * scale, m_y * scale,m_z * scale };
 }
 
 bool Vector3::operator!=(const Vector3& val) const
 {
 	/// ベクトルの不等価比較
-	return (x != val.x || y != val.y || z != val.z);
+	return (m_x != val.m_x || m_y != val.m_y || m_z != val.m_z);
 }
 
 bool Vector3::operator==(const Vector3& val) const
 {
-	return (x == val.x && y == val.y && z == val.z);
+	return (m_x == val.m_x && m_y == val.m_y && m_z == val.m_z);
+}
+
+VECTOR Vector3::ToDxLib() const
+{
+	//DxLibのVECTOR型に変換する
+	return VGet(m_x, m_y, m_z);
 }

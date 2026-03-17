@@ -136,6 +136,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\Transforman_Master\Projects\General\Input.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Geometry.cpp" />
     <ClCompile Include="main.cpp" />
@@ -143,6 +144,7 @@
     <ClCompile Include="SceneMain.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\Transforman_Master\Projects\General\Input.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Geometry.h" />

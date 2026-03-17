@@ -28,7 +28,8 @@ private:
 	};
 
 	//プレイヤーや敵のモデルのハンドル
-	std::vector<int> m_modelHandles;
+	std::vector<int> m_modelBaseHandles;
+	std::vector<int> m_modelCopyHandles;
 
 	//プレイヤーの実体
 	std::shared_ptr<Player> m_pPlayer;

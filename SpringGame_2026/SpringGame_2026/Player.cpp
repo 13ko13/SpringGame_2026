@@ -4,12 +4,14 @@
 namespace
 {
 	constexpr Vector3 first_pos = { 0.0f,0.0f,0.0f };
+	constexpr Vector3 player_size = { 1.5f,1.5f,1.5f  };
 }
 
 Player::Player(int modelHandle):
-	GameObject(m_modelHandle, first_pos)
+	GameObject(modelHandle, first_pos)
 {
-	
+	//プレイヤーのサイズを変更する
+	MV1SetScale(m_modelHandle, player_size.ToDxLib());
 }
 
 Player::~Player()
@@ -19,10 +21,12 @@ Player::~Player()
 
 void Player::Update()
 {
-	MV1SetPosition(m_modelHandle, VGet(m_pos.x, m_pos.y, m_pos.z));
+	//プレイヤーの位置をDxLibのVECTOR型に変換してMV1SetPosition関数に渡す
+	MV1SetPosition(m_modelHandle,m_pos.ToDxLib());
 }
 
 void Player::Draw()
 {
+	//モデルを描画する
 	MV1DrawModel(m_modelHandle);
 }

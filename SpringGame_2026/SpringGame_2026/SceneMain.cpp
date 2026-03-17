@@ -27,22 +27,26 @@ void SceneMain::Init()
 	SetCameraNearFar(200.0f, 1500.0f);
 
 	//モデルのロード
-	m_modelHandles.push_back(MV1LoadModel("Data/Player.mv1"));//プレイヤーのモデル
+	m_modelBaseHandles.push_back(MV1LoadModel("Data/Player.mv1"));//プレイヤーのモデル
 	//TODO:敵のモデルもロードする
 
 	//ロードに失敗した場合はアサートする
-	assert(m_modelHandles[static_cast<int>(ModelType::Player)] != -1);
+	assert(m_modelBaseHandles[static_cast<int>(ModelType::Player)] != -1);
 	//TODO:敵のモデルも
 
 	//ロードしたモデルのハンドルをMV1DuplicateModel関数に渡して複製して、
 	//複製したモデルのハンドルを渡す
-	MV1DuplicateModel(m_modelHandles[static_cast<int>(ModelType::Player)]);
-	std::make_shared<Player>(m_modelHandles[static_cast<int>(ModelType::Player)]);
+	auto temp = MV1DuplicateModel(m_modelBaseHandles[static_cast<int>(ModelType::Player)]);
+	m_modelCopyHandles.push_back(MV1DuplicateModel(m_modelBaseHandles[static_cast<int>(ModelType::Player)]));
+	m_pPlayer = std::make_shared<Player>(m_modelCopyHandles[static_cast<int>(ModelType::Player)]);
 }
 
 void SceneMain::Update()
 {
 	m_frameCount++;
+
+	//プレイヤーの更新
+	m_pPlayer->Update();
 }
 
 void SceneMain::Draw()
@@ -51,6 +55,10 @@ void SceneMain::Draw()
 
 	DrawString(0,0,"SceneMain",0xffffff);
 	DrawFormatString(0, 16, 0xffffff, "FRAME:%d", m_frameCount);
+
+	//オブジェクトの描画
+	//プレイヤーの描画
+	m_pPlayer->Draw();
 }
 
 void SceneMain::DrawGrid()
