@@ -1,13 +1,20 @@
 #include "Input.h"
 #include "DxLib.h"
+#include "../Math/Vector3.h"
 
+namespace
+{
+	constexpr int min_dedzone_r = 3000;//右スティックの最小デッドゾーン
+	constexpr int max_dedzone_r = 28000;//右スティックの最大デッドゾーン
+}
 
 Input::Input() :
 	m_inputData{},
 	m_lastInputData{},
 	m_inputTable{},
 	m_bufX(0),
-	m_bufY(0)
+	m_bufY(0),
+	m_rightStickDir({0.0f,0.0f,0.0f})
 {
 	//イベント名を添え時にして、右辺値に実際の入力種別と押されたボタンの配列を置く
 	m_inputTable["ok"] = { {PeripheralType::keyboard,KEY_INPUT_A},	//キーボード:エンターキー
@@ -15,18 +22,6 @@ Input::Input() :
 
 	m_inputTable["attack"] = { {PeripheralType::keyboard,KEY_INPUT_Z},	//キーボード:Z
 							{PeripheralType::pad1,PAD_INPUT_C} };		//パッド:Xボタン
-
-	//m_inputTable["up"] = { {PeripheralType::keyboard,KEY_INPUT_UP},		//キーボード:上矢印
-	//						{PeripheralType::pad1,PAD_INPUT_UP } };		//パッド:スティック上又は十字上
-
-	//m_inputTable["down"] = { {PeripheralType::keyboard,KEY_INPUT_DOWN},	//キーボード:下矢印
-	//						{PeripheralType::pad1,PAD_INPUT_DOWN } };	//パッド:スティック下又は十字下
-
-	//m_inputTable["left"] = { {PeripheralType::keyboard,KEY_INPUT_LEFT},	//キーボード:左矢印
-	//							{PeripheralType::pad1,PAD_INPUT_LEFT } };//パッド:スティック左又は十字左
-
-	//m_inputTable["right"] = { {PeripheralType::keyboard,KEY_INPUT_RIGHT},//キーボード:右矢印
-	//						{PeripheralType::pad1,PAD_INPUT_RIGHT } };	 //パッド:スティック右又は十字右
 
 	//m_inputTable["jump"] = { {PeripheralType::keyboard,KEY_INPUT_SPACE},//キーボード:スペースキー
 	//						{PeripheralType::pad1,PAD_INPUT_A	} };	//パッド:Aボタン
@@ -51,6 +46,18 @@ Input::Input() :
 	//						{PeripheralType::pad1,PAD_INPUT_X & PAD_INPUT_A} };	//パッド:XとAボタン
 	//m_inputTable["playerSpeedUp"] = { {PeripheralType::keyboard,KEY_INPUT_W },//キーボード:W
 	//						{PeripheralType::pad1,PAD_INPUT_X & PAD_INPUT_B } };//パッド:XボタンとBボタン
+
+	m_inputTable["up"] = { {PeripheralType::keyboard,KEY_INPUT_UP},		//キーボード:上矢印
+							{PeripheralType::pad1,PAD_INPUT_UP } };		//パッド:スティック上又は十字上
+
+	m_inputTable["down"] = { {PeripheralType::keyboard,KEY_INPUT_DOWN},	//キーボード:下矢印
+							{PeripheralType::pad1,PAD_INPUT_DOWN } };	//パッド:スティック下又は十字下
+
+	m_inputTable["left"] = { {PeripheralType::keyboard,KEY_INPUT_LEFT},	//キーボード:左矢印
+								{PeripheralType::pad1,PAD_INPUT_LEFT } };//パッド:スティック左又は十字左
+
+	m_inputTable["right"] = { {PeripheralType::keyboard,KEY_INPUT_RIGHT},//キーボード:右矢印
+							{PeripheralType::pad1,PAD_INPUT_RIGHT } };	 //パッド:スティック右又は十字右
 #endif // _DEBUG
 
 	//あらかじめ入力データのための枠を開けておく
@@ -103,8 +110,27 @@ void Input::Update()
 		}
 	}
 
-	//アナログパッドの値を取得し続ける
+	//アナログスティック(左)の値を取得し続ける
 	GetJoypadAnalogInput(&m_bufX, &m_bufY, DX_INPUT_PAD1);
+	//アナログスティック(右)の値を取得し続ける
+	XINPUT_STATE input;
+	GetJoypadXInputState(DX_INPUT_PAD1, &input);
+
+	//右スティックの値をfloatに変換する
+	Vector3 result = {
+		static_cast<float>(min_dedzone_r),
+		static_cast<float>(max_dedzone_r) };
+	
+	//入力ベクトルの長さを求める
+	float len = result.Length();
+	
+	//min_dedzone_rが0.0,max_dedzone_rが1.0になるように計算
+	//3000以下はマイナス、28000以上は1.0を超えている
+	float lenRate = (len - min_dedzone_r) / (max_dedzone_r - min_dedzone_r);
+	if (lenRate < 0.0f) lenRate = 0.0f;
+	if (lenRate > 1.0f) lenRate = 1.0f;
+
+	m_rightStickDir = result.Normalized() * lenRate;
 }
 
 bool Input::IsPressed(const char* name)const

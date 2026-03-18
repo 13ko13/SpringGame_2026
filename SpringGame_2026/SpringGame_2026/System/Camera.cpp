@@ -1,13 +1,15 @@
 #include "Camera.h"
+#include "../System/Input.h"
 
 namespace 
 {
-	const float camera_near = 200.0f;//カメラのNear
-	const float camera_far = 1500.0f;//カメラのFar
+	constexpr float camera_near = 200.0f;//カメラのNear
+	constexpr float camera_far = 1500.0f;//カメラのFar
+	const Vector3 first_pos = { 0.0f,300.0f,-700.0f };
 }
 
 Camera::Camera(const Vector3& targetPos) :
-	GameObject({0.0f,0.0f,0.0f}),
+	GameObject(first_pos),
 	m_angle(0.0f)
 {
 	//カメラの設定
@@ -22,6 +24,7 @@ Camera::Camera(const Vector3& targetPos) :
 
 Camera::~Camera()
 {
+
 }
 
 void Camera::Update()
@@ -29,11 +32,16 @@ void Camera::Update()
 
 }
 
-void Camera::Update(const Vector3& targetPos)
+void Camera::Update(const Vector3& targetPos, const Input input)
 {
+	//inputクラスから右スティックの入力を受け取って、値に応じて
+	//カメラが回転するようにする
+
+	//カメラのターゲットと位置をセットし続ける
 	SetCameraPositionAndTarget_UpVecY(m_pos.ToDxLib(), targetPos.ToDxLib());
 }
 
 void Camera::Draw()
 {
+
 }

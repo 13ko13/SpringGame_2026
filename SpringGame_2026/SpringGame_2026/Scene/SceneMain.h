@@ -6,6 +6,7 @@
 //前方宣言
 class Player;
 class Input;
+class Camera;
 
 class SceneMain
 {
@@ -34,4 +35,7 @@ private:
 
 	//プレイヤーの実体
 	std::shared_ptr<Player> m_pPlayer;
+
+	//カメラの実体
+	std::shared_ptr<Camera> m_pCamera;
 };

@@ -2,7 +2,7 @@
 #include <map>
 #include <vector>
 #include <string>
-#include "Vector3.h"
+#include "../Math/Vector3.h"
 
 /// <summary>
 /// 周辺機器種別
@@ -36,6 +36,9 @@ private:
 	//コントローラーのスティックを倒したときの値を保持するもの
 	int m_bufX;
 	int m_bufY;
+
+	//右スティックの入力方向(正規化済)と入力強度を保持する
+	Vector3 m_rightStickDir;
 
 public:
 	/// <summary>
@@ -81,5 +84,11 @@ public:
 	/// </summary>
 	/// <returns>左スティックを倒したときどのくらい倒したかの値</returns>
 	int GetBufY();
-};
 
+	/// <summary>
+	/// 右スティックの倒している入力方向(正規化済み)と
+	/// 入力強度を取得する
+	/// </summary>
+	/// <returns>右スティックの倒している入力方向(正規化済み)と入力強度</returns>
+	Vector3 const GetRightStickDir() {return m_rightStickDir;}
+};

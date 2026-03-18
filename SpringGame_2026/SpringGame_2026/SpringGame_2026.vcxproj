@@ -136,24 +136,24 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="GameObject.cpp" />
-    <ClCompile Include="Input.cpp" />
-    <ClCompile Include="Matrix4x4.cpp" />
-    <ClCompile Include="Vector3.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="Player.cpp" />
-    <ClCompile Include="SceneMain.cpp" />
+    <ClCompile Include="System\Camera.cpp" />
+    <ClCompile Include="GameObjects\GameObject.cpp" />
+    <ClCompile Include="System\Input.cpp" />
+    <ClCompile Include="Math\Matrix4x4.cpp" />
+    <ClCompile Include="Math\Vector3.cpp" />
+    <ClCompile Include="Main\main.cpp" />
+    <ClCompile Include="GameObjects\Player.cpp" />
+    <ClCompile Include="Scene\SceneMain.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Camera.h" />
-    <ClInclude Include="Game.h" />
-    <ClInclude Include="GameObject.h" />
-    <ClInclude Include="Input.h" />
-    <ClInclude Include="Matrix4x4.h" />
-    <ClInclude Include="Vector3.h" />
-    <ClInclude Include="Player.h" />
-    <ClInclude Include="SceneMain.h" />
+    <ClInclude Include="System\Camera.h" />
+    <ClInclude Include="Constants\Game.h" />
+    <ClInclude Include="GameObjects\GameObject.h" />
+    <ClInclude Include="System\Input.h" />
+    <ClInclude Include="Math\Matrix4x4.h" />
+    <ClInclude Include="Math\Vector3.h" />
+    <ClInclude Include="GameObjects\Player.h" />
+    <ClInclude Include="Scene\SceneMain.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

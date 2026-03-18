@@ -1,8 +1,9 @@
 #include "SceneMain.h"
 #include <DxLib.h>
 #include <cassert>
-#include "Player.h"
-#include "Input.h"
+#include "../GameObjects/Player.h"
+#include "../System/Input.h"
+#include "../System/Camera.h"
 
 SceneMain::SceneMain() :
 	m_frameCount(0)
@@ -40,6 +41,9 @@ void SceneMain::Init()
 	auto temp = MV1DuplicateModel(m_modelBaseHandles[static_cast<int>(ModelType::Player)]);
 	m_modelCopyHandles.push_back(MV1DuplicateModel(m_modelBaseHandles[static_cast<int>(ModelType::Player)]));
 	m_pPlayer = std::make_shared<Player>(m_modelCopyHandles[static_cast<int>(ModelType::Player)]);
+
+	//カメラの実体を確保
+	m_pCamera = std::make_shared<Camera>(m_pPlayer->GetPos());
 }
 
 void SceneMain::Update(Input& input)
@@ -48,6 +52,9 @@ void SceneMain::Update(Input& input)
 
 	//プレイヤーの更新
 	m_pPlayer->Update(input);
+
+	//カメラの更新
+	m_pCamera->Update();
 }
 
 void SceneMain::Draw()

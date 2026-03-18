@@ -1,5 +1,5 @@
 #pragma once
-#include "Vector3.h"
+#include "../Math/Vector3.h"
 
 class GameObject
 {
@@ -18,7 +18,11 @@ public:
 	/// </summary>
 	virtual void Draw() abstract;
 
-	virtual void const GetPos(Vector3& pos) const { pos = m_pos; }
+	/// <summary>
+	/// プレイヤーの位置を取得する
+	/// </summary>
+	/// <returns>プレイヤーの位置</returns>
+	virtual Vector3 const GetPos() const {  return m_pos; }
 
 private:
 

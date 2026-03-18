@@ -1,9 +1,9 @@
 #include "DxLib.h"
-#include "Game.h"
+#include "../Constants/Game.h"
 #include <memory>
 
-#include "SceneMain.h"
-#include "Input.h"
+#include "../Scene/SceneMain.h" 
+#include "../System/Input.h"
 
 // ƒvƒƒOƒ‰ƒ€‚Í WinMain ‚©‚çn‚Ü‚é
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
