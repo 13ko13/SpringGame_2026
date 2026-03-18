@@ -2,6 +2,7 @@
 #include <DxLib.h>
 #include <cassert>
 #include "Player.h"
+#include "Input.h"
 
 SceneMain::SceneMain() :
 	m_frameCount(0)
@@ -41,12 +42,12 @@ void SceneMain::Init()
 	m_pPlayer = std::make_shared<Player>(m_modelCopyHandles[static_cast<int>(ModelType::Player)]);
 }
 
-void SceneMain::Update()
+void SceneMain::Update(Input& input)
 {
 	m_frameCount++;
 
 	//プレイヤーの更新
-	m_pPlayer->Update();
+	m_pPlayer->Update(input);
 }
 
 void SceneMain::Draw()

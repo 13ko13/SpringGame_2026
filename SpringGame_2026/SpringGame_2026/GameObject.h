@@ -1,10 +1,11 @@
 #pragma once
-#include "Geometry.h"
+#include "Vector3.h"
 
 class GameObject
 {
 public:
-	GameObject(int modelHandle,Vector3 pos);
+	GameObject(int modelHandle,const Vector3& pos);
+	GameObject(const Vector3& pos);
 	virtual ~GameObject();
 
 	/// <summary>
@@ -16,6 +17,9 @@ public:
 	/// 描画処理
 	/// </summary>
 	virtual void Draw() abstract;
+
+	virtual void const GetPos(Vector3& pos) const { pos = m_pos; }
+
 private:
 
 protected:

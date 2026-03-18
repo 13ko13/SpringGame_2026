@@ -3,6 +3,7 @@
 #include <memory>
 
 #include "SceneMain.h"
+#include "Input.h"
 
 // プログラムは WinMain から始まる
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
@@ -19,14 +20,18 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	auto pScene = std::make_shared<SceneMain>();
 	pScene->Init();
+	Input input;//入力のためのオブジェクト
 
 	while (ProcessMessage() != -1)
 	{
 		LONGLONG start = GetNowHiPerformanceCount(); // フレーム開始時間を取得
 		ClearDrawScreen(); // 画面をクリア
 
-		pScene->Update();
+		pScene->Update(input);
 		pScene->Draw();
+
+		//インプットの更新処理
+		input.Update();
 
 		// escキーで終了
 		if (CheckHitKey(KEY_INPUT_ESCAPE))

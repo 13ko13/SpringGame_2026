@@ -5,6 +5,7 @@
 
 //前方宣言
 class Player;
+class Input;
 
 class SceneMain
 {
@@ -13,7 +14,7 @@ public:
 	~SceneMain();
 
 	void Init();
-	void Update();
+	void Update(Input& input);
 	void Draw();
 private:
 	void DrawGrid();
