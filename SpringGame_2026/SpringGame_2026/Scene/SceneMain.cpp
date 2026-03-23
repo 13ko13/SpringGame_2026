@@ -54,7 +54,7 @@ void SceneMain::Update(Input& input)
 	m_pPlayer->Update(input);
 
 	//カメラの更新
-	m_pCamera->Update();
+	m_pCamera->Update(m_pPlayer->GetPos(),input);
 }
 
 void SceneMain::Draw()
@@ -74,6 +74,9 @@ void SceneMain::DrawGrid()
 	// 直線の始点と終点
 	VECTOR startPos;
 	VECTOR endPos;
+
+	//カメラのdraw(基本デバッグ用)
+	m_pCamera->Draw();
 
 	for (int z = -300; z <= 300; z += 100)
 	{

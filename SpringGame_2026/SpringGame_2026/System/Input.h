@@ -90,5 +90,5 @@ public:
 	/// 入力強度を取得する
 	/// </summary>
 	/// <returns>右スティックの倒している入力方向(正規化済み)と入力強度</returns>
-	Vector3 const GetRightStickDir() {return m_rightStickDir;}
+	Vector3 const GetRightStickDir() const {return m_rightStickDir;}
 };

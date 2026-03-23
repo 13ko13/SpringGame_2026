@@ -118,8 +118,8 @@ void Input::Update()
 
 	//右スティックの値をfloatに変換する
 	Vector3 result = {
-		static_cast<float>(min_dedzone_r),
-		static_cast<float>(max_dedzone_r) };
+		static_cast<float>(input.ThumbRX),
+		static_cast<float>(input.ThumbRY) };
 	
 	//入力ベクトルの長さを求める
 	float len = result.Length();
