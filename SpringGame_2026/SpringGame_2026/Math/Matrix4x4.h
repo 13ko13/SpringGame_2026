@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 //前方宣言
 class Vector3;
@@ -23,7 +23,7 @@ public:
 	Matrix4x4 operator-(const Matrix4x4& right) const;
 
 	//行列の掛け算
-	Matrix4x4 operator*(const Matrix4x4& right) const;
+	Matrix4x4 operator*(const Matrix4x4& r) const;
 
 	//X軸回転行列
 	static Matrix4x4 RotationX(float angle);

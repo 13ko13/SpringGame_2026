@@ -42,33 +42,32 @@ Matrix4x4 Matrix4x4::operator-(const Matrix4x4& right) const
 	);
 }
 
-Matrix4x4 Matrix4x4::operator*(const Matrix4x4& right) const
+Matrix4x4 Matrix4x4::operator*(const Matrix4x4& r) const
 {
-	return Matrix4x4(
-		//X
-		m_x0 * right.m_x0 + m_x1 * right.m_y0 + m_x2 * right.m_z0 + m_x3 * right.m_w0,
-		m_x1 * right.m_x0 + m_x1 * right.m_y0 + m_x2 * right.m_z0 + m_x3 * right.m_w0,
-		m_x2 * right.m_x0 + m_x1 * right.m_y0 + m_x2 * right.m_z0 + m_x3 * right.m_w0,
-		m_x3 * right.m_x0 + m_x1 * right.m_y0 + m_x2 * right.m_z0 + m_x3 * right.m_w0,
 
-		//Y
-		m_y0 * right.m_x0 + m_y1 * right.m_y0 + m_y2 * right.m_z0 + m_y3 * right.m_w0,
-		m_y1 * right.m_x0 + m_y1 * right.m_y0 + m_y2 * right.m_z0 + m_y3 * right.m_w0,
-		m_y2 * right.m_x0 + m_y1 * right.m_y0 + m_y2 * right.m_z0 + m_y3 * right.m_w0,
-		m_x3 * right.m_x0 + m_y1 * right.m_y0 + m_y2 * right.m_z0 + m_y3 * right.m_w0,
+	Matrix4x4 out;
 
-		//Z
-		m_z0 * right.m_x0 + m_z1 * right.m_y0 + m_z2 * right.m_z0 + m_z3 * right.m_w0,
-		m_z1 * right.m_x0 + m_z1 * right.m_y0 + m_z2 * right.m_z0 + m_z3 * right.m_w0,
-		m_z2 * right.m_x0 + m_z1 * right.m_y0 + m_z2 * right.m_z0 + m_z3 * right.m_w0,
-		m_z3 * right.m_x0 + m_z1 * right.m_y0 + m_z2 * right.m_z0 + m_z3 * right.m_w0,
+	out.m_x0 = m_x0 * r.m_x0 + m_x1 * r.m_y0 + m_x2 * r.m_z0 + m_x3 * r.m_w0;
+	out.m_x1 = m_x0 * r.m_x1 + m_x1 * r.m_y1 + m_x2 * r.m_z1 + m_x3 * r.m_w1;
+	out.m_x2 = m_x0 * r.m_x2 + m_x1 * r.m_y2 + m_x2 * r.m_z2 + m_x3 * r.m_w2;
+	out.m_x3 = m_x0 * r.m_x3 + m_x1 * r.m_y3 + m_x2 * r.m_z3 + m_x3 * r.m_w3;
 
-		//W
-		m_w0 * right.m_x0 + m_w1 * right.m_y0 + m_w2 * right.m_z0 + m_w3 * right.m_w0,
-		m_w1 * right.m_x0 + m_w1 * right.m_y0 + m_w2 * right.m_z0 + m_w3 * right.m_w0,
-		m_w2 * right.m_x0 + m_w1 * right.m_y0 + m_w2 * right.m_z0 + m_w3 * right.m_w0,
-		m_w3 * right.m_x0 + m_w1 * right.m_y0 + m_w2 * right.m_z0 + m_w3 * right.m_w0
-	);
+	out.m_y0 = m_y0 * r.m_x0 + m_y1 * r.m_y0 + m_y2 * r.m_z0 + m_y3 * r.m_w0;
+	out.m_y1 = m_y0 * r.m_x1 + m_y1 * r.m_y1 + m_y2 * r.m_z1 + m_y3 * r.m_w1;
+	out.m_y2 = m_y0 * r.m_x2 + m_y1 * r.m_y2 + m_y2 * r.m_z2 + m_y3 * r.m_w2;
+	out.m_y3 = m_y0 * r.m_x3 + m_y1 * r.m_y3 + m_y2 * r.m_z3 + m_y3 * r.m_w3;
+
+	out.m_z0 = m_z0 * r.m_x0 + m_z1 * r.m_y0 + m_z2 * r.m_z0 + m_z3 * r.m_w0;
+	out.m_z1 = m_z0 * r.m_x1 + m_z1 * r.m_y1 + m_z2 * r.m_z1 + m_z3 * r.m_w1;
+	out.m_z2 = m_z0 * r.m_x2 + m_z1 * r.m_y2 + m_z2 * r.m_z2 + m_z3 * r.m_w2;
+	out.m_z3 = m_z0 * r.m_x3 + m_z1 * r.m_y3 + m_z2 * r.m_z3 + m_z3 * r.m_w3;
+
+	out.m_w0 = m_w0 * r.m_x0 + m_w1 * r.m_y0 + m_w2 * r.m_z0 + m_w3 * r.m_w0;
+	out.m_w1 = m_w0 * r.m_x1 + m_w1 * r.m_y1 + m_w2 * r.m_z1 + m_w3 * r.m_w1;
+	out.m_w2 = m_w0 * r.m_x2 + m_w1 * r.m_y2 + m_w2 * r.m_z2 + m_w3 * r.m_w2;
+	out.m_w3 = m_w0 * r.m_x3 + m_w1 * r.m_y3 + m_w2 * r.m_z3 + m_w3 * r.m_w3;
+
+	return out;
 }
 
 Matrix4x4 Matrix4x4::RotationX(float angle)

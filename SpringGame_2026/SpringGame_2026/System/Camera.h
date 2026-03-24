@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "../GameObjects/GameObject.h"
 
 class Input;
@@ -23,7 +23,17 @@ public:
 	/// 描画処理
 	/// </summary>
 	void Draw() override;
+
+	/// <summary>
+	/// Y軸回転角を取得する
+	/// </summary>
+	/// <returns>Y軸回転角</returns>
+	float GetAngleY() const { return m_angleY; }
 	
 private:
-	float m_angle;//カメラの回転角
+	float m_angleX = 0.0f;//カメラの回転角横
+	float m_angleY = 0.0f;//カメラの回転角縦
+
+	//ターゲットの位置
+	Vector3 m_targetPos;
 };
