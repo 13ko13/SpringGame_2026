@@ -29,5 +29,7 @@ public:
 	Vector3 const GetTargetPos() const;
 
 private:
-	Vector3 m_targetPos;//カメラに注視させる位置
+	Vector3 m_targetPos = { 0.0f,0.0f,0.0f };//カメラに注視させる位置
+
+	float m_prevAngleY = 0.0f;//前のフレームのプレイヤーの回転角
 };

@@ -12,13 +12,18 @@ namespace
 
 	//プレイヤー基準位置から注視点までのベクトル
 	const Vector3 player_to_target = { 0.0f, 290.0f, 0.0f };
+
+	//プレイヤーの向きを変えるときの最低限のvelocityの大きさ
+	constexpr float min_velocity_for_rot = 0.4f;
+
+	//左スティックで受け取った値が大きくなりすぎるのを防ぐための上限と下限
+	constexpr float input_value = 250.0f;
 }
 
 Player::Player(int modelHandle):
 	GameObject(modelHandle, first_pos)
 {
-	//プレイヤーのサイズを変更する
-	MV1SetScale(m_modelHandle, model_size.ToDxLib());
+	
 }
 
 Player::~Player()
@@ -33,25 +38,44 @@ void Player::Update()
 
 void Player::Update(Input input , float angle)
 {
-	//カメラの正面ベクトルを取得して、それをもとにプレイヤーの移動ベクトルを計算する
-	Matrix4x4 rotMtx = Matrix4x4::RotationY(angle);
+	Matrix4x4 rotMtx;
 
 	//値が大きすぎるため、上限と下限をあらかじめ設定する
-	m_velocity.m_x = static_cast<float>(input.GetBufX()) / 250.0f;
+	m_velocity.m_x = static_cast<float>(input.GetBufX()) / input_value;
 	m_velocity.m_y = 0.0f;
-	m_velocity.m_z = -static_cast<float>(input.GetBufY()) / 250.0f;
+	m_velocity.m_z = -static_cast<float>(input.GetBufY()) / input_value;
 
 	//カメラの回転行列をプレイヤーの移動ベクトルにかけることで、カメラの向きに応じた移動ベクトルを計算する
-	m_velocity = rotMtx.Transform(m_velocity);
+	Matrix4x4 camRot = Matrix4x4::RotationY(angle);
+	m_velocity = camRot.Transform(m_velocity);
 	m_velocity.m_y = 0.0f;//プレイヤーは地面を移動するだけなので、Yの値は0にしてあげる
 
 	//moveに入った値を正規化する
-	Vector3 normMove = m_velocity.Normalized();
-	//正規化されたmoveに速度をかけたものをポジションに足してあげる
-	m_pos += normMove * move_speed;
+	Vector3 normVel = m_velocity.Normalized();
 
-	//プレイヤーの位置をDxLibのVECTOR型に変換してMV1SetPosition関数に渡す
-	MV1SetPosition(m_modelHandle, m_pos.ToDxLib());
+	if (normVel.Length() > min_velocity_for_rot)
+	{
+		float angleY = atan2f(normVel.m_x, -normVel.m_z);
+		rotMtx = Matrix4x4::RotationY(angleY);
+		m_prevAngleY = angleY;
+	}
+	else
+	{
+		rotMtx = Matrix4x4::RotationY(m_prevAngleY);
+	}
+
+	//正規化されたmoveに速度をかけたものをポジションに足してあげる
+	m_pos += normVel * move_speed;
+
+	//平行移動行列を作成
+	Matrix4x4 transMtx = Matrix4x4::Matrix4x4::Translate(m_pos); 
+	//拡大縮小行列を作成
+	Matrix4x4 scaleMtx = Matrix4x4::Scale(model_size);
+	//回転行列と平行移動行列を合成した行列を作成
+	Matrix4x4 matrix = scaleMtx * rotMtx * transMtx;
+	
+	//合成した行列をモデルにセットする
+	MV1SetMatrix(m_modelHandle, matrix.ToDxLib());
 
 #if _DEBUG
 
@@ -89,8 +113,5 @@ void Player::Draw()
 Vector3 const Player::GetTargetPos() const
 {
 	//注視点の位置を渡す
-	Vector3 pos = m_pos;
-	pos.m_y = 0.0f;
-	
-	return pos + player_to_target;
+	return m_pos + player_to_target;
 }

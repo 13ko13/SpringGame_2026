@@ -1,4 +1,4 @@
-#include "Matrix4x4.h"
+﻿#include "Matrix4x4.h"
 #include "Vector3.h"
 #include <cmath>
 
@@ -130,3 +130,16 @@ Vector3 Matrix4x4::Transform(const Vector3& vector) const
 
 	return result;
 }
+
+MATRIX Matrix4x4::ToDxLib() const
+{
+	MATRIX mat;
+
+	mat.m[0][0] = m_x0; mat.m[0][1] = m_x1; mat.m[0][2] = m_x2; mat.m[0][3] = m_x3;
+	mat.m[1][0] = m_y0; mat.m[1][1] = m_y1; mat.m[1][2] = m_y2; mat.m[1][3] = m_y3;
+	mat.m[2][0] = m_z0; mat.m[2][1] = m_z1; mat.m[2][2] = m_z2; mat.m[2][3] = m_z3;
+	mat.m[3][0] = m_w0; mat.m[3][1] = m_w1; mat.m[3][2] = m_w2; mat.m[3][3] = m_w3;
+
+	return mat;
+}
+
