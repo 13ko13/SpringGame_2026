@@ -18,10 +18,14 @@ namespace
 
 	//左スティックで受け取った値が大きくなりすぎるのを防ぐための上限と下限
 	constexpr float input_value = 250.0f;
+
+	//アニメーションの名前
+	const char* const idle_anim_name = "Armature|Idle";
 }
 
 Player::Player(int modelHandle):
-	GameObject(modelHandle, first_pos)
+	GameObject(modelHandle, first_pos),
+	m_animator(modelHandle)
 {
 	
 }
@@ -76,6 +80,15 @@ void Player::Update(Input input , float angle)
 	
 	//合成した行列をモデルにセットする
 	MV1SetMatrix(m_modelHandle, matrix.ToDxLib());
+
+	if (CheckHitKey(KEY_INPUT_1))
+	{
+		//TODO:再生するアニメーション番号を引数に入れて、それを再生する
+		m_animator.Play(MV1GetAnimIndex(m_modelHandle, idle_anim_name),10);
+	}
+
+	//アニメーションの更新
+	m_animator.Update(0.1f);
 
 #if _DEBUG
 
