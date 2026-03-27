@@ -43,7 +43,7 @@ private:
 	};
 
 	//現在のステート
-	State m_currentState;
+	State m_currentState = State::Idle;
 
 	//アニメーター
 	Animator m_animator;

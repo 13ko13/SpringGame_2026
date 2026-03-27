@@ -10,33 +10,32 @@ public:
 	/// アニメーションを再生(変更)
 	/// </summary>
 	/// <param name="animIndex">再生させるアニメーション番号</param>
-	/// <param name="blendTime">何フレームでブレンドするか</param>
-	void Play(int animIndex, float blendTime);
+	void Play(int animIndex);
 
 	/// <summary>
 	/// アニメーションを更新
 	/// </summary>
-	/// <param name="durationTime">ブレンドの間隔</param>
-	void Update(float durationTime);
+	/// <param name="blendTime">何フレームでブレンドするか</param>
+	void Update(float blendTime);
 
 private:
 	//モデルのハンドル
 	int m_modelHandle = -1;
 
+	//現在再生中のアタッチ番号
+	int m_currentAttachIdx = -1;
+	//前フレームで再生されていたアタッチ番号
+	int m_prevAttachIdx = -1;
+
 	//現在再生中のアニメーションの番号
-	int m_currentAnim = -1;
-	//次に再生するアニメーションの番号
-	int m_nextAnim = -1;
+	int m_animIdx = -1;
 
 	//現在再生中のアニメーション時間
 	float m_currentTime = 0.0f;
-	//次に再生するアニメーションの時間
-	float m_nextTime = 0.0f;
+	float m_prevTime = 0.0f;
 
 	//ブレンドするときのタイマー
 	float m_blendTimer = 0.0f;
-	//ブレンドするときの間隔
-	float m_blendDuration = 0.0f;
 
 	//現在ブレンド中か
 	bool m_isBlending = false;

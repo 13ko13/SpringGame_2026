@@ -84,11 +84,11 @@ void Player::Update(Input input , float angle)
 	if (CheckHitKey(KEY_INPUT_1))
 	{
 		//TODO:再生するアニメーション番号を引数に入れて、それを再生する
-		m_animator.Play(MV1GetAnimIndex(m_modelHandle, idle_anim_name),10);
+		m_animator.Play(MV1GetAnimIndex(m_modelHandle, idle_anim_name));
 	}
 
 	//アニメーションの更新
-	m_animator.Update(0.1f);
+	m_animator.Update(60.0f);
 
 #if _DEBUG
 
