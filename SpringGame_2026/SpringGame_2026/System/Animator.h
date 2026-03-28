@@ -10,13 +10,19 @@ public:
 	/// アニメーションを再生(変更)
 	/// </summary>
 	/// <param name="animIndex">再生させるアニメーション番号</param>
-	void Play(int animIndex);
+	void Play(int animIndex, bool isLoop, float animSpeed = 1.0f);
 
 	/// <summary>
 	/// アニメーションを更新
 	/// </summary>
 	/// <param name="blendTime">何フレームでブレンドするか</param>
 	void Update(float blendTime);
+
+	/// <summary>
+	/// 前フレームのアニメーションが終わっているかを取得
+	/// </summary>
+	/// <returns>前フレームのアニメーションが終わっているか</returns>
+	bool const IsEnd() const;
 
 private:
 	//モデルのハンドル
@@ -34,10 +40,19 @@ private:
 	float m_currentTime = 0.0f;
 	float m_prevTime = 0.0f;
 
+	//アニメーションの速度
+	float m_animSpeed = 1.0f;
+
 	//ブレンドするときのタイマー
 	float m_blendTimer = 0.0f;
 
 	//現在ブレンド中か
 	bool m_isBlending = false;
+
+	//アニメーションが終わったか
+	bool m_isEnd = false;
+
+	//アニメーションをループするか
+	bool m_isLoop = false;
 };
 

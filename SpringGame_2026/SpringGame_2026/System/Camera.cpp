@@ -94,13 +94,13 @@ void Camera::Update(const Vector3& targetPos, const Input input)
 	SetCameraPositionAndTarget_UpVecY(m_pos.ToDxLib(), m_targetPos.ToDxLib());
 
 #ifdef _DEBUG
-	DrawFormatString((int)0.0f, (int)0.0f, 0xffffff, "rightStickX : %f,Y : %f", input.GetRightStickDir().m_x, input.GetRightStickDir().m_y);
+	//DrawFormatString((int)0.0f, (int)0.0f, 0xffffff, "rightStickX : %f,Y : %f", input.GetRightStickDir().m_x, input.GetRightStickDir().m_y);
 #endif // _DEBUG
 }
 
 void Camera::Draw()
 {
 #ifdef _DEBUG
-	DrawFormatString((int)0.0f, (int)30.0f, 0xffffff, "angleX : %f,Y : %f", m_angleX,m_angleY);
+	//DrawFormatString((int)0.0f, (int)30.0f, 0xffffff, "angleX : %f,Y : %f", m_angleX,m_angleY);
 #endif // _DEBUG
 }

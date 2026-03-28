@@ -34,6 +34,9 @@ private:
 
 	float m_prevAngleY = 0.0f;//前のフレームのプレイヤーの回転角
 
+	//移動可能状態か
+	bool m_isCanMove = true;
+
 	//ステート
 	enum class State : int
 	{
@@ -47,4 +50,28 @@ private:
 
 	//アニメーター
 	Animator m_animator;
+
+	/// <summary>
+	/// 移動
+	/// </summary>
+	/// <param name="input">入力情報</param>
+	void Move(Input input, float angle);
+
+	/// <summary>
+	/// パンチ攻撃
+	/// </summary>
+	/// <param name="input">入力情報</param>
+	void Attack();
+
+	/// <summary>
+	/// 移動中かを返す
+	/// </summary>
+	/// <returns>移動中か</returns>
+	bool const IsMoving() const;
+
+	/// <summary>
+	/// ステートを切り替えるときに使う
+	/// </summary>
+	/// <param name="next">切り替えたいステート</param>
+	void ChangeState(State next);
 };

@@ -6,7 +6,7 @@
 namespace
 {
 	const Vector3 first_pos = { 0.0f,0.0f,0.0f };	//初期座標
-	const Vector3 model_size = { 1.5f,1.5f,1.5f  };	//モデルのサイズ
+	const Vector3 model_size = { 1.5f,1.5f,1.5f };	//モデルのサイズ
 
 	constexpr float move_speed = 6.0f;				//移動速度
 
@@ -20,14 +20,24 @@ namespace
 	constexpr float input_value = 250.0f;
 
 	//アニメーションの名前
-	const char* const idle_anim_name = "Armature|Idle";
+	const char* const idle_anim_name = "Armature|Armature|Idle";//待機
+	const char* const run_anim_name = "Armature|Armature|Run";//移動
+	const char* const punch_anim_name = "Armature|Punch";//パンチ
+
+	//アニメーションのブレンド時間
+	constexpr float anim_blend_time = 20.0f;
+
+	//パンチのアニメーションの速度
+	constexpr float punch_anim_speed = 1.8f;
 }
 
-Player::Player(int modelHandle):
+Player::Player(int modelHandle) :
 	GameObject(modelHandle, first_pos),
 	m_animator(modelHandle)
 {
-	
+	//再生するアニメーション番号を引数に入れて、それを再生する
+	//初期状態はIdleにする
+	m_animator.Play(MV1GetAnimIndex(m_modelHandle, idle_anim_name),true);
 }
 
 Player::~Player()
@@ -37,10 +47,110 @@ Player::~Player()
 
 void Player::Update()
 {
-	
+
 }
 
-void Player::Update(Input input , float angle)
+void Player::Update(Input input, float angle)
+{
+	//攻撃中
+	if (m_currentState == State::Attack)
+	{
+		//攻撃アニメーションがおわるまで　
+		//他の行動はできないようにする
+		if (m_animator.IsEnd())
+		{
+			//終わったらステートを移動中ならMove,
+			//何もしていないならIdleに切り替える
+			if (IsMoving())
+			{
+				ChangeState(State::Move);
+			}
+			else
+			{
+				ChangeState(State::Idle);
+			}
+
+			m_isCanMove = true;
+		}
+
+		m_animator.Update(anim_blend_time);
+		//処理を抜ける
+		return;
+	}
+
+	//動ける状態のみ
+	if (m_isCanMove)
+	{
+		//移動
+		Move(input, angle);
+	}
+
+	//攻撃入力を最優先にする
+	if (input.IsTriggered("attack"))
+	{
+		Attack();
+	}
+	else
+	{
+		//攻撃が押されていない場合で、
+		//移動中であれば、ステートを移動にする
+		if (IsMoving())
+		{
+			ChangeState(State::Move);
+		}
+		else
+		{
+			//全てに当てはまらない場合待機にする
+			ChangeState(State::Idle);
+		}
+	}
+
+
+	//アニメーションの更新
+	m_animator.Update(anim_blend_time);
+
+#if _DEBUG
+
+	//家ではキーボードしか使えないので
+	//キーでも使える入力方法
+	Vector3 dir = { 0.0f,0.0f,0.0f };//プレイヤーの速度ベクトル
+	m_velocity.m_x = 0.0f;
+	if (input.IsPressed("right"))
+	{
+		dir.m_x = 1.0f;
+	}
+	if (input.IsPressed("left"))
+	{
+		dir.m_x = -1.0f;
+	}
+	if (input.IsPressed("down"))
+	{
+		dir.m_z = -1.0f;
+	}
+	if (input.IsPressed("up"))
+	{
+		dir.m_z = 1.0f;
+	}
+
+	m_velocity = dir;
+#endif
+}
+
+void Player::Draw()
+{
+	//モデルを描画する
+	MV1DrawModel(m_modelHandle);
+
+	DrawFormatString(0, 30, 0xffffff, "PlayerState:%d", m_currentState);
+}
+
+Vector3 const Player::GetTargetPos() const
+{
+	//注視点の位置を渡す
+	return m_pos + player_to_target;
+}
+
+void Player::Move(Input input, float angle)
 {
 	Matrix4x4 rotMtx;
 
@@ -72,59 +182,59 @@ void Player::Update(Input input , float angle)
 	m_pos += normVel * move_speed;
 
 	//平行移動行列を作成
-	Matrix4x4 transMtx = Matrix4x4::Matrix4x4::Translate(m_pos); 
+	Matrix4x4 transMtx = Matrix4x4::Matrix4x4::Translate(m_pos);
 	//拡大縮小行列を作成
 	Matrix4x4 scaleMtx = Matrix4x4::Scale(model_size);
 	//回転行列と平行移動行列を合成した行列を作成
 	Matrix4x4 matrix = scaleMtx * rotMtx * transMtx;
-	
+
 	//合成した行列をモデルにセットする
 	MV1SetMatrix(m_modelHandle, matrix.ToDxLib());
-
-	if (CheckHitKey(KEY_INPUT_1))
-	{
-		//TODO:再生するアニメーション番号を引数に入れて、それを再生する
-		m_animator.Play(MV1GetAnimIndex(m_modelHandle, idle_anim_name));
-	}
-
-	//アニメーションの更新
-	m_animator.Update(60.0f);
-
-#if _DEBUG
-
-	//家ではキーボードしか使えないので
-	//キーでも使える入力方法
-	Vector3 dir = { 0.0f,0.0f,0.0f};//プレイヤーの速度ベクトル
-	m_velocity.m_x = 0.0f;
-	if (input.IsPressed("right"))
-	{
-		dir.m_x = 1.0f;
-	}
-	if (input.IsPressed("left"))
-	{
-		dir.m_x = -1.0f;
-	}
-	if(input.IsPressed("down"))
-	{
-		dir.m_z = -1.0f;
-	}
-	if (input.IsPressed("up"))
-	{
-		dir.m_z = 1.0f;
-	}
-
-	m_velocity = dir;
-#endif
 }
 
-void Player::Draw()
+void Player::Attack()
 {
-	//モデルを描画する
-	MV1DrawModel(m_modelHandle);
+	//動けなくする
+	m_isCanMove = false;
+
+	//ステートを攻撃中に変更
+	ChangeState(State::Attack);
 }
 
-Vector3 const Player::GetTargetPos() const
+bool const Player::IsMoving() const
 {
-	//注視点の位置を渡す
-	return m_pos + player_to_target;
+	Vector3 v = m_velocity;
+	v.m_y = 0.0f;//Y成分は無視する
+	if (v.Length() > min_velocity_for_rot)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+void Player::ChangeState(State next)
+{
+	//切り替えたいステートがすでに適用されている場合は
+	//処理を飛ばす
+	if (m_currentState == next) return;
+
+	//ステートを切り替える
+	m_currentState = next;
+
+	//ステートに応じてアニメーションを変更
+	switch (m_currentState)
+	{
+	case State::Idle:
+		m_animator.Play(MV1GetAnimIndex(m_modelHandle, idle_anim_name), true);
+		break;
+	case State::Move:
+		m_animator.Play(MV1GetAnimIndex(m_modelHandle, run_anim_name), true);
+		break;
+	case State::Attack:
+		m_animator.Play(MV1GetAnimIndex(m_modelHandle, punch_anim_name), false, punch_anim_speed);
+		break;
+	}
 }

@@ -1,7 +1,13 @@
 ﻿#include "Animator.h"
 #include <DxLib.h>
 
-Animator::Animator(int modelHandle):
+namespace
+{
+	//1フレーム当たりのアニメ時間の進む量
+	constexpr float anim_delta_time = 0.5f;
+}
+
+Animator::Animator(int modelHandle) :
 	m_modelHandle(modelHandle)
 {
 
@@ -11,13 +17,20 @@ Animator::~Animator()
 {
 }
 
-void Animator::Play(int animIndex)
+void Animator::Play(int animIndex, bool isLoop,float animSpeed)
 {
 	//同じアニメーション中ならアタッチしない
 	if (m_animIdx == animIndex) return;
 
+	//アニメーション中なのでisEndをfalse
+	m_isEnd = false;
+
 	//再生中のアニメーション番号を更新
 	m_animIdx = animIndex;
+	m_isLoop = isLoop;
+
+	//アニメーションの速度を設定
+	m_animSpeed = animSpeed;
 
 	//もしすでに前のアニメーションが残っていたら強制終了してデタッチする
 	if (m_prevAttachIdx != -1)
@@ -30,7 +43,7 @@ void Animator::Play(int animIndex)
 	m_prevTime = m_currentTime;//現在のアニメーションのカウントを保存する
 
 	//アニメーションをアタッチ
-	m_currentAttachIdx= MV1AttachAnim(m_modelHandle, animIndex);
+	m_currentAttachIdx = MV1AttachAnim(m_modelHandle, animIndex);
 	m_currentTime = 0.0f;
 
 	//ブレンド中のタイマーをリセット
@@ -49,17 +62,33 @@ void Animator::Play(int animIndex)
 void Animator::Update(float blendTime)
 {
 	//アニメーションなし状態なら処理をスキップ
-	if (m_currentAttachIdx < 0 ) return;
+	if (m_currentAttachIdx < 0) return;
 
-	m_currentTime += 0.5f;//アニメーションの時間を更新
-	m_prevTime += 0.5f;
+	//パンチアニメーションのみ
+
+	m_currentTime += anim_delta_time * m_animSpeed;//アニメーションの時間を更新
+	m_prevTime += anim_delta_time * m_animSpeed;
 
 	float totalTime = MV1GetAttachAnimTotalTime(m_modelHandle, m_currentAttachIdx);
+	//アニメーションがループされていて、
 	//アニメーションのカウントが総カウントを越えたら
 	//アニメーションのカウントをリセットする
-	if (m_currentTime >= totalTime)
+	if (m_isLoop)
 	{
-		m_currentTime -= totalTime;
+		if (m_currentTime >= totalTime)
+		{
+			m_currentTime -= totalTime;
+		}
+	}
+	else
+	{
+		//ループじゃない場合は
+		//一回しか再生しない
+		if (m_currentTime >= totalTime)
+		{
+			m_currentTime = totalTime;//クランプ
+			m_isEnd = true;
+		}
 	}
 
 	//アニメーションのカウントをアニメーションに反映させる
@@ -68,61 +97,34 @@ void Animator::Update(float blendTime)
 	//ブレンドフラグが立っていたら
 	if (m_isBlending && m_prevAttachIdx != -1)
 	{
+		//ブレンドタイマーを更新
 		m_blendTimer++;
 
-		//アニメーションのブレンド率を変更して滑らかな切り替えを行う
-		if (m_prevAttachIdx == -1)
+		//ブレンド率を計算する
+		float blendRate = m_blendTimer / blendTime;
+		//ブレンドが終了したら
+		if (blendRate >= 1.0f)
 		{
-			//アニメーションが1つしか設定されていない場合
-			//ブレンドは行わない
-			MV1SetAttachAnimBlendRate(m_modelHandle, m_currentAttachIdx, 1.0f);//アニメーションのブレンド率を1にする
-		}
-		else
-		{
-			//現在のアニメーションのブレンド率を計算する
-			float blendRate = m_blendTimer / blendTime;//ブレンドにかける時間をもとに、ブレンド率を計算する
-			//ブレンド率が1を越えたら
-			//ブレンド率を1ににする
-			if (blendRate > 1.0f)
-			{
-				blendRate = 1.0f;
-				//ブレンド中フラグを降ろす
-				m_isBlending = false;
-
-				//前のアニメーションをデタッチする
-				MV1DetachAnim(m_modelHandle, m_prevAttachIdx);
-			}
-
-			MV1SetAttachAnimBlendRate(m_modelHandle, m_currentAttachIdx, blendRate);
-			MV1SetAttachAnimBlendRate(m_modelHandle, m_prevAttachIdx, 1.0 - blendRate);
+			blendRate = 1.0f;//クランプ
+			//フラグを降ろす
+			m_isBlending = false;
+			//ブレンド前アニメーションをデタッチ
+			MV1DetachAnim(m_modelHandle, m_prevAttachIdx);
 		}
 
-		//アニメーションのループ再生
-		//アニメーションの総カウントを取得する
-		float totalTime = MV1GetAttachAnimTotalTime(m_modelHandle, m_currentAttachIdx);
-		
-		//アニメーションのカウントが総カウントを越えたら
-		//アニメーションのカウントをリセットする
-		if (m_currentTime >= totalTime)
-		{
-			m_currentTime -= totalTime;
-		}
-		//一つ前のアニメーションも一応カウントを進める
-		if (m_prevAttachIdx != -1)
-		{
-			//アニメーションのループ再生
-		//アニメーションの総カウントを取得する
-			float totalTime = MV1GetAttachAnimTotalTime(m_modelHandle, m_prevAttachIdx);
+		//計算したブレンド率をもとにアニメーションをブレンドする
+		MV1SetAttachAnimBlendRate(m_modelHandle, m_currentAttachIdx, blendRate);
+		MV1SetAttachAnimBlendRate(m_modelHandle, m_prevAttachIdx, 1.0f - blendRate);
 
-			//アニメーションのカウントが総カウントを越えたら
-			//アニメーションのカウントをリセットする
-			if (m_prevTime >= totalTime)
-			{
-				m_prevTime -= totalTime;
-			}
-
-			//前のアニメーションのカウントをアニメーションに反映させる
-			MV1SetAttachAnimTime(m_modelHandle, m_prevAttachIdx, m_prevTime);
-		}
+		// 前アニメの時間反映
+		MV1SetAttachAnimTime(m_modelHandle, m_prevAttachIdx, m_prevTime);
 	}
+}
+
+bool const Animator::IsEnd() const
+{
+	//現在再生中のアタッチ番号が無ければfalseを返す
+	if (m_currentAttachIdx < 0) return false;
+
+	return m_isEnd;
 }

@@ -29,7 +29,7 @@ void SceneMain::Init()
 	SetCameraNearFar(200.0f, 1500.0f);
 
 	//モデルのロード
-	m_modelBaseHandles.push_back(MV1LoadModel("Data/Player.mv1"));//プレイヤーのモデル
+	m_modelBaseHandles.push_back(MV1LoadModel("Data/PlayerCopy.mv1"));//プレイヤーのモデル
 	//TODO:敵のモデルもロードする
 
 	//ロードに失敗した場合はアサートする
@@ -44,6 +44,14 @@ void SceneMain::Init()
 
 	//カメラの実体を確保
 	m_pCamera = std::make_shared<Camera>(m_pPlayer->GetPos());
+
+
+	// 環境光だけを最大に
+	SetGlobalAmbientLight(GetColorF(255, 255, 255, 255));
+
+	// 通常ライトを無効化
+	SetLightEnable(FALSE);
+
 }
 
 void SceneMain::Update(Input& input)
