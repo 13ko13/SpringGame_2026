@@ -8,7 +8,7 @@ namespace
 	const Vector3 first_pos = { 0.0f,0.0f,0.0f };	//初期座標
 	const Vector3 model_size = { 1.5f,1.5f,1.5f };	//モデルのサイズ
 
-	constexpr float move_speed = 6.0f;				//移動速度
+	constexpr float move_speed = 2.0f;				//移動速度
 
 	//プレイヤー基準位置から注視点までのベクトル
 	const Vector3 player_to_target = { 0.0f, 290.0f, 0.0f };
@@ -20,8 +20,8 @@ namespace
 	constexpr float input_value = 250.0f;
 
 	//アニメーションの名前
-	const char* const idle_anim_name = "Armature|Armature|Idle";//待機
-	const char* const run_anim_name = "Armature|Armature|Run";//移動
+	const char* const idle_anim_name = "Armature|Idle";//待機
+	const char* const run_anim_name = "Armature|Run";//移動
 	const char* const punch_anim_name = "Armature|Punch";//パンチ
 
 	//アニメーションのブレンド時間
@@ -29,11 +29,22 @@ namespace
 
 	//パンチのアニメーションの速度
 	constexpr float punch_anim_speed = 1.8f;
+
+	//球の半径
+	constexpr float sphere_r = 100.0f;
+	constexpr float attack_sphere_r = 50.0f;
+
+	//プレイヤーから自分の当たり判定の球までの距離
+	const Vector3 player_to_sphere = { 0.0f,125.0f,0.0f };
+
+	//プレイヤーから攻撃判定用の球までの高さ(距離)
+	const Vector3 player_to_attackSphere = { 0.0f, 150.0f, 0.0f };
 }
 
 Player::Player(int modelHandle) :
 	GameObject(modelHandle, first_pos),
-	m_animator(modelHandle)
+	m_animator(modelHandle),
+	m_attackSphere(m_pos + player_to_attackSphere)
 {
 	//再生するアニメーション番号を引数に入れて、それを再生する
 	//初期状態はIdleにする
@@ -52,24 +63,38 @@ void Player::Update()
 
 void Player::Update(Input input, float angle)
 {
+	UpdateCollSphere();
+
 	//攻撃中
 	if (m_currentState == State::Attack)
 	{
+		//移動ベクトルをリセットする
+		m_velocity = { 0.0f,0.0f,0.0f };
+
 		//攻撃アニメーションがおわるまで　
 		//他の行動はできないようにする
 		if (m_animator.IsEnd())
 		{
-			//終わったらステートを移動中ならMove,
+			//終わったらステートを攻撃入力されていたら
+			//Attackにする
+			//移動中ならMove,
 			//何もしていないならIdleに切り替える
-			if (IsMoving())
+			//攻撃入力を最優先にする
+			if (input.IsTriggered("attack"))
 			{
-				ChangeState(State::Move);
+				Attack();
 			}
 			else
 			{
-				ChangeState(State::Idle);
+				if (IsMoving())
+				{
+					ChangeState(State::Move);
+				}
+				else
+				{
+					ChangeState(State::Idle);
+				}
 			}
-
 			m_isCanMove = true;
 		}
 
@@ -89,9 +114,13 @@ void Player::Update(Input input, float angle)
 	if (input.IsTriggered("attack"))
 	{
 		Attack();
+		m_attackSphere_r = attack_sphere_r;//攻撃判定用の球の半径を大きくする
 	}
 	else
 	{
+		//攻撃入力がされていないときは、攻撃判定用の球の半径を小さくする
+		m_attackSphere_r = 0.0f;
+
 		//攻撃が押されていない場合で、
 		//移動中であれば、ステートを移動にする
 		if (IsMoving())
@@ -141,7 +170,11 @@ void Player::Draw()
 	//モデルを描画する
 	MV1DrawModel(m_modelHandle);
 
-	DrawFormatString(0, 30, 0xffffff, "PlayerState:%d", m_currentState);
+#ifdef _DEBUG
+	DrawFormatString(0, 30, 0xffffff, "PlayerState:%d", m_currentState);//ステートを画面に表示する
+	m_sphere.Draw(0xff0000);//当たり判定用の球を描画する
+	m_attackSphere.Draw(0x0000ff);//攻撃判定用の球を描画する
+#endif
 }
 
 Vector3 const Player::GetTargetPos() const
@@ -164,13 +197,18 @@ void Player::Move(Input input, float angle)
 	m_velocity = camRot.Transform(m_velocity);
 	m_velocity.m_y = 0.0f;//プレイヤーは地面を移動するだけなので、Yの値は0にしてあげる
 
-	//moveに入った値を正規化する
-	Vector3 normVel = m_velocity.Normalized();
+	//移動ベクトルの大きさを求める
+	float len = m_velocity.Length();
 
-	if (normVel.Length() > min_velocity_for_rot)
+	if (len > min_velocity_for_rot)
 	{
-		float angleY = atan2f(normVel.m_x, -normVel.m_z);
+		Vector3 dir = m_velocity.Normalized();//移動ベクトルの向きを求める
+
+		//atan2fで、移動ベクトルの向きから回転角を求める
+		float angleY = atan2f(dir.m_x, -dir.m_z);
+		//それをもとに回転行列を作成
 		rotMtx = Matrix4x4::RotationY(angleY);
+		//前のフレームの回転角を更新
 		m_prevAngleY = angleY;
 	}
 	else
@@ -178,8 +216,8 @@ void Player::Move(Input input, float angle)
 		rotMtx = Matrix4x4::RotationY(m_prevAngleY);
 	}
 
-	//正規化されたmoveに速度をかけたものをポジションに足してあげる
-	m_pos += normVel * move_speed;
+	//posに移動ベクトルを足して次のフレームの位置を計算する
+	m_pos += m_velocity * move_speed;
 
 	//平行移動行列を作成
 	Matrix4x4 transMtx = Matrix4x4::Matrix4x4::Translate(m_pos);
@@ -237,4 +275,24 @@ void Player::ChangeState(State next)
 		m_animator.Play(MV1GetAnimIndex(m_modelHandle, punch_anim_name), false, punch_anim_speed);
 		break;
 	}
+}
+
+void Player::UpdateCollSphere()
+{
+	Vector3 spherePos = m_pos + player_to_sphere;//球の位置をプレイヤーの位置から少し上にする
+	m_sphere.Update(spherePos, sphere_r);//当たり判定用の球を更新する
+
+	//攻撃判定用の球も同様に更新する
+	m_attackSphere.Update(m_pos + GetForward() * 130.0f + player_to_attackSphere, m_attackSphere_r);
+}
+
+Vector3 Player::GetForward() const
+{
+	Vector3 forward;
+	forward = {
+		sinf(m_prevAngleY),
+		0.0f,
+		-cosf(m_prevAngleY)
+	};
+	return forward;
 }

@@ -1,10 +1,11 @@
 ﻿#pragma once
 #include "../Math/Vector3.h"
+#include "../Math/Sphere.h"
 
 class GameObject
 {
 public:
-	GameObject(int modelHandle,const Vector3& pos);
+	GameObject(int modelHandle,const Vector3& pos = {0.0f,0.0f,0.0f});
 	GameObject(const Vector3& pos);
 	virtual ~GameObject();
 
@@ -38,4 +39,7 @@ protected:
 
 	//モデルハンドル
 	int m_modelHandle;
+
+	//当たり判定用の球
+	Sphere m_sphere;
 };

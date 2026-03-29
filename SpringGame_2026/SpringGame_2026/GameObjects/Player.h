@@ -51,6 +51,13 @@ private:
 	//アニメーター
 	Animator m_animator;
 
+	//攻撃判定用の球
+	Sphere m_attackSphere;
+	//攻撃判定用の球の半径
+	//攻撃時のみ半径を大きくして、攻撃範囲を広げる
+	float m_attackSphere_r = 0.0f;
+
+private:
 	/// <summary>
 	/// 移動
 	/// </summary>
@@ -74,4 +81,15 @@ private:
 	/// </summary>
 	/// <param name="next">切り替えたいステート</param>
 	void ChangeState(State next);
+
+	/// <summary>
+	/// 当たり判定用の球の位置と半径を更新する
+	/// </summary>
+	void UpdateCollSphere();
+
+	/// <summary>
+	///　プレイヤーの前方向を取得する
+	/// </summary>
+	/// <returns>プレイヤーの前方向ベクトル</returns>
+	Vector3 GetForward() const;
 };

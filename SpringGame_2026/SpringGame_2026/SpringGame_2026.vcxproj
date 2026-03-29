@@ -137,6 +137,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="GameObjects\Enemy.cpp" />
+    <ClCompile Include="Math\Sphere.cpp" />
     <ClCompile Include="System\Animator.cpp" />
     <ClCompile Include="System\Camera.cpp" />
     <ClCompile Include="GameObjects\GameObject.cpp" />
@@ -148,6 +150,8 @@
     <ClCompile Include="Scene\SceneMain.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GameObjects\Enemy.h" />
+    <ClInclude Include="Math\Sphere.h" />
     <ClInclude Include="System\Animator.h" />
     <ClInclude Include="System\Camera.h" />
     <ClInclude Include="Constants\Game.h" />

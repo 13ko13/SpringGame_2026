@@ -5,7 +5,7 @@
 namespace 
 {
 	constexpr float camera_near = 200.0f;//カメラのNear
-	constexpr float camera_far = 1500.0f;//カメラのFar
+	constexpr float camera_far = 2500.0f;//カメラのFar
 	const Vector3 first_pos = { 0.0f,300.0f,-700.0f };
 	//注視点からカメラ位置に向かうベクトル
 	const Vector3 target_to_camera = { 0.0f,0.0f,-935.0f };
@@ -13,6 +13,8 @@ namespace
 	constexpr float camera_rotate_speed = 0.04f;
 	//カメラが回転するまでのデッドゾーン
 	constexpr float camera_rot_dead_zone = 0.5f;
+
+	constexpr float fov = DX_PI_F / 3.0f;//カメラの視野角
 }
 
 Camera::Camera(const Vector3& targetPos) :
@@ -23,7 +25,7 @@ Camera::Camera(const Vector3& targetPos) :
 	SetCameraPositionAndTarget_UpVecY(m_pos.ToDxLib(), targetPos.ToDxLib());
 
 	//カメラの視野角を設定する(180/3)
-	SetupCamera_Perspective(DX_PI_F / 3.0f);
+	SetupCamera_Perspective(fov);
 	//カメラの遠近感の範囲を設定する
 	SetCameraNearFar(camera_near, camera_far);
 	m_targetPos = targetPos;

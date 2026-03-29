@@ -7,6 +7,7 @@
 class Player;
 class Input;
 class Camera;
+class Enemy;
 
 class SceneMain
 {
@@ -38,4 +39,7 @@ private:
 
 	//カメラの実体
 	std::shared_ptr<Camera> m_pCamera;
+
+	//敵の実体
+	std::shared_ptr<Enemy> m_pEnemy;
 };

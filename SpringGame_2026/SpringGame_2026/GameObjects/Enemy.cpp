@@ -1,0 +1,63 @@
+﻿#include "Enemy.h"
+#include "../Math/Matrix4x4.h"
+
+namespace
+{
+	const Vector3 model_size = { 1.5f,1.5f,1.5f };	//モデルのサイズ
+
+	const const char* const idle_anim_name = "Armature|Idle";//待機
+
+	//アニメーションブレンドの速度
+	constexpr float blend_time = 20.0f;
+
+	//球の半径
+	constexpr float sphere_r = 100.0f;
+
+	//足元から自分の当たり判定の球までの距離
+	const Vector3 enemy_to_sphere = { 0.0f,125.0f,0.0f };
+}
+
+Enemy::Enemy(int modelHandle):
+	GameObject(modelHandle),
+	m_animator(modelHandle)
+{
+	MV1SetPosition(m_modelHandle, m_pos.ToDxLib());
+
+	//初期アニメーションはidleにする
+	m_animator.Play(MV1GetAnimIndex(m_modelHandle, idle_anim_name), true);
+}
+
+Enemy::~Enemy()
+{
+}
+
+void Enemy::Update()
+{
+	//拡大縮小行列を作成
+	Matrix4x4 scaleMtx = Matrix4x4::Scale(model_size);
+
+	//行列をモデルにセットする
+	MV1SetMatrix(m_modelHandle, scaleMtx.ToDxLib());
+
+	//アニメーションを更新する
+	m_animator.Update(blend_time);
+
+	//当たり判定の更新
+	m_sphere.Update(m_pos + enemy_to_sphere, sphere_r);
+}
+
+void Enemy::Draw()
+{
+	//モデルを描画する
+	MV1DrawModel(m_modelHandle);
+
+#if _DEBUG
+	//当たり判定用の球を描画する
+	m_sphere.Draw(0xff0000);
+#endif
+}
+
+void Enemy::ChangeState(State next)
+{
+	
+}
