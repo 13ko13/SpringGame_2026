@@ -137,6 +137,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="System\CollisionManager.cpp" />
     <ClCompile Include="GameObjects\Enemy.cpp" />
     <ClCompile Include="Math\Sphere.cpp" />
     <ClCompile Include="System\Animator.cpp" />
@@ -150,6 +151,7 @@
     <ClCompile Include="Scene\SceneMain.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="System\CollisionManager.h" />
     <ClInclude Include="GameObjects\Enemy.h" />
     <ClInclude Include="Math\Sphere.h" />
     <ClInclude Include="System\Animator.h" />
