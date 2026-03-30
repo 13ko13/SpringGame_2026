@@ -2,6 +2,7 @@
 #include "GameObject.h"
 #include "../Math/Vector3.h"
 #include "../System/Animator.h"
+#include "../Math/Sphere.h"
 
 class Input;
 class Player : public GameObject
@@ -27,7 +28,28 @@ public:
 	/// </summary>
 	void Draw() override;
 
+	/// <summary>
+	/// カメラのターゲットにさせる位置を取得
+	/// </summary>
+	/// <returns>カメラのターゲットの位置</returns>
 	Vector3 const GetTargetPos() const;
+
+	/// <summary>
+	/// 攻撃用の球を取得する
+	/// </summary>
+	/// <returns>攻撃用の球</returns>
+	Sphere GetAttackSphere() const { return m_attackSphere; }
+
+	/// <summary>
+	/// 敵に攻撃が当たった時の処理
+	/// </summary>
+	void OnAttackedEnemy();
+
+	/// <summary>
+	/// 攻撃中かを返す
+	/// </summary>
+	/// <returns>true:攻撃中,false:攻撃中ではない</returns>
+	bool IsAttacking() const { return m_isAttacking; }
 
 private:
 	Vector3 m_targetPos = { 0.0f,0.0f,0.0f };//カメラに注視させる位置
@@ -36,6 +58,9 @@ private:
 
 	//移動可能状態か
 	bool m_isCanMove = true;
+
+	//攻撃中かどうか
+	bool m_isAttacking = false;
 
 	//ステート
 	enum class State : int
@@ -55,7 +80,7 @@ private:
 	Sphere m_attackSphere;
 	//攻撃判定用の球の半径
 	//攻撃時のみ半径を大きくして、攻撃範囲を広げる
-	float m_attackSphere_r = 0.0f;
+	float m_attackSphereR = 0.0f;
 
 private:
 	/// <summary>

@@ -32,13 +32,18 @@ namespace
 
 	//球の半径
 	constexpr float sphere_r = 100.0f;
-	constexpr float attack_sphere_r = 50.0f;
+	constexpr float attack_sphere_r = 70.0f;
 
 	//プレイヤーから自分の当たり判定の球までの距離
 	const Vector3 player_to_sphere = { 0.0f,125.0f,0.0f };
 
 	//プレイヤーから攻撃判定用の球までの高さ(距離)
 	const Vector3 player_to_attackSphere = { 0.0f, 150.0f, 0.0f };
+
+	//プレイヤーのパンチが当たり始める時間
+	constexpr float punch_hit_start = 0.4f;
+	//プレイヤーのパンチが当たり終わる時間
+	constexpr float punch_hit_end = 0.7f;
 }
 
 Player::Player(int modelHandle) :
@@ -68,6 +73,24 @@ void Player::Update(Input input, float angle)
 	//攻撃中
 	if (m_currentState == State::Attack)
 	{
+		//攻撃が当たる時間帯の時だけ、攻撃判定用の球を有効にする
+		float time = m_animator.GetPlayTime();//現在のアニメーションの再生時間
+		float length = m_animator.GetAnimLength();//現在のアニメーションの総再生時間
+		float rate = time / length;//アニメーションの再生率(0.0~1.0)
+
+		//パンチが当たっている時間帯なら
+		if (rate >= punch_hit_start && rate <= punch_hit_end)
+		{
+			m_isAttacking = true;//攻撃が当たる時間帯のときは攻撃中フラグを立てる
+			m_attackSphereR = attack_sphere_r;//攻撃判定用の球の半径を大きくする
+		}
+		else
+		{
+			//それ以外なら
+			m_isAttacking = false;//フラグを降ろす
+			m_attackSphereR = 0.0f;//攻撃判定用の球の半径を0にする
+		}
+
 		//移動ベクトルをリセットする
 		m_velocity = { 0.0f,0.0f,0.0f };
 
@@ -75,6 +98,9 @@ void Player::Update(Input input, float angle)
 		//他の行動はできないようにする
 		if (m_animator.IsEnd())
 		{
+			//攻撃アニメーションが終わったら、攻撃中フラグを下ろす
+			m_isAttacking = false;
+
 			//終わったらステートを攻撃入力されていたら
 			//Attackにする
 			//移動中ならMove,
@@ -114,12 +140,11 @@ void Player::Update(Input input, float angle)
 	if (input.IsTriggered("attack"))
 	{
 		Attack();
-		m_attackSphere_r = attack_sphere_r;//攻撃判定用の球の半径を大きくする
 	}
 	else
 	{
 		//攻撃入力がされていないときは、攻撃判定用の球の半径を小さくする
-		m_attackSphere_r = 0.0f;
+		m_attackSphereR = 0.0f;
 
 		//攻撃が押されていない場合で、
 		//移動中であれば、ステートを移動にする
@@ -181,6 +206,15 @@ Vector3 const Player::GetTargetPos() const
 {
 	//注視点の位置を渡す
 	return m_pos + player_to_target;
+}
+
+void Player::OnAttackedEnemy()
+{
+	//敵が何度もHitアニメーションをしないように
+	//一度攻撃が当たったら、攻撃判定用の球の半径を0にして、当たり判定をなくす
+	m_attackSphereR = 0.0f;
+
+	m_isAttacking = false;
 }
 
 void Player::Move(Input input, float angle)
@@ -283,7 +317,7 @@ void Player::UpdateCollSphere()
 	m_sphere.Update(spherePos, sphere_r);//当たり判定用の球を更新する
 
 	//攻撃判定用の球も同様に更新する
-	m_attackSphere.Update(m_pos + GetForward() * 130.0f + player_to_attackSphere, m_attackSphere_r);
+	m_attackSphere.Update(m_pos + GetForward() * 130.0f + player_to_attackSphere, m_attackSphereR);
 }
 
 Vector3 Player::GetForward() const
