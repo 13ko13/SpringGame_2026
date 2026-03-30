@@ -5,7 +5,9 @@ namespace
 {
 	const Vector3 model_size = { 1.5f,1.5f,1.5f };	//モデルのサイズ
 
-	const const char* const idle_anim_name = "Armature|Idle";//待機
+	//アニメーションの名前
+	const char* const idle_anim_name = "Armature|Idle";//待機
+	const char* const hit_anim_name = "Armature|Dead";//攻撃を受けたとき
 
 	//アニメーションブレンドの速度
 	constexpr float blend_time = 20.0f;
@@ -39,6 +41,15 @@ void Enemy::Update()
 	//行列をモデルにセットする
 	MV1SetMatrix(m_modelHandle, scaleMtx.ToDxLib());
 
+	if (m_currentState == State::Hit)
+	{
+		if (m_animator.IsEnd())
+		{
+			//攻撃を受けたときのアニメーションが終わったら待機にする
+			ChangeState(State::Idle);
+		}
+	}
+
 	//アニメーションを更新する
 	m_animator.Update(blend_time);
 
@@ -57,7 +68,32 @@ void Enemy::Draw()
 #endif
 }
 
-void Enemy::ChangeState(State next)
+void Enemy::OnHit()
 {
-	
+	//既にステートがHitの場合は処理を飛ばす
+	if (m_currentState == State::Hit) return;
+
+	//ステートをHitに変更する
+	ChangeState(State::Hit);
+}
+
+void Enemy::ChangeState(State next)
+{ 
+	//切り替えたいステートが既に適用されていたら
+	//処理を飛ばす
+	if (m_currentState == next) return;
+
+	//ステートを切り替える
+	m_currentState = next;
+
+	//ステートに応じてアニメーションを変更
+	switch (m_currentState)
+	{
+	case State::Idle:
+		m_animator.Play(MV1GetAnimIndex(m_modelHandle, idle_anim_name), true);
+		break;
+	case State::Hit:
+		m_animator.Play(MV1GetAnimIndex(m_modelHandle, hit_anim_name), false);
+		break;
+	}
 }

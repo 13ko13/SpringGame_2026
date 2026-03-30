@@ -10,14 +10,18 @@ public:
 
 	void Update() override;
 	void Draw() override;
+	
+	/// <summary>
+	/// 攻撃が当てられた時の処理
+	/// </summary>
+	void OnHit();
 
 private:
 	//ステート
 	enum class State : int
 	{
 		Idle,//待機中
-		Attack,//攻撃
-		Move,//移動
+		Hit,//攻撃を受けたとき
 	};
 
 	//現在のステート
@@ -26,6 +30,10 @@ private:
 	//アニメーター
 	Animator m_animator;
 
+	//Hitアニメーションをおこなったか
+	bool m_isHitAnim = false;
+
+private:
 	/// <summary>
 	/// ステートを切り替えるときに使う
 	/// </summary>
