@@ -25,6 +25,8 @@ public:
 	/// <returns>プレイヤーの位置</returns>
 	virtual Vector3 const GetPos() const {  return m_pos; }
 
+	Sphere const GetSphere() const { return m_sphere; }
+
 private:
 
 protected:
