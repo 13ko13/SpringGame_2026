@@ -24,6 +24,18 @@ public:
 	/// <returns>前フレームのアニメーションが終わっているか</returns>
 	bool const IsEnd() const;
 
+	/// <summary>
+	/// 今の再生時間を取得
+	/// </summary>
+	/// <returns>指定のアニメーションの現在の再生時間</returns>
+	float GetPlayTime() const { return m_currentTime; }
+
+	/// <summary>
+	/// アニメーションの総再生時間を返す
+	/// </summary>
+	/// <returns>指定のアニメーションの総再生時間</returns>
+	float GetAnimLength() const;
+
 private:
 	//モデルのハンドル
 	int m_modelHandle = -1;

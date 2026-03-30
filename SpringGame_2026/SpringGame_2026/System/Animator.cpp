@@ -128,3 +128,8 @@ bool const Animator::IsEnd() const
 
 	return m_isEnd;
 }
+
+float Animator::GetAnimLength() const
+{
+	return MV1GetAttachAnimTotalTime(m_modelHandle, m_currentAttachIdx);
+}
