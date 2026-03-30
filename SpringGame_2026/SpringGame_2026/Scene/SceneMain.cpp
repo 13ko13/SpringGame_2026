@@ -5,6 +5,7 @@
 #include "../System/Input.h"
 #include "../System/Camera.h"
 #include "../GameObjects/Enemy.h"
+#include "../System/CollisionManager.h"
 
 namespace
 {
@@ -65,6 +66,8 @@ void SceneMain::Init()
 	//カメラの実体を確保
 	m_pCamera = std::make_shared<Camera>(m_pPlayer->GetPos());
 
+	//当たり判定の管理クラスの実体を確保
+	m_pCollManager = std::make_shared<CollisionManager>();
 
 	// 環境光だけを最大に
 	SetGlobalAmbientLight(GetColorF(255, 255, 255, 255));
@@ -85,6 +88,9 @@ void SceneMain::Update(Input& input)
 
 	//カメラの更新
 	m_pCamera->Update(m_pPlayer->GetTargetPos(), input);
+
+	//当たり判定の更新
+	m_pCollManager->Update(m_pPlayer, m_pEnemy);
 }
 
 void SceneMain::Draw()

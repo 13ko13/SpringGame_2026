@@ -8,6 +8,7 @@ class Player;
 class Input;
 class Camera;
 class Enemy;
+class CollisionManager;
 
 class SceneMain
 {
@@ -42,4 +43,7 @@ private:
 
 	//敵の実体
 	std::shared_ptr<Enemy> m_pEnemy;
+
+	//当たり判定の管理クラスの実体
+	std::shared_ptr<CollisionManager> m_pCollManager;
 };
