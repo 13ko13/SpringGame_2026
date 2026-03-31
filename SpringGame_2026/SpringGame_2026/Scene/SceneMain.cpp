@@ -21,22 +21,19 @@ SceneMain::SceneMain() :
 
 SceneMain::~SceneMain()
 {
-	//プレイヤーのコピーハンドルを削除
-	MV1DeleteModel(m_playerCopyMHandle);
-	//ベースハンドルを削除
-	MV1DeleteModel(m_playerMHandle);
+	//プレイヤーのコピーモデルハンドルとプレイヤーモデルハンドルを削除する
+	if (m_playerCopyMHandle != -1)
+		MV1DeleteModel(m_playerCopyMHandle);
 
-	//敵のモデルのコピーの方のハンドルを先に開放する
-	for(int handle : m_enemyCopyHandles)
+	if (m_playerMHandle != -1)
+		MV1DeleteModel(m_playerMHandle);
+
+	for (int handle : m_enemyBaseMHandles)
 	{
-		MV1DeleteModel(handle);
+		if (handle != -1)
+			MV1DeleteModel(handle);
 	}
 
-	//モデルのハンドルを開放する
-	for(int handle : m_enemyBaseMHandles)
-	{
-		MV1DeleteModel(handle);
-	}
 }
 
 void SceneMain::Init()
@@ -66,8 +63,7 @@ void SceneMain::Init()
 	m_pPlayer = std::make_shared<Player>(m_playerCopyMHandle);
 	
 	//敵
-	m_enemyCopyHandles.push_back(MV1DuplicateModel(m_enemyBaseMHandles[static_cast<int>(EnemyModelType::Enemy1)]));
-	m_pEnemyFactory = std::make_shared<EnemyFactory>(m_enemyCopyHandles);
+	m_pEnemyFactory = std::make_shared<EnemyFactory>(m_enemyBaseMHandles);
 
 	//カメラの実体を確保
 	m_pCamera = std::make_shared<Camera>(m_pPlayer->GetPos());
@@ -93,7 +89,7 @@ void SceneMain::Update(Input& input)
 	m_pCamera->Update(m_pPlayer->GetTargetPos(), input);
 
 	//当たり判定の更新
-	m_pCollManager->Update(m_pPlayer, m_pEnemyFactory->GetEnemies());
+	m_pCollManager->Update(m_pPlayer, m_pEnemyFactory);
 
 	//敵すべての更新
 	m_pEnemyFactory->Update();

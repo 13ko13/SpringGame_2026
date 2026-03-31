@@ -44,6 +44,9 @@ protected:
 	Vector3 m_pos;
 	Vector3 m_velocity;
 
+	//死んでいるか
+	bool m_isDead = false;
+
 	//重力
 	float m_gravity;
 	//フレーム数

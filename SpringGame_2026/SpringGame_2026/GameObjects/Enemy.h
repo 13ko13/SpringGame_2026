@@ -16,12 +16,18 @@ public:
 	/// </summary>
 	void OnHit();
 
+	/// <summary>
+	/// オブジェクトが死亡したときの処理
+	/// </summary>
+	void OnDead();
+
 private:
 	//ステート
 	enum class State : int
 	{
 		Idle,//待機中
 		Hit,//攻撃を受けたとき
+		Dead,//死んでいるとき	
 	};
 
 	//現在のステート

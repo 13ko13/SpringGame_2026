@@ -2,9 +2,7 @@
 #include <memory>
 #include <list>
 #include <vector>
-
-//前方宣言
-class Enemy;
+#include "../GameObjects/Enemy.h"
 
 /// <summary>
 /// 敵タイプ
@@ -25,7 +23,7 @@ public:
 	/// </summary>
 	/// <param name="pos">生成させる位置</param>
 	/// <returns>敵のポインタ</returns>
-	std::shared_ptr<Enemy> Create(const Vector3& pos, EnemyType enemyType);
+	std::shared_ptr<Enemy> Create(const Vector3& pos, EnemyType enemyType, std::vector<int> enemyHandles);
 
 	/// <summary>
 	/// 生成されている敵のリストを返す

@@ -4,8 +4,9 @@
 
 //前方宣言
 class Player;
-class Enemy;
+class EnemyFactory;
 class Sphere;
+class Enemy;
 
 class CollisionManager
 {
@@ -15,7 +16,7 @@ public:
 
 	void Update(
 		std::shared_ptr<Player>& pPlayer,
-		std::list<std::shared_ptr<Enemy>>& pEnemys
+		std::shared_ptr<EnemyFactory>& pEnemyFactory
 	);
 
 private:
