@@ -5,7 +5,7 @@
 class Enemy : public GameObject
 {
 public:
-	Enemy(int modelHandle);
+	Enemy(const int modelHandle, const Vector3& pos);
 	~Enemy();
 
 	void Update() override;

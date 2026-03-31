@@ -11,16 +11,19 @@ CollisionManager::~CollisionManager()
 {
 }
 
-void CollisionManager::Update(std::shared_ptr<Player>& pPlayer, std::shared_ptr<Enemy>& pEnemy)
+void CollisionManager::Update(std::shared_ptr<Player>& pPlayer, std::list<std::shared_ptr<Enemy>>& pEnemys)
 {
 	//攻撃中のみ当たり判定を行う
 	if (pPlayer->IsAttacking())
 	{
-		if (CheckCollision(pPlayer->GetAttackSphere(), pEnemy))
+		for (auto& pEnemy : pEnemys)
 		{
-			//敵に当たっているときの処理を行わせる
-			pEnemy->OnHit();
-			pPlayer->OnAttackedEnemy();
+			if (CheckCollision(pPlayer->GetAttackSphere(), pEnemy))
+			{
+				//敵に当たっているときの処理を行わせる
+				pEnemy->OnHit();
+				pPlayer->OnAttackedEnemy();
+			}
 		}
 	}
 }

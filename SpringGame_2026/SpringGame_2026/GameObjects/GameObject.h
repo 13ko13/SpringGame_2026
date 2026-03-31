@@ -25,7 +25,17 @@ public:
 	/// <returns>プレイヤーの位置</returns>
 	virtual Vector3 const GetPos() const {  return m_pos; }
 
-	Sphere const GetSphere() const { return m_sphere; }
+	/// <summary>
+	/// 当たり判定用の球を取得する
+	/// </summary>
+	/// <returns></returns>
+	virtual Sphere const GetSphere() const { return m_sphere; }
+
+	/// <summary>
+	/// オブジェクトが死亡しているかを返す関数
+	/// </summary>
+	/// <returns>true:死んでいる,false:死んでいない</returns>
+	virtual bool IsDead() const { return false; }
 
 private:
 

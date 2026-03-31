@@ -4,8 +4,8 @@
 #include "../GameObjects/Player.h"
 #include "../System/Input.h"
 #include "../System/Camera.h"
-#include "../GameObjects/Enemy.h"
 #include "../System/CollisionManager.h"
+#include "../System/EnemyFactory.h"
 
 namespace
 {
@@ -21,14 +21,19 @@ SceneMain::SceneMain() :
 
 SceneMain::~SceneMain()
 {
-	//モデルのコピーの方のハンドルを先に開放する
-	for(int handle : m_modelCopyHandles)
+	//プレイヤーのコピーハンドルを削除
+	MV1DeleteModel(m_playerCopyMHandle);
+	//ベースハンドルを削除
+	MV1DeleteModel(m_playerMHandle);
+
+	//敵のモデルのコピーの方のハンドルを先に開放する
+	for(int handle : m_enemyCopyHandles)
 	{
 		MV1DeleteModel(handle);
 	}
 
 	//モデルのハンドルを開放する
-	for(int handle : m_modelBaseHandles)
+	for(int handle : m_enemyBaseMHandles)
 	{
 		MV1DeleteModel(handle);
 	}
@@ -44,24 +49,25 @@ void SceneMain::Init()
 	SetWriteZBuffer3D(true);	// 描画する物体はZバッファにも距離を書き込む
 
 	//モデルのロード
-	m_modelBaseHandles.push_back(MV1LoadModel("Data/PlayerCopy.mv1"));//プレイヤーのモデル
+	m_playerMHandle = MV1LoadModel("Data/PlayerCopy.mv1");//プレイヤーのモデル
 	//敵のモデルもロードする
-	m_modelBaseHandles.push_back(MV1LoadModel("Data/Enemy.mv1"));//敵のモデル
+	m_enemyBaseMHandles.push_back(MV1LoadModel("Data/Enemy.mv1"));//敵のモデル
 
 	//ロードに失敗した場合はアサートする
-	assert(m_modelBaseHandles[static_cast<int>(ModelType::Player)] != -1);
+	assert(m_playerMHandle != -1);
 	//敵のモデルも
-	assert(m_modelBaseHandles[static_cast<int>(ModelType::Enemy)] != -1);
+	assert(m_enemyBaseMHandles[static_cast<int>(EnemyModelType::Enemy1)] != -1);
 
 	//ロードしたモデルのハンドルをMV1DuplicateModel関数に渡して複製して、
 	//複製したモデルのハンドルを渡す
-	auto temp = MV1DuplicateModel(m_modelBaseHandles[static_cast<int>(ModelType::Player)]);
-	m_modelCopyHandles.push_back(MV1DuplicateModel(m_modelBaseHandles[static_cast<int>(ModelType::Player)]));
-	m_pPlayer = std::make_shared<Player>(m_modelCopyHandles[static_cast<int>(ModelType::Player)]);
 
-	temp = MV1DuplicateModel(m_modelBaseHandles[static_cast<int>(ModelType::Enemy)]);
-	m_modelCopyHandles.push_back(MV1DuplicateModel(m_modelBaseHandles[static_cast<int>(ModelType::Enemy)]));
-	m_pEnemy = std::make_shared<Enemy>(m_modelCopyHandles[static_cast<int>(ModelType::Enemy)]);
+	//プレイヤー
+	m_playerCopyMHandle = MV1DuplicateModel(m_playerMHandle);
+	m_pPlayer = std::make_shared<Player>(m_playerCopyMHandle);
+	
+	//敵
+	m_enemyCopyHandles.push_back(MV1DuplicateModel(m_enemyBaseMHandles[static_cast<int>(EnemyModelType::Enemy1)]));
+	m_pEnemyFactory = std::make_shared<EnemyFactory>(m_enemyCopyHandles);
 
 	//カメラの実体を確保
 	m_pCamera = std::make_shared<Camera>(m_pPlayer->GetPos());
@@ -83,14 +89,14 @@ void SceneMain::Update(Input& input)
 	//プレイヤーの更新
 	m_pPlayer->Update(input,m_pCamera->GetAngleY());
 
-	//敵の更新
-	m_pEnemy->Update();
-
 	//カメラの更新
 	m_pCamera->Update(m_pPlayer->GetTargetPos(), input);
 
 	//当たり判定の更新
-	m_pCollManager->Update(m_pPlayer, m_pEnemy);
+	m_pCollManager->Update(m_pPlayer, m_pEnemyFactory->GetEnemies());
+
+	//敵すべての更新
+	m_pEnemyFactory->Update();
 }
 
 void SceneMain::Draw()
@@ -104,8 +110,8 @@ void SceneMain::Draw()
 	//プレイヤーの描画
 	m_pPlayer->Draw();
 
-	//敵の描画
-	m_pEnemy->Draw();
+	//敵すべての描画
+	m_pEnemyFactory->Draw();
 }
 
 void SceneMain::DrawGrid()

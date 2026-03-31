@@ -2,13 +2,13 @@
 #include <vector>
 #include <memory>
 
-
 //前方宣言
 class Player;
 class Input;
 class Camera;
 class Enemy;
 class CollisionManager;
+class EnemyFactory;
 
 class SceneMain
 {
@@ -25,15 +25,18 @@ private:
 private:
 	int m_frameCount;
 
-	enum class ModelType : int
+	enum class EnemyModelType : int
 	{
-		Player = 0,
-		Enemy = 1,
+		Enemy1 = 0,
 	};
 
-	//プレイヤーや敵のモデルのハンドル
-	std::vector<int> m_modelBaseHandles;
-	std::vector<int> m_modelCopyHandles;
+	//プレイヤーモデルのハンドル
+	int m_playerMHandle;
+	int m_playerCopyMHandle;
+
+	//敵のモデルのハンドル
+	std::vector<int> m_enemyBaseMHandles;
+	std::vector<int> m_enemyCopyHandles;
 
 	//プレイヤーの実体
 	std::shared_ptr<Player> m_pPlayer;
@@ -41,9 +44,9 @@ private:
 	//カメラの実体
 	std::shared_ptr<Camera> m_pCamera;
 
-	//敵の実体
-	std::shared_ptr<Enemy> m_pEnemy;
-
 	//当たり判定の管理クラスの実体
 	std::shared_ptr<CollisionManager> m_pCollManager;
+
+	//敵の生成を行う工場の実体
+	std::shared_ptr<EnemyFactory> m_pEnemyFactory;
 };

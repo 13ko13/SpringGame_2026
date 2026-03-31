@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include <memory>
+#include <list>
 
 //前方宣言
 class Player;
@@ -14,7 +15,7 @@ public:
 
 	void Update(
 		std::shared_ptr<Player>& pPlayer,
-		std::shared_ptr<Enemy>& pEnemy
+		std::list<std::shared_ptr<Enemy>>& pEnemys
 	);
 
 private:

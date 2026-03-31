@@ -19,8 +19,8 @@ namespace
 	const Vector3 enemy_to_sphere = { 0.0f,125.0f,0.0f };
 }
 
-Enemy::Enemy(int modelHandle):
-	GameObject(modelHandle),
+Enemy::Enemy(const int modelHandle,const Vector3& pos):
+	GameObject(modelHandle,pos),
 	m_animator(modelHandle)
 {
 	MV1SetPosition(m_modelHandle, m_pos.ToDxLib());
