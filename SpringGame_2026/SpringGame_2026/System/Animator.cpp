@@ -52,6 +52,9 @@ void Animator::Play(int animIndex, bool isLoop,float animSpeed)
 	//前のがあればブレンド開始、なければ（初回再生なら）即100%
 	if (m_prevAttachIdx != -1) {
 		m_isBlending = true;
+		//新アニメは0%から、前アニメは100%からブレンドを開始する
+		MV1SetAttachAnimBlendRate(m_modelHandle, m_currentAttachIdx, 0.0f);
+		MV1SetAttachAnimBlendRate(m_modelHandle, m_prevAttachIdx, 1.0f);
 	}
 	else {
 		m_isBlending = false;
@@ -116,8 +119,10 @@ void Animator::Update(float blendTime)
 		MV1SetAttachAnimBlendRate(m_modelHandle, m_currentAttachIdx, blendRate);
 		MV1SetAttachAnimBlendRate(m_modelHandle, m_prevAttachIdx, 1.0f - blendRate);
 
-		// 前アニメの時間反映
-		MV1SetAttachAnimTime(m_modelHandle, m_prevAttachIdx, m_prevTime);
+		// 前アニメの時間反映（総再生時間を超えないようにクランプする）
+		float prevTotalTime = MV1GetAttachAnimTotalTime(m_modelHandle, m_prevAttachIdx);
+		float clampedPrevTime = (m_prevTime > prevTotalTime) ? prevTotalTime : m_prevTime;
+		MV1SetAttachAnimTime(m_modelHandle, m_prevAttachIdx, clampedPrevTime);
 	}
 }
 

@@ -23,6 +23,7 @@ namespace
 	const char* const idle_anim_name = "Armature|Idle";//待機
 	const char* const run_anim_name = "Armature|Run";//移動
 	const char* const punch_anim_name = "Armature|Punch";//パンチ
+	const char* const damage_anim_name = "Armature|Damage";//ダメージ
 
 	//アニメーションのブレンド時間
 	constexpr float anim_blend_time = 20.0f;
@@ -32,7 +33,7 @@ namespace
 
 	//球の半径
 	constexpr float sphere_r = 100.0f;
-	constexpr float attack_sphere_r = 70.0f;
+	constexpr float attack_sphere_r = 85.0f;
 
 	//プレイヤーから自分の当たり判定の球までの距離
 	const Vector3 player_to_sphere = { 0.0f,125.0f,0.0f };
@@ -44,6 +45,12 @@ namespace
 	constexpr float punch_hit_start = 0.4f;
 	//プレイヤーのパンチが当たり終わる時間
 	constexpr float punch_hit_end = 0.7f;
+
+	//Lerpに使うtの値
+	constexpr float lerp_t = 0.15f;
+
+	//無敵になる時間
+	constexpr int invincible_time = 240;
 }
 
 Player::Player(int modelHandle) :
@@ -54,6 +61,15 @@ Player::Player(int modelHandle) :
 	//再生するアニメーション番号を引数に入れて、それを再生する
 	//初期状態はIdleにする
 	m_animator.Play(MV1GetAnimIndex(m_modelHandle, idle_anim_name),true);
+
+#ifdef _DEBUG
+	//モデルに含まれる全アニメーション名を出力する
+	int animNum = MV1GetAnimNum(m_modelHandle);
+	for (int i = 0; i < animNum; i++)
+	{
+		printfDx("Anim[%d]: %s\n", i, MV1GetAnimName(m_modelHandle, i));
+	}
+#endif
 }
 
 Player::~Player()
@@ -129,36 +145,72 @@ void Player::Update(Input input, float angle)
 		return;
 	}
 
-	//動ける状態のみ
-	if (m_isCanMove)
+	if (m_currentState != State::Damage)
 	{
-		//移動
-		Move(input, angle);
-	}
-
-	//攻撃入力を最優先にする
-	if (input.IsTriggered("attack"))
-	{
-		Attack();
-	}
-	else
-	{
-		//攻撃入力がされていないときは、攻撃判定用の球の半径を小さくする
-		m_attackSphereR = 0.0f;
-
-		//攻撃が押されていない場合で、
-		//移動中であれば、ステートを移動にする
-		if (IsMoving())
+		//動ける状態のみ
+		if (m_isCanMove)
 		{
-			ChangeState(State::Move);
+			//移動
+			Move(input, angle);
+		}
+
+		//攻撃入力を最優先にする
+		if (input.IsTriggered("attack"))
+		{
+			Attack();
 		}
 		else
 		{
-			//全てに当てはまらない場合待機にする
-			ChangeState(State::Idle);
+			//攻撃入力がされていないときは、攻撃判定用の球の半径を小さくする
+			m_attackSphereR = 0.0f;
+
+			//攻撃が押されていない場合で、
+			//移動中であれば、ステートを移動にする
+			if (IsMoving())
+			{
+				ChangeState(State::Move);
+			}
+			else
+			{
+				//全てに当てはまらない場合待機にする
+				ChangeState(State::Idle);
+			}
+		}
+	}
+	else
+	{
+		//Damageアニメーションが終わったら移動中ならMove、それ以外はIdleに戻す
+		if (m_animator.IsEnd())
+		{
+			m_isCanMove = true;
+			if (IsMoving())
+			{
+				ChangeState(State::Move);
+			}
+			else
+			{
+				ChangeState(State::Idle);
+			}
 		}
 	}
 
+	//ダメージを受けた時のみに無敵フラグを立てる
+	if (m_currentState == State::Damage)
+	{
+		m_isInvincible = true;
+	}
+
+	//無敵状態のときは、無敵時間用のタイマーを進める
+	if (m_isInvincible)
+	{
+		m_invincibleTimer++;
+		//無敵時間が一定時間を超えたら、無敵状態を解除する
+		if (m_invincibleTimer > invincible_time)
+		{
+			m_isInvincible = false;
+			m_invincibleTimer = 0;
+		}
+	}
 
 	//アニメーションの更新
 	m_animator.Update(anim_blend_time);
@@ -240,8 +292,20 @@ void Player::Move(Input input, float angle)
 
 		//atan2fで、移動ベクトルの向きから回転角を求める
 		float angleY = atan2f(dir.m_x, -dir.m_z);
+
+		//ここからは角度の線形補完
+		//現在の角度と求めた角度の差を求める
+		float angleDiff = angleY - m_currentAngleY;
+		//-π～πの範囲に収める
+		// 角度の差が-πより小さい場合は360度回転させる
+		while (angleDiff < -DX_PI_F) angleDiff += DX_TWO_PI_F;
+		// 角度の差がπより大きい場合は360度回転させる
+		while (angleDiff > DX_PI_F) angleDiff -= DX_TWO_PI_F;
+		//現在の角度に角度の差のlerp_t倍を足す
+		m_currentAngleY += angleDiff * lerp_t;
+
 		//それをもとに回転行列を作成
-		rotMtx = Matrix4x4::RotationY(angleY);
+		rotMtx = Matrix4x4::RotationY(m_currentAngleY);
 		//前のフレームの回転角を更新
 		m_prevAngleY = angleY;
 	}
@@ -308,6 +372,9 @@ void Player::ChangeState(State next)
 	case State::Attack:
 		m_animator.Play(MV1GetAnimIndex(m_modelHandle, punch_anim_name), false, punch_anim_speed);
 		break;
+	case State::Damage:
+		m_animator.Play(MV1GetAnimIndex(m_modelHandle, damage_anim_name), false);
+		break;
 	}
 }
 
@@ -329,4 +396,19 @@ Vector3 Player::GetForward() const
 		-cosf(m_prevAngleY)
 	};
 	return forward;
+}
+
+void Player::OnDamage()
+{
+	//プレイヤーが攻撃中または
+	//無敵中なら処理を飛ばす
+	if (m_currentState == State::Attack||
+		m_isInvincible) return;
+
+	//ダメージを受けたときは、攻撃判定用の球の半径を0にして、当たり判定をなくす
+	m_attackSphereR = 0.0f;
+	//移動できないようにする
+	m_isCanMove = false;
+	//ステートをダメージにする
+	ChangeState(State::Damage);
 }

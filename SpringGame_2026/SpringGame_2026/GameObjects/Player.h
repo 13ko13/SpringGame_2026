@@ -51,7 +51,17 @@ public:
 	/// <returns>true:攻撃中,false:攻撃中ではない</returns>
 	bool IsAttacking() const { return m_isAttacking; }
 
+	/// <summary>
+	/// ダメージを受けたときの処理
+	/// </summary>
+	void OnDamage();
+
 private:
+	//無敵時間用のタイマー
+	int m_invincibleTimer = 0;
+	//無敵状態かどうか
+	bool m_isInvincible = false;
+
 	Vector3 m_targetPos = { 0.0f,0.0f,0.0f };//カメラに注視させる位置
 
 	float m_prevAngleY = 0.0f;//前のフレームのプレイヤーの回転角
@@ -62,12 +72,16 @@ private:
 	//攻撃中かどうか
 	bool m_isAttacking = false;
 
+	//現在のY軸回転角
+	float m_currentAngleY = 0.0f;
+
 	//ステート
 	enum class State : int
 	{
 		Idle,//待機中
 		Attack,//攻撃
 		Move,//移動
+		Damage,//ダメージを受けたとき
 	};
 
 	//現在のステート

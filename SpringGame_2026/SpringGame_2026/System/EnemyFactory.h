@@ -32,9 +32,10 @@ public:
 	std::list<std::shared_ptr<Enemy>>& GetEnemies() { return m_enemies; }
 
 	/// <summary>
-	/// 敵全員のUpdate
+	/// 敵全員の更新処理
 	/// </summary>
-	void Update();
+	/// <param name="playerPos">プレイヤーの位置</param>
+	void Update(const Vector3& playerPos);
 
 	/// <summary>
 	/// 敵全員のDraw

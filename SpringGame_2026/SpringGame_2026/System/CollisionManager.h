@@ -28,5 +28,13 @@ private:
 	/// <returns>true:あたっている,false:当たっていない</returns>
 	bool CheckCollision(const Sphere& attackSphere,
 		std::shared_ptr<Enemy>& pEnemy);
+
+	bool CheckCollision(std::shared_ptr<Player>& pPlayer,
+		std::shared_ptr<Enemy>& pEnemy);
+
+	void OnHitEnemyAndPlayer(std::shared_ptr<Player>& pPlayer,
+		std::shared_ptr<Enemy>& pEnemy);
+
+	void OnHitEnemyAndPAttack(std::shared_ptr<Player>& pPlayer, std::shared_ptr<Enemy>& pEnemy);
 };
 

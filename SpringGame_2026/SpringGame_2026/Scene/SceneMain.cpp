@@ -43,10 +43,10 @@ void SceneMain::Init()
 
 	// Zバッファの設定
 	SetUseZBuffer3D(true);	// Zバッファを使います
-	SetWriteZBuffer3D(true);	// 描画する物体はZバッファにも距離を書き込む
+	SetWriteZBuffer3D(true);// 描画する物体はZバッファにも距離を書き込む
 
 	//モデルのロード
-	m_playerMHandle = MV1LoadModel("Data/PlayerCopy.mv1");//プレイヤーのモデル
+	m_playerMHandle = MV1LoadModel("Data/Player.mv1");//プレイヤーのモデル
 	//敵のモデルもロードする
 	m_enemyBaseMHandles.push_back(MV1LoadModel("Data/Enemy.mv1"));//敵のモデル
 
@@ -92,7 +92,7 @@ void SceneMain::Update(Input& input)
 	m_pCollManager->Update(m_pPlayer, m_pEnemyFactory);
 
 	//敵すべての更新
-	m_pEnemyFactory->Update();
+	m_pEnemyFactory->Update(m_pPlayer->GetPos());
 }
 
 void SceneMain::Draw()
@@ -112,23 +112,25 @@ void SceneMain::Draw()
 
 void SceneMain::DrawGrid()
 {
+	//カメラのdraw(基本デバッグ用)
+	m_pCamera->Draw();
+
+#ifdef _DEBUG
 	// 直線の始点と終点
 	VECTOR startPos;
 	VECTOR endPos;
 
-	//カメラのdraw(基本デバッグ用)
-	m_pCamera->Draw();
-
-	for (int z = -300; z <= 300; z += 100)
+	for (int z = -1000; z <= 1000; z += 100)
 	{
-		startPos = VGet(-300.0f, 0.0f, static_cast<float>(z));
-		endPos = VGet(300.0f, 0.0f, static_cast<float>(z));
+		startPos = VGet(-1000.0f, 0.0f, static_cast<float>(z));
+		endPos = VGet(1000.0f, 0.0f, static_cast<float>(z));
 		DrawLine3D(startPos, endPos, 0xff0000);
 	}
-	for (int x = -300; x <= 300; x += 100)
+	for (int x = -1000; x <= 1000; x += 100)
 	{
-		startPos = VGet(static_cast<float>(x), 0.0f, -300.0f);
-		endPos = VGet(static_cast<float>(x), 0.0f, 300.0f);
+		startPos = VGet(static_cast<float>(x), 0.0f, -1000.0f);
+		endPos = VGet(static_cast<float>(x), 0.0f, 1000.0f);
 		DrawLine3D(startPos, endPos, 0x0000ff);
 	}
+#endif
 }

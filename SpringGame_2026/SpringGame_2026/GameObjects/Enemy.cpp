@@ -1,5 +1,6 @@
 ﻿#include "Enemy.h"
 #include "../Math/Matrix4x4.h"
+#include <cmath>
 
 namespace
 {
@@ -9,6 +10,7 @@ namespace
 	const char* const idle_anim_name = "Armature|Idle";//待機
 	const char* const hit_anim_name = "Armature|Hit";//攻撃を受けたとき
 	const char* const dead_anim_name = "Armature|Dead";//死んでいるとき
+	const char* const walk_anim_name = "Armature|Walk";//歩いているとき
 
 	//アニメーションブレンドの速度
 	constexpr float blend_time = 20.0f;
@@ -18,6 +20,15 @@ namespace
 
 	//足元から自分の当たり判定の球までの距離
 	const Vector3 enemy_to_sphere = { 0.0f,125.0f,0.0f };
+
+	//Lerpに使うtの値
+	constexpr float lerp_t = 0.08f;
+
+	//敵がプレイヤーに向かって移動するときの速度
+	constexpr float move_speed = 0.2f;
+
+	//敵が移動するときの最低限のvelocityの大きさ
+	constexpr float min_velocity = 0.1f;
 }
 
 Enemy::Enemy(const int modelHandle,const Vector3& pos):
@@ -36,16 +47,6 @@ Enemy::~Enemy()
 
 void Enemy::Update()
 {
-	//拡大縮小行列を作成
-	Matrix4x4 scaleMtx = Matrix4x4::Scale(model_size);
-	//平行移動行列を作成
-	Matrix4x4 transMtx = Matrix4x4::Translate(m_pos);
-	//拡大縮小行列と平行移動行列を合成した行列を作成
-	Matrix4x4 mtx = scaleMtx * transMtx;
-
-	//行列をモデルにセットする
-	MV1SetMatrix(m_modelHandle, mtx.ToDxLib());
-
 	//if (m_currentState == State::Hit)
 	//{
 	//	if (m_animator.IsEnd())
@@ -69,6 +70,66 @@ void Enemy::Update()
 
 	//当たり判定の更新
 	m_sphere.Update(m_pos + enemy_to_sphere, sphere_r);
+}
+
+void Enemy::Update(const Vector3& playerPos)
+{
+	if (m_currentState != State::Dead)
+	{
+		//プレイヤーの方を線形補完して向くようにする
+		//まずは敵からプレイヤーへのベクトルを求める
+		Vector3 toPlayer = playerPos - m_pos;
+		//Y成分はいらないので0にする
+		toPlayer.m_y = 0.0f;
+
+		//ベクトルの正規化
+		Vector3 toPlayerNorm = toPlayer.Normalized();
+
+		//モデルの初期の向き(-Z方向)とtoPlayerNormのなす角を求める
+		float angleY = atan2f(toPlayerNorm.m_x, -toPlayerNorm.m_z);
+
+		//ここからは角度の線形補完
+		//現在の角度と求めた角度の差を求める
+		float angleDiff = angleY - m_currentAngleY;
+		//-π～πの範囲に収める
+		// 角度の差が-πより小さい場合は360度回転させる
+		while (angleDiff < -DX_PI_F) angleDiff += DX_TWO_PI_F;
+		// 角度の差がπより大きい場合は360度回転させる
+		while (angleDiff > DX_PI_F) angleDiff -= DX_TWO_PI_F;
+		//現在の角度に角度の差のlerp_t倍を足す
+		m_currentAngleY += angleDiff * lerp_t;
+
+		//プレイヤーに向かって移動する
+		m_velocity = toPlayerNorm * move_speed;
+		m_pos += m_velocity;
+
+		//拡大縮小行列を作成
+		Matrix4x4 scaleMtx = Matrix4x4::Scale(model_size);
+		//平行移動行列を作成
+		Matrix4x4 transMtx = Matrix4x4::Translate(m_pos);
+		//回転行列を作成
+		//プレイヤーの方を向くようにする
+		Matrix4x4 rotMtx = Matrix4x4::Matrix4x4::RotationY(m_currentAngleY);
+		//拡大縮小行列と平行移動行列を合成した行列を作成
+		Matrix4x4 mtx = scaleMtx * rotMtx;
+		mtx = mtx * transMtx;
+
+		//行列をモデルにセットする
+		MV1SetMatrix(m_modelHandle, mtx.ToDxLib());
+
+		if (IsMoving())
+		{
+			//移動しているときはWalkアニメーションにする
+			ChangeState(State::Walk);
+
+		}
+		else
+		{
+			//止まっているときはIdleアニメーションにする
+			ChangeState(State::Idle);
+		}
+	}
+	Update();
 }
 
 void Enemy::Draw()
@@ -101,7 +162,7 @@ void Enemy::OnDead()
 }
 
 void Enemy::ChangeState(State next)
-{ 
+{
 	//切り替えたいステートが既に適用されていたら
 	//処理を飛ばす
 	if (m_currentState == next) return;
@@ -120,5 +181,44 @@ void Enemy::ChangeState(State next)
 		break;
 	case State::Dead:
 		m_animator.Play(MV1GetAnimIndex(m_modelHandle, dead_anim_name), false);
+		break;
+	case State::Walk:
+		m_animator.Play(MV1GetAnimIndex(m_modelHandle, walk_anim_name), true);
+		break;
 	}
+}
+
+bool const Enemy::IsMoving() const
+{
+	Vector3 v = m_velocity;
+	v.m_y = 0.0f;//Y成分は無視する
+	if (v.Length() > min_velocity)
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool Enemy::IsDeadAnimEnd() const
+{
+	//死亡アニメーションに入っていて、
+	//まだアニメションが終わっていないときはfalseを返す
+	if (m_currentState == State::Dead)
+	{
+		if (!m_animator.IsEnd())
+		{
+			return false;
+		}
+		else
+		{
+			//死んでいるときはアニメーションが終わっているかを返す
+			return true;
+		}
+	}
+
+	//死亡状態でない（生きている）ときはtrueを返す
+	return true;
 }

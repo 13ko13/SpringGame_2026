@@ -37,7 +37,7 @@ std::shared_ptr<Enemy> EnemyFactory::Create(const Vector3& pos, EnemyType enemyT
 	return nullptr;
 }
 
-void EnemyFactory::Update()
+void EnemyFactory::Update(const Vector3& playerPos)
 {
 	//常に敵が3体になるようにする
 	while (m_enemies.size() < 3)
@@ -54,7 +54,7 @@ void EnemyFactory::Update()
 
 	for (auto& enemy : m_enemies)
 	{
-		enemy->Update();
+		enemy->Update(playerPos);
 	}
 }
 
