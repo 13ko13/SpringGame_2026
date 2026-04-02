@@ -45,6 +45,9 @@ namespace
 	constexpr float punch_hit_start = 0.4f;
 	//プレイヤーのパンチが当たり終わる時間
 	constexpr float punch_hit_end = 0.7f;
+	
+	//プレイヤーがダメージを受けて吹き飛んで地面につくときの時間
+	constexpr float damage_fly_time = 0.3f;
 
 	//Lerpに使うtの値
 	constexpr float lerp_t = 0.15f;
@@ -198,6 +201,30 @@ void Player::Update(Input input, float angle)
 	if (m_currentState == State::Damage)
 	{
 		m_isInvincible = true;
+
+		//プレイヤーが地面に当たる時間帯になったら、ノックバックの速度を0にする
+		float time = m_animator.GetPlayTime();//現在のアニメーションの再生時間
+		float length = m_animator.GetAnimLength();//現在のアニメーションの総再生時間
+		float rate = time / length;//アニメーションの再生率(0.0~1.0)
+
+		//地面に当たっている時間帯なら
+		if (rate >= damage_fly_time)
+		{
+			//地面に当たっている時間帯のときはノックバックの速度を0にする
+			m_knockBackVelocity = { 0.0f,0.0f,0.0f };
+		}
+
+		//ダメージを受けたときのノックバックの速度を入れる
+		m_pos += m_knockBackVelocity;
+
+		//平行移動行列を作成
+		Matrix4x4 transMtx = Matrix4x4::Matrix4x4::Translate(m_pos);
+
+		//回転行列と平行移動行列を合成した行列を作成
+		Matrix4x4 matrix = transMtx;
+
+		//合成した行列をモデルにセットする
+		MV1SetMatrix(m_modelHandle, matrix.ToDxLib());
 	}
 
 	//無敵状態のときは、無敵時間用のタイマーを進める
@@ -404,6 +431,9 @@ void Player::OnDamage()
 	//無敵中なら処理を飛ばす
 	if (m_currentState == State::Attack||
 		m_isInvincible) return;
+
+	//後ろに吹き飛ぶ力を加える
+	m_knockBackVelocity = -GetForward() * 5.0f;
 
 	//ダメージを受けたときは、攻撃判定用の球の半径を0にして、当たり判定をなくす
 	m_attackSphereR = 0.0f;

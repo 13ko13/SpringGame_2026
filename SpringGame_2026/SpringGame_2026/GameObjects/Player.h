@@ -62,6 +62,9 @@ private:
 	//無敵状態かどうか
 	bool m_isInvincible = false;
 
+	//ノックバック用の速度ベクトル
+	Vector3 m_knockBackVelocity = { 0.0f,0.0f,0.0f };
+
 	Vector3 m_targetPos = { 0.0f,0.0f,0.0f };//カメラに注視させる位置
 
 	float m_prevAngleY = 0.0f;//前のフレームのプレイヤーの回転角

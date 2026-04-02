@@ -25,7 +25,7 @@ namespace
 	constexpr float lerp_t = 0.08f;
 
 	//敵がプレイヤーに向かって移動するときの速度
-	constexpr float move_speed = 0.2f;
+	constexpr float move_speed = 0.5f;
 
 	//敵が移動するときの最低限のvelocityの大きさ
 	constexpr float min_velocity = 0.1f;
