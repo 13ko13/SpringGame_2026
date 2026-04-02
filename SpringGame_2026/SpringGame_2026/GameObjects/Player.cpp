@@ -45,7 +45,7 @@ namespace
 	constexpr float punch_hit_start = 0.4f;
 	//プレイヤーのパンチが当たり終わる時間
 	constexpr float punch_hit_end = 0.7f;
-	
+
 	//プレイヤーがダメージを受けて吹き飛んで地面につくときの時間
 	constexpr float damage_fly_time = 0.3f;
 
@@ -63,7 +63,7 @@ Player::Player(int modelHandle) :
 {
 	//再生するアニメーション番号を引数に入れて、それを再生する
 	//初期状態はIdleにする
-	m_animator.Play(MV1GetAnimIndex(m_modelHandle, idle_anim_name),true);
+	m_animator.Play(MV1GetAnimIndex(m_modelHandle, idle_anim_name), true);
 
 #ifdef _DEBUG
 	//モデルに含まれる全アニメーション名を出力する
@@ -217,11 +217,18 @@ void Player::Update(Input input, float angle)
 		//ダメージを受けたときのノックバックの速度を入れる
 		m_pos += m_knockBackVelocity;
 
+		//拡大縮小行列を作成
+		Matrix4x4 scaleMtx = Matrix4x4::Scale(model_size);
+		//回転行列を作成
+		Matrix4x4 rotMtx = Matrix4x4::RotationY(m_currentAngleY);
 		//平行移動行列を作成
 		Matrix4x4 transMtx = Matrix4x4::Matrix4x4::Translate(m_pos);
 
-		//回転行列と平行移動行列を合成した行列を作成
-		Matrix4x4 matrix = transMtx;
+		//回転行列と拡大縮小行列を合成した行列を作成
+		Matrix4x4 matrix = scaleMtx * rotMtx;
+
+		//さらにそれに平行移動行列をかけて、最終的な行列を作成する
+		matrix = matrix * transMtx;
 
 		//合成した行列をモデルにセットする
 		MV1SetMatrix(m_modelHandle, matrix.ToDxLib());
@@ -429,7 +436,7 @@ void Player::OnDamage()
 {
 	//プレイヤーが攻撃中または
 	//無敵中なら処理を飛ばす
-	if (m_currentState == State::Attack||
+	if (m_currentState == State::Attack ||
 		m_isInvincible) return;
 
 	//後ろに吹き飛ぶ力を加える

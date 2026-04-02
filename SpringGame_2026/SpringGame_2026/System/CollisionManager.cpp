@@ -37,9 +37,9 @@ void CollisionManager::Update(std::shared_ptr<Player>& pPlayer,
 	//敵一体一体とプレイヤーの攻撃判定用の球との当たり判定を行う
 	for (auto& pEnemy : enemies)
 	{
-		//敵が既に死亡アニメーション中なら
+		//敵が死亡済み、または死亡アニメーション中なら
 		//当たり判定を行わない
-		if (!pEnemy->IsDeadAnimEnd()) continue;
+		if (pEnemy->IsDead() || !pEnemy->IsDeadAnimEnd()) continue;
 
 		//敵とプレイヤーの当たり判定を行う
 		if (CheckCollision(pPlayer, pEnemy))

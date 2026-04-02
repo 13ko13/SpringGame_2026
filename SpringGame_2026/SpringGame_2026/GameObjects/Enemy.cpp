@@ -56,6 +56,9 @@ void Enemy::Update()
 	//	}
 	//}
 
+	//アニメーションを更新する
+	m_animator.Update(blend_time);
+
 	//Deadアニメーションが終わったらisDeadをtrueにする
 	if (m_currentState == State::Dead)
 	{
@@ -65,15 +68,15 @@ void Enemy::Update()
 		}
 	}
 
-	//アニメーションを更新する
-	m_animator.Update(blend_time);
-
 	//当たり判定の更新
 	m_sphere.Update(m_pos + enemy_to_sphere, sphere_r);
 }
 
 void Enemy::Update(const Vector3& playerPos)
 {
+	//基本的な更新処理
+	Update();
+
 	if (m_currentState != State::Dead)
 	{
 		//プレイヤーの方を線形補完して向くようにする
@@ -129,7 +132,6 @@ void Enemy::Update(const Vector3& playerPos)
 			ChangeState(State::Idle);
 		}
 	}
-	Update();
 }
 
 void Enemy::Draw()

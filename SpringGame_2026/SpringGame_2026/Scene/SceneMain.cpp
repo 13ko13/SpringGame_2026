@@ -88,11 +88,11 @@ void SceneMain::Update(Input& input)
 	//カメラの更新
 	m_pCamera->Update(m_pPlayer->GetTargetPos(), input);
 
-	//当たり判定の更新
-	m_pCollManager->Update(m_pPlayer, m_pEnemyFactory);
-
 	//敵すべての更新
 	m_pEnemyFactory->Update(m_pPlayer->GetPos());
+
+	//当たり判定の更新
+	m_pCollManager->Update(m_pPlayer, m_pEnemyFactory);
 }
 
 void SceneMain::Draw()
@@ -133,4 +133,17 @@ void SceneMain::DrawGrid()
 		DrawLine3D(startPos, endPos, 0x0000ff);
 	}
 #endif
+
+	//塗りつぶしありの四角を描画して、地面を作る
+	//四角形を三角形2つで描画する（時計回り=表面が上を向く）
+	DrawTriangle3D(
+		VGet(-1000.0f, 0.0f, -1000.0f),
+		VGet(-1000.0f, 0.0f,  1000.0f),
+		VGet( 1000.0f, 0.0f, -1000.0f),
+		0x44aa44, TRUE);
+	DrawTriangle3D(
+		VGet( 1000.0f, 0.0f, -1000.0f),
+		VGet(-1000.0f, 0.0f,  1000.0f),
+		VGet( 1000.0f, 0.0f,  1000.0f),
+		0x44aa44, TRUE);
 }
