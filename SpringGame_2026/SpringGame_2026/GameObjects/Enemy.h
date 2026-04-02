@@ -9,7 +9,7 @@ public:
 	~Enemy();
 
 	void Update() override;
-	void Update(const Vector3& playerPos);
+	void Update(const Vector3& playerPos, const Vector3& stageSize);
 	void Draw() override;
 	
 	/// <summary>

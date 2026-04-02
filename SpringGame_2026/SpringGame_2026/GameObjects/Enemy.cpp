@@ -31,8 +31,8 @@ namespace
 	constexpr float min_velocity = 0.1f;
 }
 
-Enemy::Enemy(const int modelHandle,const Vector3& pos):
-	GameObject(modelHandle,pos),
+Enemy::Enemy(const int modelHandle, const Vector3& pos) :
+	GameObject(modelHandle, pos),
 	m_animator(modelHandle)
 {
 	MV1SetPosition(m_modelHandle, m_pos.ToDxLib());
@@ -72,7 +72,7 @@ void Enemy::Update()
 	m_sphere.Update(m_pos + enemy_to_sphere, sphere_r);
 }
 
-void Enemy::Update(const Vector3& playerPos)
+void Enemy::Update(const Vector3& playerPos, const Vector3& stageSize)
 {
 	//基本的な更新処理
 	Update();
@@ -132,6 +132,10 @@ void Enemy::Update(const Vector3& playerPos)
 			ChangeState(State::Idle);
 		}
 	}
+
+	//ステージから出れないようにする
+	if (m_pos.m_x < -stageSize.m_x) m_pos.m_x = -stageSize.m_x;
+	if (m_pos.m_z > stageSize.m_z) m_pos.m_z = stageSize.m_z;
 }
 
 void Enemy::Draw()

@@ -6,12 +6,16 @@
 #include "../System/Camera.h"
 #include "../System/CollisionManager.h"
 #include "../System/EnemyFactory.h"
+#include "../Graphic/BackGround.h"
 
 namespace
 {
 	//カメラのnearとfar
 	constexpr float camera_near = 200.0f;
 	constexpr float camera_far = 1500.0f;
+
+	//ステージのサイズ
+	const Vector3 stage_size = { 1000.0f, 0.0f, 1000.0f };
 }
 
 SceneMain::SceneMain() :
@@ -46,9 +50,9 @@ void SceneMain::Init()
 	SetWriteZBuffer3D(true);// 描画する物体はZバッファにも距離を書き込む
 
 	//モデルのロード
-	m_playerMHandle = MV1LoadModel("Data/Player.mv1");//プレイヤーのモデル
+	m_playerMHandle = MV1LoadModel("Data/Mv1/Player.mv1");//プレイヤーのモデル
 	//敵のモデルもロードする
-	m_enemyBaseMHandles.push_back(MV1LoadModel("Data/Enemy.mv1"));//敵のモデル
+	m_enemyBaseMHandles.push_back(MV1LoadModel("Data/Mv1/Enemy.mv1"));//敵のモデル
 
 	//ロードに失敗した場合はアサートする
 	assert(m_playerMHandle != -1);
@@ -71,6 +75,9 @@ void SceneMain::Init()
 	//当たり判定の管理クラスの実体を確保
 	m_pCollManager = std::make_shared<CollisionManager>();
 
+	//skyboxの実体を確保
+	m_pBackGround = std::make_shared<BackGround>();
+
 	// 環境光だけを最大に
 	SetGlobalAmbientLight(GetColorF(255, 255, 255, 255));
 
@@ -83,13 +90,13 @@ void SceneMain::Update(Input& input)
 	m_frameCount++;
 
 	//プレイヤーの更新
-	m_pPlayer->Update(input,m_pCamera->GetAngleY());
+	m_pPlayer->Update(input,m_pCamera->GetAngleY(),GetStageSize());
 
 	//カメラの更新
 	m_pCamera->Update(m_pPlayer->GetTargetPos(), input);
 
 	//敵すべての更新
-	m_pEnemyFactory->Update(m_pPlayer->GetPos());
+	m_pEnemyFactory->Update(m_pPlayer->GetPos(), GetStageSize());
 
 	//当たり判定の更新
 	m_pCollManager->Update(m_pPlayer, m_pEnemyFactory);
@@ -97,6 +104,9 @@ void SceneMain::Update(Input& input)
 
 void SceneMain::Draw()
 {
+	//skyboxの描画
+	m_pBackGround->Draw(m_pCamera->GetPos());
+
 	DrawGrid();
 
 	DrawString(0,0,"SceneMain",0xffffff);
@@ -146,4 +156,9 @@ void SceneMain::DrawGrid()
 		VGet(-1000.0f, 0.0f,  1000.0f),
 		VGet( 1000.0f, 0.0f,  1000.0f),
 		0x44aa44, TRUE);
+}
+
+Vector3 const SceneMain::GetStageSize() const
+{
+	return stage_size;
 }

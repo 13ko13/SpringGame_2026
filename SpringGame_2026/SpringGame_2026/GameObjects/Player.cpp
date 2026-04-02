@@ -32,8 +32,8 @@ namespace
 	constexpr float punch_anim_speed = 1.8f;
 
 	//球の半径
-	constexpr float sphere_r = 100.0f;
-	constexpr float attack_sphere_r = 85.0f;
+	constexpr float sphere_r = 70.0f;
+	constexpr float attack_sphere_r = 95.0f;
 
 	//プレイヤーから自分の当たり判定の球までの距離
 	const Vector3 player_to_sphere = { 0.0f,125.0f,0.0f };
@@ -85,7 +85,7 @@ void Player::Update()
 
 }
 
-void Player::Update(Input input, float angle)
+void Player::Update(Input input, float angle,const Vector3& stageSize)
 {
 	UpdateCollSphere();
 
@@ -274,6 +274,12 @@ void Player::Update(Input input, float angle)
 
 	m_velocity = dir;
 #endif
+
+	//ステージから出れないようにする
+	if (m_pos.m_x < -stageSize.m_x) m_pos.m_x = -stageSize.m_x;
+	if (m_pos.m_x > stageSize.m_x) m_pos.m_x = stageSize.m_x;
+	if (m_pos.m_z > stageSize.m_z) m_pos.m_z = stageSize.m_z;
+	if (m_pos.m_z < -stageSize.m_z ) m_pos.m_z = -stageSize.m_z;
 }
 
 void Player::Draw()

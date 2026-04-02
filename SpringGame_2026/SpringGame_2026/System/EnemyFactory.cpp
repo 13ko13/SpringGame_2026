@@ -1,6 +1,12 @@
 ﻿#include "EnemyFactory.h"
 #include "../Math/Vector3.h"
 
+namespace
+{
+	//敵の総数
+	constexpr int enemy_num = 10;
+}
+
 EnemyFactory::EnemyFactory(std::vector<int> modelHandles) :
 	m_handles(modelHandles)
 {
@@ -15,7 +21,7 @@ EnemyFactory::~EnemyFactory()
 	}
 }
 
-std::shared_ptr<Enemy> EnemyFactory::Create(const Vector3& pos, EnemyType enemyType,std::vector<int> enemyHandles)
+std::shared_ptr<Enemy> EnemyFactory::Create(const Vector3& pos, EnemyType enemyType, std::vector<int> enemyHandles)
 {
 	switch (enemyType)
 	{
@@ -37,16 +43,16 @@ std::shared_ptr<Enemy> EnemyFactory::Create(const Vector3& pos, EnemyType enemyT
 	return nullptr;
 }
 
-void EnemyFactory::Update(const Vector3& playerPos)
+void EnemyFactory::Update(const Vector3& playerPos, const Vector3& stageSize)
 {
 	//常に敵が3体になるようにする
-	while (m_enemies.size() < 3)
+	while (m_enemies.size() < enemy_num)
 	{
 		//ランダムな位置に敵を生成する
 		Vector3 pos = {
-			static_cast<float>(rand() % 2000 - 1000),//-1000~1000のランダムなX座標
+			static_cast<float>(rand() % static_cast<int>(stageSize.m_x * 2.0f) - stageSize.m_x),//-1000~1000のランダムなX座標
 			0.0f,//Y座標は地面にする
-			static_cast<float>(rand() % 2000 - 1000),//-1000~1000のランダムなZ座標
+			static_cast<float>(rand() % static_cast<int>(stageSize.m_z * 2.0f) - stageSize.m_z),//-1000~1000のランダムなZ座標
 		};
 
 		Create(pos, EnemyType::Enemy1, m_handles);
@@ -54,7 +60,7 @@ void EnemyFactory::Update(const Vector3& playerPos)
 
 	for (auto& enemy : m_enemies)
 	{
-		enemy->Update(playerPos);
+		enemy->Update(playerPos, stageSize);
 	}
 }
 

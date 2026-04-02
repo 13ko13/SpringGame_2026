@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include <vector>
 #include <memory>
+#include "../Math/Vector3.h"
 
 //前方宣言
 class Player;
@@ -9,6 +10,7 @@ class Camera;
 class Enemy;
 class CollisionManager;
 class EnemyFactory;
+class BackGround;
 
 class SceneMain
 {
@@ -19,6 +21,13 @@ public:
 	void Init();
 	void Update(Input& input);
 	void Draw();
+
+	/// <summary>
+	/// ステージのサイズを取得する
+	/// </summary>
+	/// <returns>ステージの大きさ</returns>
+	Vector3 const GetStageSize() const;
+
 private:
 	void DrawGrid();
 
@@ -48,4 +57,7 @@ private:
 
 	//敵の生成を行う工場の実体
 	std::shared_ptr<EnemyFactory> m_pEnemyFactory;
+
+	//skyboxの実体
+	std::shared_ptr<BackGround> m_pBackGround;
 };

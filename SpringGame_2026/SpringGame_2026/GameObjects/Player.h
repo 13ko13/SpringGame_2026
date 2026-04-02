@@ -21,7 +21,7 @@ public:
 	/// </summary>
 	/// <param name="input">入力情報</param>
 	/// <param name="angle">カメラの回転角</param>
-	void Update(Input input, float angle);
+	void Update(Input input, float angle, const Vector3& stageSize);
 
 	/// <summary>
 	/// 描画
