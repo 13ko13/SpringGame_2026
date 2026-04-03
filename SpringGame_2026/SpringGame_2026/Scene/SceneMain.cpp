@@ -76,7 +76,7 @@ void SceneMain::Init()
 	m_pCollManager = std::make_shared<CollisionManager>();
 
 	//skyboxの実体を確保
-	m_pBackGround = std::make_shared<BackGround>();
+	//m_pBackGround = std::make_shared<BackGround>();
 
 	// 環境光だけを最大に
 	SetGlobalAmbientLight(GetColorF(255, 255, 255, 255));
@@ -104,8 +104,8 @@ void SceneMain::Update(Input& input)
 
 void SceneMain::Draw()
 {
-	//skyboxの描画
-	m_pBackGround->Draw(m_pCamera->GetPos());
+	////skyboxの描画
+	//m_pBackGround->Draw(m_pCamera->GetPos());
 
 	DrawGrid();
 
