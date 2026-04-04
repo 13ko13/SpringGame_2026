@@ -137,7 +137,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Graphic\BackGround.cpp" />
+    <ClCompile Include="Graphic\SkyBox.cpp" />
     <ClCompile Include="System\EnemyFactory.cpp" />
     <ClCompile Include="System\CollisionManager.cpp" />
     <ClCompile Include="GameObjects\Enemy.cpp" />
@@ -153,7 +153,7 @@
     <ClCompile Include="Scene\SceneMain.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Graphic\BackGround.h" />
+    <ClInclude Include="Graphic\SkyBox.h" />
     <ClInclude Include="System\EnemyFactory.h" />
     <ClInclude Include="System\CollisionManager.h" />
     <ClInclude Include="GameObjects\Enemy.h" />

@@ -10,7 +10,7 @@ class Camera;
 class Enemy;
 class CollisionManager;
 class EnemyFactory;
-class BackGround;
+class SkyBox;
 
 class SceneMain
 {
@@ -43,6 +43,14 @@ private:
 	int m_playerMHandle = -1;
 	int m_playerCopyMHandle = -1;
 
+	//skyboxのテクスチャのハンドル
+	int m_skyFrontHandle = -1;
+	int m_skyBackHandle = -1;
+	int m_skyLeftHandle = -1;
+	int m_skyRightHandle = -1;
+	int m_skyUpHandle = -1;
+	int m_skyDownHandle = -1;
+
 	//敵のモデルのハンドル
 	std::vector<int> m_enemyBaseMHandles;
 
@@ -59,5 +67,5 @@ private:
 	std::shared_ptr<EnemyFactory> m_pEnemyFactory;
 
 	//skyboxの実体
-	std::shared_ptr<BackGround> m_pBackGround;
+	std::shared_ptr<SkyBox> m_pSkyBox;
 };

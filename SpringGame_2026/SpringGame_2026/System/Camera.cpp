@@ -5,7 +5,7 @@
 namespace 
 {
 	constexpr float camera_near = 200.0f;//カメラのNear
-	constexpr float camera_far = 3000.0f;//カメラのFar
+	constexpr float camera_far = 3500.0f;//カメラのFar
 	const Vector3 first_pos = { 0.0f,300.0f,-700.0f };
 	//注視点からカメラ位置に向かうベクトル
 	const Vector3 target_to_camera = { 0.0f,0.0f,-935.0f };

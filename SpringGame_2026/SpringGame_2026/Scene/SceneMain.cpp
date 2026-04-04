@@ -6,7 +6,7 @@
 #include "../System/Camera.h"
 #include "../System/CollisionManager.h"
 #include "../System/EnemyFactory.h"
-#include "../Graphic/BackGround.h"
+#include "../Graphic/SkyBox.h"
 
 namespace
 {
@@ -38,6 +38,13 @@ SceneMain::~SceneMain()
 			MV1DeleteModel(handle);
 	}
 
+	//skyboxのテクスチャを削除する
+	DeleteGraph(m_skyFrontHandle);
+	DeleteGraph(m_skyBackHandle);
+	DeleteGraph(m_skyLeftHandle);
+	DeleteGraph(m_skyRightHandle);
+	DeleteGraph(m_skyUpHandle);
+	DeleteGraph(m_skyDownHandle);
 }
 
 void SceneMain::Init()
@@ -59,13 +66,35 @@ void SceneMain::Init()
 	//敵のモデルも
 	assert(m_enemyBaseMHandles[static_cast<int>(EnemyModelType::Enemy1)] != -1);
 
+	//skyboxのテクスチャのロード
+	m_skyFrontHandle = LoadGraph("data/SkyBox/skybox_front.png");
+	m_skyBackHandle = LoadGraph("data/SkyBox/skybox_back.png");
+	m_skyLeftHandle = LoadGraph("data/SkyBox/skybox_left.png");
+	m_skyRightHandle = LoadGraph("data/SkyBox/skybox_right.png");
+	m_skyUpHandle = LoadGraph("data/SkyBox/skybox_up.png");
+	m_skyDownHandle = LoadGraph("data/SkyBox/skybox_down.png");
+
+	assert(m_skyFrontHandle != -1);
+	assert(m_skyBackHandle != -1);
+	assert(m_skyLeftHandle != -1);
+	assert(m_skyRightHandle != -1);
+	assert(m_skyUpHandle != -1);
+	assert(m_skyDownHandle != -1);
+
+	//skyboxの実体を確保
+	m_pSkyBox = std::make_shared<SkyBox>(
+		m_skyFrontHandle,
+		m_skyBackHandle,
+		m_skyLeftHandle,
+		m_skyRightHandle,
+		m_skyUpHandle, m_skyDownHandle);
+
 	//ロードしたモデルのハンドルをMV1DuplicateModel関数に渡して複製して、
 	//複製したモデルのハンドルを渡す
-
 	//プレイヤー
 	m_playerCopyMHandle = MV1DuplicateModel(m_playerMHandle);
 	m_pPlayer = std::make_shared<Player>(m_playerCopyMHandle);
-	
+
 	//敵
 	m_pEnemyFactory = std::make_shared<EnemyFactory>(m_enemyBaseMHandles);
 
@@ -74,9 +103,6 @@ void SceneMain::Init()
 
 	//当たり判定の管理クラスの実体を確保
 	m_pCollManager = std::make_shared<CollisionManager>();
-
-	//skyboxの実体を確保
-	//m_pBackGround = std::make_shared<BackGround>();
 
 	// 環境光だけを最大に
 	SetGlobalAmbientLight(GetColorF(255, 255, 255, 255));
@@ -90,7 +116,7 @@ void SceneMain::Update(Input& input)
 	m_frameCount++;
 
 	//プレイヤーの更新
-	m_pPlayer->Update(input,m_pCamera->GetAngleY(),GetStageSize());
+	m_pPlayer->Update(input, m_pCamera->GetAngleY(), GetStageSize());
 
 	//カメラの更新
 	m_pCamera->Update(m_pPlayer->GetTargetPos(), input);
@@ -104,12 +130,12 @@ void SceneMain::Update(Input& input)
 
 void SceneMain::Draw()
 {
-	////skyboxの描画
-	//m_pBackGround->Draw(m_pCamera->GetPos());
+	//skyboxの描画
+	m_pSkyBox->Draw(m_pCamera->GetPos());
 
 	DrawGrid();
 
-	DrawString(0,0,"SceneMain",0xffffff);
+	DrawString(0, 0, "SceneMain", 0xffffff);
 	DrawFormatString(0, 16, 0xffffff, "FRAME:%d", m_frameCount);
 
 	//オブジェクトの描画
@@ -148,13 +174,13 @@ void SceneMain::DrawGrid()
 	//四角形を三角形2つで描画する（時計回り=表面が上を向く）
 	DrawTriangle3D(
 		VGet(-1000.0f, 0.0f, -1000.0f),
-		VGet(-1000.0f, 0.0f,  1000.0f),
-		VGet( 1000.0f, 0.0f, -1000.0f),
+		VGet(-1000.0f, 0.0f, 1000.0f),
+		VGet(1000.0f, 0.0f, -1000.0f),
 		0x44aa44, TRUE);
 	DrawTriangle3D(
-		VGet( 1000.0f, 0.0f, -1000.0f),
-		VGet(-1000.0f, 0.0f,  1000.0f),
-		VGet( 1000.0f, 0.0f,  1000.0f),
+		VGet(1000.0f, 0.0f, -1000.0f),
+		VGet(-1000.0f, 0.0f, 1000.0f),
+		VGet(1000.0f, 0.0f, 1000.0f),
 		0x44aa44, TRUE);
 }
 

@@ -54,7 +54,7 @@
     <ClCompile Include="System\EnemyFactory.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Graphic\BackGround.cpp">
+    <ClCompile Include="Graphic\SkyBox.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -98,7 +98,7 @@
     <ClInclude Include="System\EnemyFactory.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Graphic\BackGround.h">
+    <ClInclude Include="Graphic\SkyBox.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
