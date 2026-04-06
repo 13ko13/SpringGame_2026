@@ -23,7 +23,7 @@ private:
 		Right,
 		Up,
 		Down,
-
+		
 		FaceNum,
 	};
 

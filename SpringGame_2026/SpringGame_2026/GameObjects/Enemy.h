@@ -33,7 +33,7 @@ private:
 	enum class State : int
 	{
 		Idle,//待機中
-		Hit,//攻撃を受けたとき
+		Hit, //攻撃を受けたとき
 		Dead,//死んでいるとき
 		Walk,//歩いているとき
 	};
