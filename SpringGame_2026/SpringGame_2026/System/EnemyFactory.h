@@ -4,6 +4,8 @@
 #include <vector>
 #include "../GameObjects/Enemy.h"
 
+class EffectManager;
+
 /// <summary>
 /// 敵タイプ
 /// </summary>
@@ -15,7 +17,7 @@ enum class EnemyType
 class EnemyFactory
 {
 public:
-	EnemyFactory(std::vector<int> modelHandles);
+	EnemyFactory(std::vector<int> modelHandles, std::shared_ptr<EffectManager> pEffectManager);
 	~EnemyFactory();
 
 	/// <summary>
@@ -47,5 +49,8 @@ private:
 	std::vector<int> m_handles;//敵全員のハンドルを持っておく
 
 	std::list<std::shared_ptr<Enemy>> m_enemies;//生成した敵を保存しておくリスト
+
+	//エフェクトマネージャー
+	std::shared_ptr<EffectManager> m_pEffectManager;
 };
 

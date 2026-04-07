@@ -1,6 +1,6 @@
 ﻿#pragma once
-#include "GameObjects/GameObject.h"
-#include "Math/Vector3.h"
+#include "../GameObjects/GameObject.h"
+#include "../Math/Vector3.h"
 
 class Effect : public GameObject
 {
@@ -14,6 +14,7 @@ public:
 private:
 
 protected:
-
+	//現在再生中のエフェクトのハンドル
+	int m_playingHandle = -1;
 };
 

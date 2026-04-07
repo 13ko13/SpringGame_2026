@@ -1,6 +1,7 @@
 ﻿#include "Enemy.h"
 #include "../Math/Matrix4x4.h"
 #include <cmath>
+#include "../Effect/EffectManager.h"
 
 namespace
 {
@@ -31,9 +32,10 @@ namespace
 	constexpr float min_velocity = 0.1f;
 }
 
-Enemy::Enemy(const int modelHandle, const Vector3& pos) :
+Enemy::Enemy(const int modelHandle, const Vector3& pos, std::shared_ptr<EffectManager> pManager) :
 	GameObject(modelHandle, pos),
-	m_animator(modelHandle)
+	m_animator(modelHandle),
+	m_pEffectManager(pManager)
 {
 	MV1SetPosition(m_modelHandle, m_pos.ToDxLib());
 
@@ -165,6 +167,8 @@ void Enemy::OnDead()
 
 	//ステートをDeadに変更する
 	ChangeState(State::Dead);
+	//エフェクトマネージャーにエフェクトの再生を依頼する
+	m_pEffectManager->Create(m_pos, EffectManager::EffectType::EnemyDeath);
 }
 
 void Enemy::ChangeState(State next)

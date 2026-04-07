@@ -7,6 +7,8 @@
 #include "../System/CollisionManager.h"
 #include "../System/EnemyFactory.h"
 #include "../Graphic/SkyBox.h"
+#include "../../../Dxlib_h/EffekseerForDXLib.h"
+#include "../Effect/EffectManager.h"
 
 namespace
 {
@@ -45,6 +47,9 @@ SceneMain::~SceneMain()
 	DeleteGraph(m_skyRightHandle);
 	DeleteGraph(m_skyUpHandle);
 	DeleteGraph(m_skyDownHandle);
+
+	//エフェクトを削除する
+	DeleteEffekseerEffect(m_deathEffectHandle);
 }
 
 void SceneMain::Init()
@@ -89,20 +94,31 @@ void SceneMain::Init()
 		m_skyRightHandle,
 		m_skyUpHandle, m_skyDownHandle);
 
+	//エフェクトのロード
+	m_deathEffectHandle = LoadEffekseerEffect("Data/Effect/Death.efk");
+	assert(m_deathEffectHandle != -1);
+
 	//ロードしたモデルのハンドルをMV1DuplicateModel関数に渡して複製して、
 	//複製したモデルのハンドルを渡す
 	//プレイヤー
 	m_playerCopyMHandle = MV1DuplicateModel(m_playerMHandle);
 	m_pPlayer = std::make_shared<Player>(m_playerCopyMHandle);
 
+	//エフェクトマネージャーの実体を確保
+	m_pEffectManager = std::make_shared<EffectManager>(m_deathEffectHandle);
+
 	//敵
-	m_pEnemyFactory = std::make_shared<EnemyFactory>(m_enemyBaseMHandles);
+	m_pEnemyFactory = std::make_shared<EnemyFactory>(m_enemyBaseMHandles, m_pEffectManager);
 
 	//カメラの実体を確保
 	m_pCamera = std::make_shared<Camera>(m_pPlayer->GetPos());
 
 	//当たり判定の管理クラスの実体を確保
 	m_pCollManager = std::make_shared<CollisionManager>();
+
+	//エフェクトマネージャーの実体を確保する
+	//エフェクトのハンドルを渡す
+	m_pEffectManager = std::make_shared<EffectManager>(m_deathEffectHandle);
 
 	// 環境光だけを最大に
 	SetGlobalAmbientLight(GetColorF(255, 255, 255, 255));
@@ -126,6 +142,12 @@ void SceneMain::Update(Input& input)
 
 	//当たり判定の更新
 	m_pCollManager->Update(m_pPlayer, m_pEnemyFactory);
+
+	//エフェクトの更新
+	UpdateEffekseer3D();
+
+	//エフェクトマネージャーの更新
+	m_pEffectManager->Update();
 }
 
 void SceneMain::Draw()
@@ -144,6 +166,12 @@ void SceneMain::Draw()
 
 	//敵すべての描画
 	m_pEnemyFactory->Draw();
+
+	//エフェクトの描画
+	DrawEffekseer3D();
+
+	//エフェクトマネージャーの描画処理を呼ぶ
+	m_pEffectManager->Draw();
 }
 
 void SceneMain::DrawGrid()

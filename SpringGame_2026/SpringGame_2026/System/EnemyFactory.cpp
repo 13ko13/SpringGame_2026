@@ -7,8 +7,9 @@ namespace
 	constexpr int enemy_num = 10;
 }
 
-EnemyFactory::EnemyFactory(std::vector<int> modelHandles) :
-	m_handles(modelHandles)
+EnemyFactory::EnemyFactory(std::vector<int> modelHandles, std::shared_ptr<EffectManager> pEffectManager) :
+	m_handles(modelHandles),
+	m_pEffectManager(pEffectManager)
 {
 
 }
@@ -32,7 +33,8 @@ std::shared_ptr<Enemy> EnemyFactory::Create(const Vector3& pos, EnemyType enemyT
 
 		m_enemies.push_back(std::make_shared<Enemy>(
 			handle,//モデルのハンドル
-			pos));//生成される位置
+			pos,//生成される位置
+			m_pEffectManager));//エフェクトマネージャー
 		return m_enemies.back();
 	}
 

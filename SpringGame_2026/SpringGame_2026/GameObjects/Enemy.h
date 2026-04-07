@@ -1,17 +1,20 @@
 ﻿#pragma once
 #include "GameObject.h"
 #include "../System/Animator.h"
+#include <memory>
+
+class EffectManager;
 
 class Enemy : public GameObject
 {
 public:
-	Enemy(const int modelHandle, const Vector3& pos);
+	Enemy(const int modelHandle, const Vector3& pos, std::shared_ptr<EffectManager> pManager);
 	~Enemy();
 
 	void Update() override;
 	void Update(const Vector3& playerPos, const Vector3& stageSize);
 	void Draw() override;
-	
+
 	/// <summary>
 	/// 攻撃が当てられた時の処理
 	/// </summary>
@@ -61,5 +64,8 @@ private:
 	/// 現在動いているかを判定する
 	/// </summary>
 	bool const IsMoving() const;
+
+	//エフェクトマネージャー
+	std::shared_ptr<EffectManager> m_pEffectManager;
 };
 

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -126,20 +126,20 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>c:\DxLib_VC\プロジェクトに追加すべきファイル_VC用</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\Dxlib_h</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>c:\DxLib_VC\プロジェクトに追加すべきファイル_VC用</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\Dxlib_h</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="DeathEffect.cpp" />
-    <ClCompile Include="Effect.cpp" />
-    <ClCompile Include="EffectManager.cpp" />
+    <ClCompile Include="Effect\DeathEffect.cpp" />
+    <ClCompile Include="Effect\Effect.cpp" />
+    <ClCompile Include="Effect\EffectManager.cpp" />
     <ClCompile Include="Graphic\SkyBox.cpp" />
     <ClCompile Include="System\EnemyFactory.cpp" />
     <ClCompile Include="System\CollisionManager.cpp" />
@@ -156,9 +156,9 @@
     <ClCompile Include="Scene\SceneMain.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DeathEffect.h" />
-    <ClInclude Include="Effect.h" />
-    <ClInclude Include="EffectManager.h" />
+    <ClInclude Include="Effect\DeathEffect.h" />
+    <ClInclude Include="Effect\Effect.h" />
+    <ClInclude Include="Effect\EffectManager.h" />
     <ClInclude Include="Graphic\SkyBox.h" />
     <ClInclude Include="System\EnemyFactory.h" />
     <ClInclude Include="System\CollisionManager.h" />

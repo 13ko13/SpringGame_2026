@@ -1,6 +1,7 @@
 ﻿#include "Camera.h"
 #include "../System/Input.h"
 #include "../Math/Matrix4x4.h"
+#include "../../../Dxlib_h/EffekseerForDXLib.h"
 
 namespace 
 {
@@ -94,6 +95,9 @@ void Camera::Update(const Vector3& targetPos, const Input input)
 
 	//カメラの位置とターゲットの位置をセットする
 	SetCameraPositionAndTarget_UpVecY(m_pos.ToDxLib(), m_targetPos.ToDxLib());
+
+	//DxLibのカメラ設定をEffekseerに同期する
+	Effekseer_Sync3DSetting();
 
 #ifdef _DEBUG
 	//DrawFormatString((int)0.0f, (int)0.0f, 0xffffff, "rightStickX : %f,Y : %f", input.GetRightStickDir().m_x, input.GetRightStickDir().m_y);

@@ -11,6 +11,8 @@ class Enemy;
 class CollisionManager;
 class EnemyFactory;
 class SkyBox;
+class DeathEffect;
+class EffectManager;
 
 class SceneMain
 {
@@ -51,6 +53,9 @@ private:
 	int m_skyUpHandle = -1;
 	int m_skyDownHandle = -1;
 
+	//エフェクシアのエフェクトハンドル
+	int m_deathEffectHandle = -1;
+
 	//敵のモデルのハンドル
 	std::vector<int> m_enemyBaseMHandles;
 
@@ -68,4 +73,7 @@ private:
 
 	//skyboxの実体
 	std::shared_ptr<SkyBox> m_pSkyBox;
+
+	//エフェクトマネージャーの実体
+	std::shared_ptr<EffectManager> m_pEffectManager;
 };
