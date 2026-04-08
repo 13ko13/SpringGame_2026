@@ -107,7 +107,7 @@ private:
 	void Move(Input input, float angle);
 
 	/// <summary>
-	/// パンチ攻撃
+	/// ジャンプ攻撃
 	/// </summary>
 	/// <param name="input">入力情報</param>
 	void Attack();

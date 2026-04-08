@@ -22,14 +22,14 @@ namespace
 	//アニメーションの名前
 	const char* const idle_anim_name = "Armature|Idle";//待機
 	const char* const run_anim_name = "Armature|Run";//移動
-	const char* const punch_anim_name = "Armature|Punch";//パンチ
+	const char* const jump_attack = "Armature|JumpAttack";//ジャンプ攻撃
 	const char* const damage_anim_name = "Armature|Damage";//ダメージ
 
 	//アニメーションのブレンド時間
 	constexpr float anim_blend_time = 20.0f;
 
-	//パンチのアニメーションの速度
-	constexpr float punch_anim_speed = 1.8f;
+	//ジャンプ攻撃のアニメーションの速度
+	constexpr float jump_attack_anim_speed = 1.4f;
 
 	//球の半径
 	constexpr float sphere_r = 70.0f;
@@ -41,10 +41,10 @@ namespace
 	//プレイヤーから攻撃判定用の球までの高さ(距離)
 	const Vector3 player_to_attackSphere = { 0.0f, 150.0f, 0.0f };
 
-	//プレイヤーのパンチが当たり始める時間
-	constexpr float punch_hit_start = 0.4f;
-	//プレイヤーのパンチが当たり終わる時間
-	constexpr float punch_hit_end = 0.7f;
+	//プレイヤーのジャンプ攻撃が当たり始める時間
+	constexpr float jump_attack_hit_start = 0.4f;
+	//プレイヤーのジャンプ攻撃が当たり終わる時間
+	constexpr float jump_attack_hit_end = 0.7f;
 
 	//プレイヤーがダメージを受けて吹き飛んで地面につくときの時間
 	constexpr float damage_fly_time = 0.3f;
@@ -97,8 +97,8 @@ void Player::Update(Input input, float angle,const Vector3& stageSize)
 		float length = m_animator.GetAnimLength();//現在のアニメーションの総再生時間
 		float rate = time / length;//アニメーションの再生率(0.0~1.0)
 
-		//パンチが当たっている時間帯なら
-		if (rate >= punch_hit_start && rate <= punch_hit_end)
+		//ジャンプ攻撃が当たっている時間帯なら
+		if (rate >= jump_attack_hit_start && rate <= jump_attack_hit_end)
 		{
 			m_isAttacking = true;//攻撃が当たる時間帯のときは攻撃中フラグを立てる
 			m_attackSphereR = attack_sphere_r;//攻撃判定用の球の半径を大きくする
@@ -110,15 +110,17 @@ void Player::Update(Input input, float angle,const Vector3& stageSize)
 			m_attackSphereR = 0.0f;//攻撃判定用の球の半径を0にする
 		}
 
-		//移動ベクトルをリセットする
-		m_velocity = { 0.0f,0.0f,0.0f };
-
 		//攻撃アニメーションがおわるまで　
 		//他の行動はできないようにする
 		if (m_animator.IsEnd())
 		{
 			//攻撃アニメーションが終わったら、攻撃中フラグを下ろす
 			m_isAttacking = false;
+			m_isCanMove = true;
+
+			//入力を読み取って移動ベクトルを更新する
+			//（Attack→Move の直接遷移でブレンドを正しくするため）
+			Move(input, angle);
 
 			//終わったらステートを攻撃入力されていたら
 			//Attackにする
@@ -129,18 +131,19 @@ void Player::Update(Input input, float angle,const Vector3& stageSize)
 			{
 				Attack();
 			}
+			else if (IsMoving())
+			{
+				ChangeState(State::Move);
+			}
 			else
 			{
-				if (IsMoving())
-				{
-					ChangeState(State::Move);
-				}
-				else
-				{
-					ChangeState(State::Idle);
-				}
+				ChangeState(State::Idle);
 			}
-			m_isCanMove = true;
+		}
+		else
+		{
+			//攻撃中は移動ベクトルをリセットする
+			m_velocity = { 0.0f,0.0f,0.0f };
 		}
 
 		m_animator.Update(anim_blend_time);
@@ -410,7 +413,7 @@ void Player::ChangeState(State next)
 		m_animator.Play(MV1GetAnimIndex(m_modelHandle, run_anim_name), true);
 		break;
 	case State::Attack:
-		m_animator.Play(MV1GetAnimIndex(m_modelHandle, punch_anim_name), false, punch_anim_speed);
+		m_animator.Play(MV1GetAnimIndex(m_modelHandle, jump_attack), false, jump_attack_anim_speed);
 		break;
 	case State::Damage:
 		m_animator.Play(MV1GetAnimIndex(m_modelHandle, damage_anim_name), false);

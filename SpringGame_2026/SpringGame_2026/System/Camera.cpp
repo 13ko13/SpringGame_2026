@@ -16,6 +16,10 @@ namespace
 	constexpr float camera_rot_dead_zone = 0.5f;
 
 	constexpr float fov = DX_PI_F / 3.0f;//カメラの視野角
+
+	//カメラの回転角の制限
+	constexpr float rot_rimit_up = DX_PI_F / 3.0f;//真下向くときは60度以上回転しないようにする
+	constexpr float rot_rimit_down = -DX_PI_F / 6.0f;//-30度以上回転しないようにする
 }
 
 Camera::Camera(const Vector3& targetPos) :
@@ -65,8 +69,8 @@ void Camera::Update(const Vector3& targetPos, const Input input)
 	}
 
 	//カメラの回転角を制限する
-	if (m_angleX > DX_PI_F / 3.0f) m_angleX = DX_PI_F / 3.0f;//真下向くときは60度以上回転しないようにする
-	if (m_angleX < -DX_PI_F / 6.0f) m_angleX = -DX_PI_F / 6.0f;//-30度以上回転しないようにする
+	if (m_angleX > rot_rimit_up) m_angleX = rot_rimit_up;//真下向くときは60度以上回転しないようにする
+	if (m_angleX < rot_rimit_down) m_angleX = rot_rimit_down;//真上向くときは-30度以上回転しないようにする
 
 	//カメラの注視点
 	Vector3 target = targetPos;

@@ -18,7 +18,7 @@ void CollisionManager::Update(std::shared_ptr<Player>& pPlayer,
 	//敵のリストを取得する
 	auto& enemies = pEnemyFactory->GetEnemies();
 
-	//プレイヤーのパンチと敵の当たり判定を行う
+	//プレイヤーのジャンプ攻撃と敵の当たり判定を行う
 	//攻撃中のみ当たり判定を行う
 	if (pPlayer->IsAttacking())
 	{
@@ -27,7 +27,7 @@ void CollisionManager::Update(std::shared_ptr<Player>& pPlayer,
 		{
 			if (CheckCollision(pPlayer->GetAttackSphere(), pEnemy))
 			{
-				//敵にパンチが当たっているときの処理を行わせる
+				//敵にジャンプ攻撃が当たっているときの処理を行わせる
 				OnHitEnemyAndPAttack(pPlayer, pEnemy);
 			}
 		}
