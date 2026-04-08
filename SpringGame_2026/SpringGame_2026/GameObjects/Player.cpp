@@ -33,7 +33,7 @@ namespace
 
 	//球の半径
 	constexpr float sphere_r = 70.0f;
-	constexpr float attack_sphere_r = 95.0f;
+	constexpr float attack_sphere_r = 500.0f;
 
 	//プレイヤーから自分の当たり判定の球までの距離
 	const Vector3 player_to_sphere = { 0.0f,125.0f,0.0f };
