@@ -14,12 +14,15 @@ namespace
 	constexpr float camera_rotate_speed = 0.04f;
 	//カメラが回転するまでのデッドゾーン
 	constexpr float camera_rot_dead_zone = 0.5f;
-
-	constexpr float fov = DX_PI_F / 3.0f;//カメラの視野角
+	//カメラの視野角
+	constexpr float fov = DX_PI_F / 3.0f;
 
 	//カメラの回転角の制限
 	constexpr float rot_rimit_up = DX_PI_F / 3.0f;//真下向くときは60度以上回転しないようにする
 	constexpr float rot_rimit_down = -DX_PI_F / 6.0f;//-30度以上回転しないようにする
+
+	//カメラのLerpに使うtの値
+	constexpr float lerp_t = 0.2f;
 }
 
 Camera::Camera(const Vector3& targetPos) :
@@ -86,7 +89,7 @@ void Camera::Update(const Vector3& targetPos, const Input input)
 
 	//m_posからendCameraPosへのベクトル
 	Vector3 tempCameraPos = endCameraPos - m_pos;
-	tempCameraPos *= 0.2f;//カメラの移動速度を調整するために、ベクトルを0.1倍する
+	tempCameraPos *= lerp_t;//カメラの移動速度を調整するために、ベクトルを0.1倍する
 
 	//回転させたカメラへのベクトルとターゲットの位置を足して、
 	//カメラの位置を求める
@@ -94,7 +97,7 @@ void Camera::Update(const Vector3& targetPos, const Input input)
 
 	//ターゲットの位置も補間する
 	Vector3 targetDelta = targetPos - m_targetPos;
-	targetDelta *= 0.2f;
+	targetDelta *= lerp_t;
 	m_targetPos += targetDelta;
 
 	//カメラの位置とターゲットの位置をセットする

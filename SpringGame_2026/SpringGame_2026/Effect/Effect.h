@@ -14,6 +14,9 @@ public:
 	//エフェクトの再生ハンドルを取得する
 	int GetPlayingHandle() const { return m_playingHandle; }
 
+	//エフェクトが再生中かを判定する
+	bool IsPlaying() const;
+
 private:
 
 protected:

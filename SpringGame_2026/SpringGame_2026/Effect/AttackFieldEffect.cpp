@@ -1,6 +1,12 @@
 ﻿#include "AttackFieldEffect.h"
 #include "../../../Dxlib_h/EffekseerForDXLib.h"
 
+namespace
+{
+	//エフェクトの再生速度
+	constexpr float effect_speed = 1.5f;
+}
+
 AttackFieldEffect::AttackFieldEffect(int handle, const Vector3& pos):
 	Effect(pos)
 {
@@ -9,6 +15,7 @@ AttackFieldEffect::AttackFieldEffect(int handle, const Vector3& pos):
 	{
 		//m_playingHandleにエフェクトの再生を開始する
 		m_playingHandle = PlayEffekseer3DEffect(m_resourceHandle);
+		SetSpeedPlayingEffekseer3DEffect(m_playingHandle, effect_speed);
 		auto manager = GetEffekseer3DManager();
 		//再生するトリガーにした番号を第二引数に指定する
 		manager.Get()->SendTrigger(m_playingHandle, 0);

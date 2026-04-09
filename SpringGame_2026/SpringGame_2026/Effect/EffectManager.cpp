@@ -18,6 +18,12 @@ EffectManager::~EffectManager()
 
 void EffectManager::Update()
 {
+	//再生が終了したエフェクトをリストから削除する
+	m_pEffects.remove_if([](const std::shared_ptr<Effect>& effect)
+	{
+		return !effect->IsPlaying();
+	});
+
 	//エフェクトの更新
 	for (auto& effect : m_pEffects)
 	{
