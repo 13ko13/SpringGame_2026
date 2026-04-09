@@ -1,7 +1,7 @@
-﻿#include "DeathEffect.h"
+﻿#include "AttackFieldEffect.h"
 #include "../../../Dxlib_h/EffekseerForDXLib.h"
 
-DeathEffect::DeathEffect(int handle, const Vector3& pos):
+AttackFieldEffect::AttackFieldEffect(int handle, const Vector3& pos):
 	Effect(pos)
 {
 	m_resourceHandle = handle;
@@ -19,7 +19,7 @@ DeathEffect::DeathEffect(int handle, const Vector3& pos):
 	}
 }
 
-DeathEffect::~DeathEffect()
+AttackFieldEffect::~AttackFieldEffect()
 {
 	//エフェクトの再生を停止する
 	StopEffekseer3DEffect(m_resourceHandle);
@@ -27,27 +27,16 @@ DeathEffect::~DeathEffect()
 	m_playingHandle = -1;
 }
 
-void DeathEffect::Update()
+void AttackFieldEffect::Update()
 {
-	////エフェクトの再生を停止する
-	//if (m_playingHandle >= 0)
-	//{
-	//	//Effekseerのマネージャーを取得して、エフェクトの再生を停止する
-	//	auto manager = GetEffekseer3DManager();
-	//	//0番のトリガーで停止する
-	//	manager.Get()->SendTrigger(m_playingHandle, 0);
-	//	m_playingHandle = -1;
-	//}
-
 	//もしm_playingHandleに有効な値が入っている場合は、エフェクトの位置を更新する
-	if (m_playingHandle >= 0) 
+	if (m_playingHandle >= 0)
 	{
 		//エフェクトの位置を更新する
-		SetPosPlayingEffekseer3DEffect(m_playingHandle, m_pos.m_x, m_pos.m_y,m_pos.m_z);
+		SetPosPlayingEffekseer3DEffect(m_playingHandle, m_pos.m_x, m_pos.m_y, m_pos.m_z);
 	}
 }
 
-void DeathEffect::Draw()
+void AttackFieldEffect::Draw()
 {
-
 }

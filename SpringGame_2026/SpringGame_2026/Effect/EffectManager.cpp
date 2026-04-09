@@ -1,11 +1,14 @@
 ﻿#include "EffectManager.h"
 #include "Effect.h"
 #include "DeathEffect.h"
+#include "AttackFieldEffect.h"
+#include <EffekseerForDXLib.h>
 
-EffectManager::EffectManager(const int deathEffectHandle)
+EffectManager::EffectManager(const int deathEffectHandle, const int attackFieldEffectHandle)
 {
 	//エフェクトのハンドルを配列に格納する
 	m_handles.push_back(deathEffectHandle);
+	m_handles.push_back(attackFieldEffectHandle);
 }
 
 EffectManager::~EffectManager()
@@ -39,6 +42,18 @@ void EffectManager::Create(const Vector3& pos, EffectType type)
 	case EffectType::EnemyDeath:
 		m_pEffects.push_back(std::make_shared<DeathEffect>(m_handles[static_cast<int>(EffectType::EnemyDeath)], pos));
 		break;
+	case EffectType::AttackField:
+	{
+		//現在再生中のAttackFieldエフェクトがあるなら、新しいエフェクトは作成しない
+		if (IsEffekseer3DEffectPlaying(m_attackFieldPlayingHandle) == 0)
+		{
+			break;
+		}
+		auto attackField = std::make_shared<AttackFieldEffect>(m_handles[static_cast<int>(EffectType::AttackField)], pos);
+		m_pEffects.push_back(attackField);
+		m_attackFieldPlayingHandle = attackField->GetPlayingHandle();
+		break;
+	}
 	default:
 		break;
 	}

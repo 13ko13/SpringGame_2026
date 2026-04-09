@@ -95,30 +95,29 @@ void SceneMain::Init()
 		m_skyUpHandle, m_skyDownHandle);
 
 	//エフェクトのロード
-	m_deathEffectHandle = LoadEffekseerEffect("Data/Effect/Death.efk");
+	m_deathEffectHandle = LoadEffekseerEffect("Data/Effect/Death.efk");//敵の死亡エフェクト
 	assert(m_deathEffectHandle != -1);
+
+	m_attackFieldEffectHandle = LoadEffekseerEffect("Data/Effect/AttackField.efk",10.0f);//攻撃エフェクト
+	assert(m_attackFieldEffectHandle != -1);
+
+	//エフェクトマネージャーの実体を確保
+	m_pEffectManager = std::make_shared<EffectManager>(m_deathEffectHandle, m_attackFieldEffectHandle);
+
+	//敵
+	m_pEnemyFactory = std::make_shared<EnemyFactory>(m_enemyBaseMHandles, m_pEffectManager);
 
 	//ロードしたモデルのハンドルをMV1DuplicateModel関数に渡して複製して、
 	//複製したモデルのハンドルを渡す
 	//プレイヤー
 	m_playerCopyMHandle = MV1DuplicateModel(m_playerMHandle);
-	m_pPlayer = std::make_shared<Player>(m_playerCopyMHandle);
-
-	//エフェクトマネージャーの実体を確保
-	m_pEffectManager = std::make_shared<EffectManager>(m_deathEffectHandle);
-
-	//敵
-	m_pEnemyFactory = std::make_shared<EnemyFactory>(m_enemyBaseMHandles, m_pEffectManager);
+	m_pPlayer = std::make_shared<Player>(m_playerCopyMHandle, m_pEffectManager);
 
 	//カメラの実体を確保
 	m_pCamera = std::make_shared<Camera>(m_pPlayer->GetPos());
 
 	//当たり判定の管理クラスの実体を確保
 	m_pCollManager = std::make_shared<CollisionManager>();
-
-	//エフェクトマネージャーの実体を確保する
-	//エフェクトのハンドルを渡す
-	m_pEffectManager = std::make_shared<EffectManager>(m_deathEffectHandle);
 
 	// 環境光だけを最大に
 	SetGlobalAmbientLight(GetColorF(255, 255, 255, 255));

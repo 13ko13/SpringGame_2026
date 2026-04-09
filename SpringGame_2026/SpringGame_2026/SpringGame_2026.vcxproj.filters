@@ -57,13 +57,16 @@
     <ClCompile Include="Graphic\SkyBox.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="EffectManager.cpp">
+    <ClCompile Include="Effect\DeathEffect.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Effect.cpp">
+    <ClCompile Include="Effect\Effect.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="DeathEffect.cpp">
+    <ClCompile Include="Effect\EffectManager.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="Effect\AttackFieldEffect.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
   </ItemGroup>
@@ -110,13 +113,16 @@
     <ClInclude Include="Graphic\SkyBox.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="EffectManager.h">
+    <ClInclude Include="Effect\DeathEffect.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Effect.h">
+    <ClInclude Include="Effect\Effect.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="DeathEffect.h">
+    <ClInclude Include="Effect\EffectManager.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Effect\AttackFieldEffect.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

@@ -2,6 +2,7 @@
 #include <DxLib.h>
 #include "../System/Input.h"
 #include "../Math/Matrix4x4.h"
+#include "../Effect/EffectManager.h"
 
 namespace
 {
@@ -38,9 +39,6 @@ namespace
 	//プレイヤーから自分の当たり判定の球までの距離
 	const Vector3 player_to_sphere = { 0.0f,125.0f,0.0f };
 
-	//プレイヤーから攻撃判定用の球までの高さ(距離)
-	const Vector3 player_to_attackSphere = { 0.0f, 150.0f, 0.0f };
-
 	//プレイヤーのジャンプ攻撃が当たり始める時間
 	constexpr float jump_attack_hit_start = 0.4f;
 	//プレイヤーのジャンプ攻撃が当たり終わる時間
@@ -54,12 +52,16 @@ namespace
 
 	//無敵になる時間
 	constexpr int invincible_time = 240;
+
+	//エフェクトのオフセット
+	const Vector3 effect_offset = { 0.0f, -50.0f, 0.0f };
 }
 
-Player::Player(int modelHandle) :
+Player::Player(int modelHandle, std::shared_ptr<EffectManager> pManager) :
 	GameObject(modelHandle, first_pos),
 	m_animator(modelHandle),
-	m_attackSphere(m_pos + player_to_attackSphere)
+	m_attackSphere(m_pos),
+	m_pEffectManager(pManager)
 {
 	//再生するアニメーション番号を引数に入れて、それを再生する
 	//初期状態はIdleにする
@@ -127,9 +129,11 @@ void Player::Update(Input input, float angle,const Vector3& stageSize)
 			//移動中ならMove,
 			//何もしていないならIdleに切り替える
 			//攻撃入力を最優先にする
-			if (input.IsTriggered("attack"))
+			if (input.IsPressed("attack"))
 			{
 				Attack();
+				//攻撃入力がされたときに、攻撃エフェクトを出す
+				m_pEffectManager->Create(m_pos + effect_offset, EffectManager::EffectType::AttackField);
 			}
 			else if (IsMoving())
 			{
@@ -161,9 +165,11 @@ void Player::Update(Input input, float angle,const Vector3& stageSize)
 		}
 
 		//攻撃入力を最優先にする
-		if (input.IsTriggered("attack"))
+		if (input.IsPressed("attack"))
 		{
 			Attack();
+			//攻撃入力がされたときに、攻撃エフェクトを出す
+			m_pEffectManager->Create(m_pos + effect_offset, EffectManager::EffectType::AttackField);
 		}
 		else
 		{
@@ -303,15 +309,6 @@ Vector3 const Player::GetTargetPos() const
 	return m_pos + player_to_target;
 }
 
-void Player::OnAttackedEnemy()
-{
-	//敵が何度もHitアニメーションをしないように
-	//一度攻撃が当たったら、攻撃判定用の球の半径を0にして、当たり判定をなくす
-	m_attackSphereR = 0.0f;
-
-	m_isAttacking = false;
-}
-
 void Player::Move(Input input, float angle)
 {
 	Matrix4x4 rotMtx;
@@ -427,7 +424,7 @@ void Player::UpdateCollSphere()
 	m_sphere.Update(spherePos, sphere_r);//当たり判定用の球を更新する
 
 	//攻撃判定用の球も同様に更新する
-	m_attackSphere.Update(m_pos + GetForward() * 130.0f + player_to_attackSphere, m_attackSphereR);
+	m_attackSphere.Update(m_pos, m_attackSphereR);
 }
 
 Vector3 Player::GetForward() const

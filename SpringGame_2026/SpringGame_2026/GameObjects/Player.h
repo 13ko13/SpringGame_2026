@@ -3,12 +3,15 @@
 #include "../Math/Vector3.h"
 #include "../System/Animator.h"
 #include "../Math/Sphere.h"
+#include <memory>
 
 class Input;
+class EffectManager;
+
 class Player : public GameObject
 {
 public:
-	Player(int modelHandle);
+	Player(int modelHandle, std::shared_ptr<EffectManager> pManager);
 	~Player();
 
 	/// <summary>
@@ -41,11 +44,6 @@ public:
 	Sphere GetAttackSphere() const { return m_attackSphere; }
 
 	/// <summary>
-	/// 敵に攻撃が当たった時の処理
-	/// </summary>
-	void OnAttackedEnemy();
-
-	/// <summary>
 	/// 攻撃中かを返す
 	/// </summary>
 	/// <returns>true:攻撃中,false:攻撃中ではない</returns>
@@ -75,6 +73,9 @@ private:
 	//攻撃中かどうか
 	bool m_isAttacking = false;
 
+	//エフェクトを出したか
+	bool m_isCreateEffect = false;
+
 	//現在のY軸回転角
 	float m_currentAngleY = 0.0f;
 
@@ -98,6 +99,9 @@ private:
 	//攻撃判定用の球の半径
 	//攻撃時のみ半径を大きくして、攻撃範囲を広げる
 	float m_attackSphereR = 0.0f;
+
+	//エフェクトマネージャーへのポインタ
+	std::shared_ptr<EffectManager> m_pEffectManager;
 
 private:
 	/// <summary>

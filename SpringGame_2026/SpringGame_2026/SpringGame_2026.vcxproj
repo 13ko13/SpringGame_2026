@@ -137,6 +137,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Effect\AttackFieldEffect.cpp" />
     <ClCompile Include="Effect\DeathEffect.cpp" />
     <ClCompile Include="Effect\Effect.cpp" />
     <ClCompile Include="Effect\EffectManager.cpp" />
@@ -156,6 +157,7 @@
     <ClCompile Include="Scene\SceneMain.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Effect\AttackFieldEffect.h" />
     <ClInclude Include="Effect\DeathEffect.h" />
     <ClInclude Include="Effect\Effect.h" />
     <ClInclude Include="Effect\EffectManager.h" />

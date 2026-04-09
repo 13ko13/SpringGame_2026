@@ -11,7 +11,6 @@ class Enemy;
 class CollisionManager;
 class EnemyFactory;
 class SkyBox;
-class DeathEffect;
 class EffectManager;
 
 class SceneMain
@@ -55,6 +54,7 @@ private:
 
 	//エフェクシアのエフェクトハンドル
 	int m_deathEffectHandle = -1;
+	int m_attackFieldEffectHandle = -1;
 
 	//敵のモデルのハンドル
 	std::vector<int> m_enemyBaseMHandles;

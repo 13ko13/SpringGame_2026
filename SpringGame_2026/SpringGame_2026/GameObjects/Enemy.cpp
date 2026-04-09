@@ -23,7 +23,7 @@ namespace
 	const Vector3 enemy_to_sphere = { 0.0f,125.0f,0.0f };
 
 	//Lerpに使うtの値
-	constexpr float lerp_t = 0.08f;
+	constexpr float lerp_t = 0.01f;
 
 	//敵がプレイヤーに向かって移動するときの速度
 	constexpr float move_speed = 0.5f;

@@ -25,10 +25,13 @@ void CollisionManager::Update(std::shared_ptr<Player>& pPlayer,
 		//敵一体一体とプレイヤーの攻撃判定用の球との当たり判定を行う
 		for (auto& pEnemy : enemies)
 		{
+			//既に死亡状態の敵はスキップする
+			if (!pEnemy->IsDeadAnimEnd()) continue;
+
 			if (CheckCollision(pPlayer->GetAttackSphere(), pEnemy))
 			{
-				//敵にジャンプ攻撃が当たっているときの処理を行わせる
-				OnHitEnemyAndPAttack(pPlayer, pEnemy);
+				//敵に攻撃が当たっているときの処理を行わせる
+				pEnemy->OnDead();
 			}
 		}
 	}
@@ -81,5 +84,4 @@ void CollisionManager::OnHitEnemyAndPlayer(std::shared_ptr<Player>& pPlayer,
 void CollisionManager::OnHitEnemyAndPAttack(std::shared_ptr<Player>& pPlayer, std::shared_ptr<Enemy>& pEnemy)
 {
 	pEnemy->OnDead();
-	pPlayer->OnAttackedEnemy();
 }

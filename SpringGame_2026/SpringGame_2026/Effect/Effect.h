@@ -11,10 +11,15 @@ public:
 	virtual void Update() override;
 	virtual void Draw() override;
 
+	//エフェクトの再生ハンドルを取得する
+	int GetPlayingHandle() const { return m_playingHandle; }
+
 private:
 
 protected:
 	//現在再生中のエフェクトのハンドル
 	int m_playingHandle = -1;
+	//リソースハンドル
+	int m_resourceHandle = -1;
 };
 
