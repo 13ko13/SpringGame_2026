@@ -141,6 +141,7 @@
     <ClCompile Include="Effect\DeathEffect.cpp" />
     <ClCompile Include="Effect\Effect.cpp" />
     <ClCompile Include="Effect\EffectManager.cpp" />
+    <ClCompile Include="Effect\EnemyPortalEffect.cpp" />
     <ClCompile Include="Graphic\SkyBox.cpp" />
     <ClCompile Include="System\EnemyFactory.cpp" />
     <ClCompile Include="System\CollisionManager.cpp" />
@@ -161,6 +162,7 @@
     <ClInclude Include="Effect\DeathEffect.h" />
     <ClInclude Include="Effect\Effect.h" />
     <ClInclude Include="Effect\EffectManager.h" />
+    <ClInclude Include="Effect\EnemyPortalEffect.h" />
     <ClInclude Include="Graphic\SkyBox.h" />
     <ClInclude Include="System\EnemyFactory.h" />
     <ClInclude Include="System\CollisionManager.h" />
