@@ -31,5 +31,10 @@ GameObject::GameObject(const Vector3& pos):
 
 GameObject::~GameObject()
 {
-
+	//モデルのハンドルが有効な値ならモデルを削除する
+	if (m_modelHandle >= 0)
+	{
+		MV1DeleteModel(m_modelHandle);
+		m_modelHandle = -1;
+	}
 }

@@ -22,7 +22,7 @@ DeathEffect::DeathEffect(int handle, const Vector3& pos):
 DeathEffect::~DeathEffect()
 {
 	//エフェクトの再生を停止する
-	StopEffekseer3DEffect(m_resourceHandle);
+	StopEffekseer3DEffect(m_playingHandle);
 
 	m_playingHandle = -1;
 }

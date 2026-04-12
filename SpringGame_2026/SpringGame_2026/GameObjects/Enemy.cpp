@@ -45,6 +45,7 @@ Enemy::Enemy(const int modelHandle, const Vector3& pos, std::shared_ptr<EffectMa
 
 Enemy::~Enemy()
 {
+	//特になし
 }
 
 void Enemy::Update()
@@ -231,4 +232,10 @@ bool Enemy::IsDeadAnimEnd() const
 
 	//死亡状態でない（生きている）ときはtrueを返す
 	return true;
+}
+
+void Enemy::OnPushBack(const Vector3& pushVector)
+{
+	//押し戻しのベクトルを加算する
+	m_pos += pushVector;
 }

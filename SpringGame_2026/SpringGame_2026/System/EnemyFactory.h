@@ -31,7 +31,7 @@ public:
 	/// 生成されている敵のリストを返す
 	/// </summary>
 	/// <returns>生成されている敵のリスト</returns>
-	std::list<std::shared_ptr<Enemy>>& GetEnemies() { return m_enemies; }
+	std::list<std::shared_ptr<Enemy>>& GetEnemies() { return m_pEnemies; }
 
 	/// <summary>
 	/// 敵全員の更新処理
@@ -48,7 +48,7 @@ private:
 	//あらかじめ敵の表示に必要なモデルをロードしておく
 	std::vector<int> m_handles;//敵全員のハンドルを持っておく
 
-	std::list<std::shared_ptr<Enemy>> m_enemies;//生成した敵を保存しておくリスト
+	std::list<std::shared_ptr<Enemy>> m_pEnemies;//生成した敵を保存しておくリスト
 
 	//エフェクトマネージャー
 	std::shared_ptr<EffectManager> m_pEffectManager;

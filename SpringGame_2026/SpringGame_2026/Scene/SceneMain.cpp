@@ -18,6 +18,9 @@ namespace
 
 	//ステージのサイズ
 	const Vector3 stage_size = { 1000.0f, 0.0f, 1000.0f };
+
+	//エフェクトの拡大率
+	constexpr float attack_ef_scale = 10.0f;
 }
 
 SceneMain::SceneMain() :
@@ -27,10 +30,6 @@ SceneMain::SceneMain() :
 
 SceneMain::~SceneMain()
 {
-	//プレイヤーのコピーモデルハンドルとプレイヤーモデルハンドルを削除する
-	if (m_playerCopyMHandle != -1)
-		MV1DeleteModel(m_playerCopyMHandle);
-
 	if (m_playerMHandle != -1)
 		MV1DeleteModel(m_playerMHandle);
 
@@ -50,6 +49,7 @@ SceneMain::~SceneMain()
 
 	//エフェクトを削除する
 	DeleteEffekseerEffect(m_deathEffectHandle);
+	DeleteEffekseerEffect(m_attackFieldEffectHandle);
 }
 
 void SceneMain::Init()
@@ -98,7 +98,7 @@ void SceneMain::Init()
 	m_deathEffectHandle = LoadEffekseerEffect("Data/Effect/Death.efk");//敵の死亡エフェクト
 	assert(m_deathEffectHandle != -1);
 
-	m_attackFieldEffectHandle = LoadEffekseerEffect("Data/Effect/AttackField.efk",10.0f);//攻撃エフェクト
+	m_attackFieldEffectHandle = LoadEffekseerEffect("Data/Effect/AttackField.efk", attack_ef_scale);//攻撃エフェクト
 	assert(m_attackFieldEffectHandle != -1);
 
 	//エフェクトマネージャーの実体を確保

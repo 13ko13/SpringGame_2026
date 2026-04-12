@@ -10,7 +10,17 @@ public:
 	void Update(const Vector3& pos, const float radius);
 	void Draw(unsigned int color);
 
+	/// <summary>
+	/// 位置を返す
+	/// </summary>
+	/// <returns>球の位置</returns>
 	const Vector3 GetPos() const { return m_pos; }
+
+	/// <summary>
+	/// 球の半径を返す
+	/// </summary>
+	/// <returns>球の半径</returns>
+	const float GetRadius() const { return m_radius; }
 
 	/// <summary>
 	/// 球との球の当たり判定

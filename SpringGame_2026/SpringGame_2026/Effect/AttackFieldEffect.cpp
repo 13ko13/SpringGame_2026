@@ -29,7 +29,7 @@ AttackFieldEffect::AttackFieldEffect(int handle, const Vector3& pos):
 AttackFieldEffect::~AttackFieldEffect()
 {
 	//エフェクトの再生を停止する
-	StopEffekseer3DEffect(m_resourceHandle);
+	StopEffekseer3DEffect(m_playingHandle);
 
 	m_playingHandle = -1;
 }

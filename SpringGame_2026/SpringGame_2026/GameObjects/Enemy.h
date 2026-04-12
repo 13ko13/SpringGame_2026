@@ -31,6 +31,12 @@ public:
 	/// <returns>true:終了,false:まだ終了していない</returns>
 	bool IsDeadAnimEnd() const;
 
+	/// <summary>
+	/// 敵同士の押し戻しの処理
+	/// </summary>
+	/// <param name="pushVector">押し戻す方向と強さを表すベクトル</param>
+	void OnPushBack(const Vector3& pushVector);
+
 private:
 	//ステート
 	enum class State : int
