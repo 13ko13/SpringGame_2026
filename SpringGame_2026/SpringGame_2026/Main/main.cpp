@@ -8,7 +8,7 @@
 
 namespace
 {
-	constexpr int effect_num = 1000;
+	constexpr int effect_num = 8000;
 }
 
 // プログラムは WinMain から始まる

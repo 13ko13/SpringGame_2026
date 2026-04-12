@@ -18,7 +18,7 @@ void Sphere::Update(const Vector3& pos, const float radius)
 
 void Sphere::Draw(unsigned int color)
 {
-	DrawSphere3D(m_pos.ToDxLib(), m_radius, 16, color, color, FALSE);
+	DrawSphere3D(m_pos.ToDxLib(), m_radius, 8, color, color, FALSE);
 }
 
 bool Sphere::HitCollision(const Sphere& other) const
