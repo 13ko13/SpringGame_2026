@@ -50,7 +50,7 @@ void SceneController::Update(Input& input)
 	m_fade.Update();
 
 	//フェードアウトが終了しているか
-	if(m_fade.IsFading() == false && m_nextScene != nullptr)
+	if(!m_fade.IsFading() && m_nextScene != nullptr)
 	{
 		//フェードインを開始する
 		m_fade.StartFadeIn(m_fade.GetFadeFrame());
