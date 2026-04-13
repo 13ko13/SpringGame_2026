@@ -39,7 +39,7 @@
     <ClCompile Include="System\Camera.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="System\Animator.cpp">
+    <ClCompile Include="System\ModelAnimator.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
     <ClCompile Include="GameObjects\Enemy.cpp">
@@ -84,6 +84,12 @@
     <ClCompile Include="Manager\Fade.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Scene\TitleScene.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
+    <ClCompile Include="System\SpriteAnimator.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Constants\Game.h">
@@ -110,7 +116,7 @@
     <ClInclude Include="System\Camera.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="System\Animator.h">
+    <ClInclude Include="System\ModelAnimator.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="GameObjects\Enemy.h">
@@ -156,6 +162,12 @@
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="Manager\Fade.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene\TitleScene.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="System\SpriteAnimator.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
