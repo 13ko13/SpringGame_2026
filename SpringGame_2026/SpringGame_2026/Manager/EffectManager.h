@@ -24,7 +24,14 @@ public:
 		EffectTypeNum,//エフェクトの種類の数
 	};
 
+	/// <summary>
+	/// エフェクトを作成する
+	/// </summary>
+	/// <param name="pos">エフェクトの位置</param>
+	/// <param name="type">エフェクトの種類</param>
 	void Create(const Vector3& pos, EffectType type);
+
+
 
 private:
 	//登録されたエフェクトを格納する配列

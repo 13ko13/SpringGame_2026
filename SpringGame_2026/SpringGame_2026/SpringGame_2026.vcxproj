@@ -140,11 +140,15 @@
     <ClCompile Include="Effect\AttackFieldEffect.cpp" />
     <ClCompile Include="Effect\DeathEffect.cpp" />
     <ClCompile Include="Effect\Effect.cpp" />
-    <ClCompile Include="Effect\EffectManager.cpp" />
+    <ClCompile Include="Manager\EffectManager.cpp" />
     <ClCompile Include="Effect\EnemyPortalEffect.cpp" />
+    <ClCompile Include="Manager\Fade.cpp" />
     <ClCompile Include="Graphic\SkyBox.cpp" />
-    <ClCompile Include="System\EnemyFactory.cpp" />
-    <ClCompile Include="System\CollisionManager.cpp" />
+    <ClCompile Include="Main\Application.cpp" />
+    <ClCompile Include="Scene\Scene.cpp" />
+    <ClCompile Include="Scene\SceneController.cpp" />
+    <ClCompile Include="Manager\EnemyFactory.cpp" />
+    <ClCompile Include="Manager\CollisionManager.cpp" />
     <ClCompile Include="GameObjects\Enemy.cpp" />
     <ClCompile Include="Math\Sphere.cpp" />
     <ClCompile Include="System\Animator.cpp" />
@@ -155,17 +159,22 @@
     <ClCompile Include="Math\Vector3.cpp" />
     <ClCompile Include="Main\main.cpp" />
     <ClCompile Include="GameObjects\Player.cpp" />
-    <ClCompile Include="Scene\SceneMain.cpp" />
+    <ClCompile Include="Scene\GameScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Effect\AttackFieldEffect.h" />
     <ClInclude Include="Effect\DeathEffect.h" />
     <ClInclude Include="Effect\Effect.h" />
-    <ClInclude Include="Effect\EffectManager.h" />
+    <ClInclude Include="Manager\EffectManager.h" />
     <ClInclude Include="Effect\EnemyPortalEffect.h" />
+    <ClInclude Include="Manager\Fade.h" />
     <ClInclude Include="Graphic\SkyBox.h" />
-    <ClInclude Include="System\EnemyFactory.h" />
-    <ClInclude Include="System\CollisionManager.h" />
+    <ClInclude Include="Main\Application.h" />
+    <ClInclude Include="Scene\Scene.h" />
+    <ClInclude Include="Scene\SceneController.h" />
+    <ClInclude Include="Constants\Size.h" />
+    <ClInclude Include="Manager\EnemyFactory.h" />
+    <ClInclude Include="Manager\CollisionManager.h" />
     <ClInclude Include="GameObjects\Enemy.h" />
     <ClInclude Include="Math\Sphere.h" />
     <ClInclude Include="System\Animator.h" />
@@ -176,7 +185,7 @@
     <ClInclude Include="Math\Matrix4x4.h" />
     <ClInclude Include="Math\Vector3.h" />
     <ClInclude Include="GameObjects\Player.h" />
-    <ClInclude Include="Scene\SceneMain.h" />
+    <ClInclude Include="Scene\GameScene.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

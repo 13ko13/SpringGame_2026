@@ -1,7 +1,7 @@
 ﻿#include "Enemy.h"
 #include "../Math/Matrix4x4.h"
 #include <cmath>
-#include "../Effect/EffectManager.h"
+#include "../Manager/EffectManager.h"
 
 namespace
 {

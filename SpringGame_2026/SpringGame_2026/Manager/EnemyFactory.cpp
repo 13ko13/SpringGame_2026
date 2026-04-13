@@ -87,6 +87,15 @@ void EnemyFactory::Update(const Vector3& playerPos, const Vector3& stageSize)
 			}
 		}
 	}
+
+	//敵が死んでいるときはリストから削除する
+	auto it = std::remove_if(m_pEnemies.begin(), m_pEnemies.end(),
+		[](const std::shared_ptr<Enemy>& enemy)
+		{
+			return enemy->IsDead();
+		});
+
+	m_pEnemies.erase(it, m_pEnemies.end());
 }
 
 void EnemyFactory::Draw()

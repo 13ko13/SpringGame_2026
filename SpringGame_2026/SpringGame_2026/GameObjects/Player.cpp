@@ -2,7 +2,7 @@
 #include <DxLib.h>
 #include "../System/Input.h"
 #include "../Math/Matrix4x4.h"
-#include "../Effect/EffectManager.h"
+#include "../Manager/EffectManager.h"
 
 namespace
 {

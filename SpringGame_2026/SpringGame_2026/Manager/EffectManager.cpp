@@ -1,7 +1,7 @@
 ﻿#include "EffectManager.h"
-#include "Effect.h"
-#include "DeathEffect.h"
-#include "AttackFieldEffect.h"
+#include "../Effect/Effect.h"
+#include "../Effect/DeathEffect.h"
+#include "../Effect/AttackFieldEffect.h"
 #include <EffekseerForDXLib.h>
 
 EffectManager::EffectManager(const int deathEffectHandle, const int attackFieldEffectHandle)

@@ -2,6 +2,7 @@
 #include <vector>
 #include <memory>
 #include "../Math/Vector3.h"
+#include "Scene.h"
 
 //前方宣言
 class Player;
@@ -13,15 +14,15 @@ class EnemyFactory;
 class SkyBox;
 class EffectManager;
 
-class SceneMain
+class GameScene :public Scene
 {
 public:
-	SceneMain();
-	~SceneMain();
+	GameScene(SceneController& controller);
+	~GameScene();
 
-	void Init();
-	void Update(Input& input);
-	void Draw();
+	void Init() override;
+	void Update(Input& input) override;
+	void Draw() override;
 
 	/// <summary>
 	/// ステージのサイズを取得する
@@ -30,14 +31,19 @@ public:
 	Vector3 const GetStageSize() const;
 
 private:
+	/// <summary>
+	/// デバッグ用のグリッドを描画する
+	/// </summary>
 	void DrawGrid();
 
 private:
+	//フレームカウンター
 	int m_frameCount;
 
+	//敵のモデルの種類
 	enum class EnemyModelType : int
 	{
-		Enemy1 = 0,
+		Zonbie = 0,//ゾンビのモデル
 	};
 
 	//プレイヤーモデルのハンドル
@@ -56,7 +62,7 @@ private:
 	int m_deathEffectHandle = -1;
 	int m_attackFieldEffectHandle = -1;
 
-	//敵のモデルのハンドル
+	//敵のモデルのハンドルの配列
 	std::vector<int> m_enemyBaseMHandles;
 
 	//プレイヤーの実体

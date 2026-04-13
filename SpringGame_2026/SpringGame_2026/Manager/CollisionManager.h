@@ -29,12 +29,28 @@ private:
 	bool CheckCollision(const Sphere& attackSphere,
 		std::shared_ptr<Enemy>& pEnemy);
 
+	/// <summary>
+	/// プレイヤーと敵の当たり判定球の衝突判定
+	/// </summary>
+	/// <param name="pPlayer">プレイヤーのオブジェクト</param>
+	/// <param name="pEnemy">敵のオブジェクト</param>
+	/// <returns>true:当たっている,false:当たっていない</returns>
 	bool CheckCollision(std::shared_ptr<Player>& pPlayer,
 		std::shared_ptr<Enemy>& pEnemy);
 
+	/// <summary>
+	/// プレイヤーと敵の当たり判定
+	/// </summary>
+	/// <param name="pPlayer"></param>
+	/// <param name="pEnemy"></param>
 	void OnHitEnemyAndPlayer(std::shared_ptr<Player>& pPlayer,
 		std::shared_ptr<Enemy>& pEnemy);
 
-	void OnHitEnemyAndPAttack(std::shared_ptr<Player>& pPlayer, std::shared_ptr<Enemy>& pEnemy);
+	/// <summary>
+	/// 敵とプレイヤーの攻撃判定が当たった時の処理
+	/// </summary>
+	/// <param name="pPlayer">プレイヤーのオブジェクト</param>
+	/// <param name="pEnemy">敵のオブジェクト</param>
+	void OnHitEnemyAndPlayerAttack(std::shared_ptr<Player>& pPlayer, std::shared_ptr<Enemy>& pEnemy);
 };
 

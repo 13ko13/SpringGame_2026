@@ -1,14 +1,14 @@
-﻿#include "SceneMain.h"
+﻿#include "GameScene.h"
 #include <DxLib.h>
 #include <cassert>
 #include "../GameObjects/Player.h"
 #include "../System/Input.h"
 #include "../System/Camera.h"
-#include "../System/CollisionManager.h"
-#include "../System/EnemyFactory.h"
+#include "../Manager/CollisionManager.h"
+#include "../Manager/EnemyFactory.h"
 #include "../Graphic/SkyBox.h"
-#include "../../../Dxlib_h/EffekseerForDXLib.h"
-#include "../Effect/EffectManager.h"
+#include <EffekseerForDXLib.h>
+#include "../Manager/EffectManager.h"
 
 namespace
 {
@@ -23,12 +23,13 @@ namespace
 	constexpr float attack_ef_scale = 10.0f;
 }
 
-SceneMain::SceneMain() :
+GameScene::GameScene(SceneController& controller) :
+	Scene(controller),
 	m_frameCount(0)
 {
 }
 
-SceneMain::~SceneMain()
+GameScene::~GameScene()
 {
 	if (m_playerMHandle != -1)
 		MV1DeleteModel(m_playerMHandle);
@@ -52,14 +53,10 @@ SceneMain::~SceneMain()
 	DeleteEffekseerEffect(m_attackFieldEffectHandle);
 }
 
-void SceneMain::Init()
+void GameScene::Init()
 {
 	// カリングの設定
 	SetUseBackCulling(true);
-
-	// Zバッファの設定
-	SetUseZBuffer3D(true);	// Zバッファを使います
-	SetWriteZBuffer3D(true);// 描画する物体はZバッファにも距離を書き込む
 
 	//モデルのロード
 	m_playerMHandle = MV1LoadModel("Data/Mv1/Player.mv1");//プレイヤーのモデル
@@ -69,7 +66,7 @@ void SceneMain::Init()
 	//ロードに失敗した場合はアサートする
 	assert(m_playerMHandle != -1);
 	//敵のモデルも
-	assert(m_enemyBaseMHandles[static_cast<int>(EnemyModelType::Enemy1)] != -1);
+	assert(m_enemyBaseMHandles[static_cast<int>(EnemyModelType::Zonbie)] != -1);
 
 	//skyboxのテクスチャのロード
 	m_skyFrontHandle = LoadGraph("data/SkyBox/skybox_front.png");
@@ -126,7 +123,7 @@ void SceneMain::Init()
 	SetLightEnable(TRUE);
 }
 
-void SceneMain::Update(Input& input)
+void GameScene::Update(Input& input)
 {
 	m_frameCount++;
 
@@ -149,15 +146,20 @@ void SceneMain::Update(Input& input)
 	m_pEffectManager->Update();
 }
 
-void SceneMain::Draw()
+void GameScene::Draw()
 {
 	//skyboxの描画
 	m_pSkyBox->Draw(m_pCamera->GetPos());
 
+	//グリッドの描画
 	DrawGrid();
 
-	DrawString(0, 0, "SceneMain", 0xffffff);
+#ifdef _DEBUG
+	DrawString(0, 0, "GameScene", 0xffffff);
 	DrawFormatString(0, 16, 0xffffff, "FRAME:%d", m_frameCount);
+#endif // DEBUG
+
+	
 
 	//オブジェクトの描画
 	//プレイヤーの描画
@@ -173,7 +175,7 @@ void SceneMain::Draw()
 	m_pEffectManager->Draw();
 }
 
-void SceneMain::DrawGrid()
+void GameScene::DrawGrid()
 {
 	//カメラのdraw(基本デバッグ用)
 	m_pCamera->Draw();
@@ -211,7 +213,7 @@ void SceneMain::DrawGrid()
 		0x44aa44, TRUE);
 }
 
-Vector3 const SceneMain::GetStageSize() const
+Vector3 const GameScene::GetStageSize() const
 {
 	return stage_size;
 }
