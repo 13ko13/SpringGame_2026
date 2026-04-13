@@ -1,4 +1,4 @@
-﻿#include "Animator.h"
+﻿#include "ModelAnimator.h"
 #include <DxLib.h>
 
 namespace
@@ -7,17 +7,17 @@ namespace
 	constexpr float anim_delta_time = 0.5f;
 }
 
-Animator::Animator(int modelHandle) :
+ModelAnimator::ModelAnimator(int modelHandle) :
 	m_modelHandle(modelHandle)
 {
 
 }
 
-Animator::~Animator()
+ModelAnimator::~ModelAnimator()
 {
 }
 
-void Animator::Play(int animIndex, bool isLoop,float animSpeed)
+void ModelAnimator::Play(int animIndex, bool isLoop,float animSpeed)
 {
 	//同じアニメーション中ならアタッチしない
 	if (m_animIdx == animIndex) return;
@@ -62,7 +62,7 @@ void Animator::Play(int animIndex, bool isLoop,float animSpeed)
 	}
 }
 
-void Animator::Update(float blendTime)
+void ModelAnimator::Update(float blendTime)
 {
 	//アニメーションなし状態なら処理をスキップ
 	if (m_currentAttachIdx < 0) return;
@@ -124,7 +124,7 @@ void Animator::Update(float blendTime)
 	}
 }
 
-bool const Animator::IsEnd() const
+bool const ModelAnimator::IsEnd() const
 {
 	//現在再生中のアタッチ番号が無ければfalseを返す
 	if (m_currentAttachIdx < 0) return false;
@@ -132,7 +132,7 @@ bool const Animator::IsEnd() const
 	return m_isEnd;
 }
 
-float Animator::GetAnimLength() const
+float ModelAnimator::GetAnimLength() const
 {
 	return MV1GetAttachAnimTotalTime(m_modelHandle, m_currentAttachIdx);
 }

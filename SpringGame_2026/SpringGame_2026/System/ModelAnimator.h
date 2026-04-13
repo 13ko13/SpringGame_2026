@@ -1,10 +1,10 @@
 ﻿#pragma once
 
-class Animator
+class ModelAnimator
 {
 public:
-	Animator(int modelHandle);
-	~Animator();
+	ModelAnimator(int modelHandle);
+	~ModelAnimator();
 
 	/// <summary>
 	/// アニメーションを再生(変更)
@@ -67,4 +67,3 @@ private:
 	//アニメーションをループするか
 	bool m_isLoop = false;
 };
-
