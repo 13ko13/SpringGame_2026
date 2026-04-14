@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "Effect.h"
+
 class AttackFieldEffect : public Effect
 {
 public:

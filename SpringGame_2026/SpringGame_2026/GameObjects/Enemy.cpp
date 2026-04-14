@@ -17,7 +17,7 @@ namespace
 	constexpr float blend_time = 20.0f;
 
 	//球の半径
-	constexpr float sphere_r = 100.0f;
+	constexpr float sphere_r = 70.0f;
 
 	//足元から自分の当たり判定の球までの距離
 	const Vector3 enemy_to_sphere = { 0.0f,125.0f,0.0f };

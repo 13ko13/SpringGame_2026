@@ -17,10 +17,13 @@ namespace
 	constexpr float camera_far = 1500.0f;
 
 	//ステージのサイズ
-	const Vector3 stage_size = { 1000.0f, 0.0f, 1000.0f };
+	const Vector3 stage_size = { 1400.0f, 0.0f, 1400.0f };
 
 	//エフェクトの拡大率
 	constexpr float attack_ef_scale = 10.0f;
+
+	//地面の場所
+	const Vector3 ground_pos = { 0.0f, -50.0f, 0.0f };
 }
 
 GameScene::GameScene(SceneController& controller) :
@@ -68,13 +71,14 @@ void GameScene::Init()
 	//敵のモデルも
 	assert(m_enemyBaseMHandles[static_cast<int>(EnemyModelType::Zonbie)] != -1);
 
+	//----スカイボックス-----
 	//skyboxのテクスチャのロード
-	m_skyFrontHandle = LoadGraph("data/SkyBox/skybox_front.png");
-	m_skyBackHandle = LoadGraph("data/SkyBox/skybox_back.png");
-	m_skyLeftHandle = LoadGraph("data/SkyBox/skybox_left.png");
-	m_skyRightHandle = LoadGraph("data/SkyBox/skybox_right.png");
-	m_skyUpHandle = LoadGraph("data/SkyBox/skybox_up.png");
-	m_skyDownHandle = LoadGraph("data/SkyBox/skybox_down.png");
+	m_skyFrontHandle = LoadGraph("Data/SkyBox/skybox_front.png");
+	m_skyBackHandle = LoadGraph("Data/SkyBox/skybox_back.png");
+	m_skyLeftHandle = LoadGraph("Data/SkyBox/skybox_left.png");
+	m_skyRightHandle = LoadGraph("Data/SkyBox/skybox_right.png");
+	m_skyUpHandle = LoadGraph("Data/SkyBox/skybox_up.png");
+	m_skyDownHandle = LoadGraph("Data/SkyBox/skybox_down.png");
 
 	assert(m_skyFrontHandle != -1);
 	assert(m_skyBackHandle != -1);
@@ -91,6 +95,9 @@ void GameScene::Init()
 		m_skyRightHandle,
 		m_skyUpHandle, m_skyDownHandle);
 
+	//--------------------------
+
+	//--------エフェクト--------
 	//エフェクトのロード
 	m_deathEffectHandle = LoadEffekseerEffect("Data/Effect/Death.efk");//敵の死亡エフェクト
 	assert(m_deathEffectHandle != -1);
@@ -101,6 +108,8 @@ void GameScene::Init()
 	//エフェクトマネージャーの実体を確保
 	m_pEffectManager = std::make_shared<EffectManager>(m_deathEffectHandle, m_attackFieldEffectHandle);
 
+	//--------------------------
+
 	//敵
 	m_pEnemyFactory = std::make_shared<EnemyFactory>(m_enemyBaseMHandles, m_pEffectManager);
 
@@ -109,6 +118,10 @@ void GameScene::Init()
 	//プレイヤー
 	m_playerCopyMHandle = MV1DuplicateModel(m_playerMHandle);
 	m_pPlayer = std::make_shared<Player>(m_playerCopyMHandle, m_pEffectManager);
+
+	//地面のモデルをロード
+	m_groundMHandle = MV1LoadModel("Data/Mv1/Ground.mv1");
+	MV1SetPosition(m_groundMHandle, ground_pos.ToDxLib());
 
 	//カメラの実体を確保
 	m_pCamera = std::make_shared<Camera>(m_pPlayer->GetPos());
@@ -151,6 +164,9 @@ void GameScene::Draw()
 	//skyboxの描画
 	m_pSkyBox->Draw(m_pCamera->GetPos());
 
+	//地面の描画
+	MV1DrawModel(m_groundMHandle);
+
 	//グリッドの描画
 	DrawGrid();
 
@@ -158,8 +174,6 @@ void GameScene::Draw()
 	DrawString(0, 0, "GameScene", 0xffffff);
 	DrawFormatString(0, 16, 0xffffff, "FRAME:%d", m_frameCount);
 #endif // DEBUG
-
-	
 
 	//オブジェクトの描画
 	//プレイヤーの描画
@@ -185,32 +199,34 @@ void GameScene::DrawGrid()
 	VECTOR startPos;
 	VECTOR endPos;
 
-	for (int z = -1000; z <= 1000; z += 100)
+	//ステージのサイズに合わせてグリッドを描画する
+	for (int z = static_cast<int>(- stage_size.m_z);
+		z <= static_cast<int>(-stage_size.m_z); z += 100)
 	{
-		startPos = VGet(-1000.0f, 0.0f, static_cast<float>(z));
-		endPos = VGet(1000.0f, 0.0f, static_cast<float>(z));
+		startPos = VGet(-stage_size.m_x, 0.0f, static_cast<float>(z));
+		endPos = VGet(-stage_size.m_x, 0.0f, static_cast<float>(z));
 		DrawLine3D(startPos, endPos, 0xff0000);
 	}
-	for (int x = -1000; x <= 1000; x += 100)
+	for (int x = static_cast<int>(-stage_size.m_x); x <= static_cast<int>(-stage_size.m_x); x += 100)
 	{
-		startPos = VGet(static_cast<float>(x), 0.0f, -1000.0f);
-		endPos = VGet(static_cast<float>(x), 0.0f, 1000.0f);
+		startPos = VGet(static_cast<float>(x), 0.0f, -stage_size.m_z);
+		endPos = VGet(static_cast<float>(x), 0.0f, -stage_size.m_z);
 		DrawLine3D(startPos, endPos, 0x0000ff);
 	}
 #endif
 
-	//塗りつぶしありの四角を描画して、地面を作る
-	//四角形を三角形2つで描画する（時計回り=表面が上を向く）
-	DrawTriangle3D(
-		VGet(-1000.0f, 0.0f, -1000.0f),
-		VGet(-1000.0f, 0.0f, 1000.0f),
-		VGet(1000.0f, 0.0f, -1000.0f),
-		0x44aa44, TRUE);
-	DrawTriangle3D(
-		VGet(1000.0f, 0.0f, -1000.0f),
-		VGet(-1000.0f, 0.0f, 1000.0f),
-		VGet(1000.0f, 0.0f, 1000.0f),
-		0x44aa44, TRUE);
+	////塗りつぶしありの四角を描画して、地面を作る
+	////四角形を三角形2つで描画する（時計回り=表面が上を向く）
+	//DrawTriangle3D(
+	//	VGet(-1000.0f, 0.0f, -1000.0f),
+	//	VGet(-1000.0f, 0.0f, 1000.0f),
+	//	VGet(1000.0f, 0.0f, -1000.0f),
+	//	0x44aa44, TRUE);
+	//DrawTriangle3D(
+	//	VGet(1000.0f, 0.0f, -1000.0f),
+	//	VGet(-1000.0f, 0.0f, 1000.0f),
+	//	VGet(1000.0f, 0.0f, 1000.0f),
+	//	0x44aa44, TRUE);
 }
 
 Vector3 const GameScene::GetStageSize() const

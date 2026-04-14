@@ -1,7 +1,7 @@
 ﻿#pragma once
 #include "GameObject.h"
 #include "../Math/Vector3.h"
-#include "../System/Animator.h"
+#include "../System/ModelAnimator.h"
 #include "../Math/Sphere.h"
 #include <memory>
 
@@ -92,7 +92,7 @@ private:
 	State m_currentState = State::Idle;
 
 	//アニメーター
-	Animator m_animator;
+	ModelAnimator m_animator;
 
 	//攻撃判定用の球
 	Sphere m_attackSphere;

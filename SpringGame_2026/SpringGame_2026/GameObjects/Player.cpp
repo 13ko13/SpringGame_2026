@@ -9,7 +9,7 @@ namespace
 	const Vector3 first_pos = { 0.0f,0.0f,0.0f };	//初期座標
 	const Vector3 model_size = { 1.5f,1.5f,1.5f };	//モデルのサイズ
 
-	constexpr float move_speed = 2.0f;				//移動速度
+	constexpr float move_speed = 4.0f;				//移動速度
 
 	//プレイヤー基準位置から注視点までのベクトル
 	const Vector3 player_to_target = { 0.0f, 290.0f, 0.0f };
@@ -262,7 +262,7 @@ void Player::Update(Input input, float angle,const Vector3& stageSize)
 
 	//家ではキーボードしか使えないので
 	//キーでも使える入力方法
-	Vector3 dir = { 0.0f,0.0f,0.0f };//プレイヤーの速度ベクトル
+	Vector3 dir = { 0.0f,0.0f,0.0f };//プレイヤーの方向ベクトル
 	m_velocity.m_x = 0.0f;
 	if (input.IsPressed("right"))
 	{

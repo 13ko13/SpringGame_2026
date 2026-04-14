@@ -62,6 +62,9 @@ private:
 	int m_deathEffectHandle = -1;
 	int m_attackFieldEffectHandle = -1;
 
+	//地面のモデルのハンドル
+	int m_groundMHandle = -1;
+
 	//敵のモデルのハンドルの配列
 	std::vector<int> m_enemyBaseMHandles;
 

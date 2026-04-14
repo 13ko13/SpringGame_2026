@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "GameObject.h"
-#include "../System/Animator.h"
+#include "../System/ModelAnimator.h"
 #include <memory>
 
 class EffectManager;
@@ -51,7 +51,7 @@ private:
 	State m_currentState = State::Idle;
 
 	//アニメーター
-	Animator m_animator;
+	ModelAnimator m_animator;
 
 	//Hitアニメーションをおこなったか
 	bool m_isHitAnim = false;

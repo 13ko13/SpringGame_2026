@@ -6,6 +6,7 @@
 #include "../Constants/Game.h"
 #include "EffekseerForDXLib.h"
 #include "../Scene/GameScene.h"
+#include "../Scene/TitleScene.h"
 
 namespace
 {
@@ -128,7 +129,7 @@ void Application::Run()
 	SetDrawScreen(DX_SCREEN_BACK);
 	Input input;//入力のためのオブジェクト 
 	SceneController controller;//シーンを管理するオブジェクト
-	controller.ChangeScene(std::make_shared<GameScene>(controller), first_fade_frame);
+	controller.ChangeScene(std::make_shared<TitleScene>(controller), first_fade_frame);
 
 	while (ProcessMessage() != -1)
 	{
