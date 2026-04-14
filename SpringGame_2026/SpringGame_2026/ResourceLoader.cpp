@@ -66,6 +66,7 @@ void ResourceLoader::LoadAll()
 
 void ResourceLoader::ReleaseAll()
 {
+	
 }
 
 int ResourceLoader::GetModel(ModelID id) const
