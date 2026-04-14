@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include <vector>
 #include "../Constants/Size.h"
 //#include "../SoundManager.h"
 
@@ -7,19 +8,10 @@
 /// シングルトンクラス
 /// </summary>
 class Application
-{ 
-private:
-	Size m_windowSize;
-
-	Application();//newも変数宣言もできなくなる
-	Application(const Application& app) = delete;//コピーコンストラクタを無効
-	void operator=(const Application& app) = delete;//代入を禁止
-
-	//void SoundLoad(SoundManager& sm);
-
+{
 public:
 	~Application();
-	
+
 	/// <summary>
 	/// Applicationのシングルトンインスタンスを取得する
 	/// </summary>
@@ -49,4 +41,28 @@ public:
 	/// </summary>
 	/// <returns></returns>
 	const Size& GetWindowSize() const;
+
+private:
+
+private:
+	Application();//newも変数宣言もできなくなる
+	Application(const Application& app) = delete;//コピーコンストラクタを無効
+	void operator=(const Application& app) = delete;//代入を禁止
+
+	/// <summary>
+	/// モデルのリソースを読み込む
+	/// </summary>
+	void ModelLoad();
+
+	/// <summary>
+	/// 画像のリソースを読み込む
+	/// </summary>
+	void GraphicLoad();
+
+	/// <summary>
+	/// エフェクトのリソースを読み込む
+	/// </summary>
+	void EffectLoad();
+
+	//void SoundLoad(SoundManager& sm);
 };

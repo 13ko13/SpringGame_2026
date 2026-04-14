@@ -3,6 +3,9 @@
 #include "../System/SpriteAnimator.h"
 #include "../System/ModelAnimator.h"
 #include "../System/Camera.h"
+#include "../Graphic/SkyBox.h"
+#include <memory>
+
 
 class TitleScene : public Scene
 {
@@ -29,4 +32,7 @@ private:
 
 	//カメラの実体
 	std::shared_ptr<Camera> m_pCamera;
+
+	//skyboxの実体
+	std::shared_ptr<SkyBox> m_pSkyBox;
 };

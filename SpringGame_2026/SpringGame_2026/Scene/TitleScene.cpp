@@ -42,12 +42,14 @@ void TitleScene::Init()
 void TitleScene::Update(Input& input)
 {
 	//カメラの更新
-	//まだプレイヤーがいないので、注視点の位置を(0,0,0)にしておく
-	m_pCamera->Update(Vector3(0.0f, 0.0f, 0.0f), input);
+	//まだプレイヤーがいないので、注視点の位置を仮設定する
+	m_pCamera->Update(Vector3(0.0f,500.0f, 0.0f), input);
 }
 
 void TitleScene::Draw()
 {
+	//skyboxの描画
+
 	//地面のモデルを描画する
 	MV1DrawModel(m_modelHandles[static_cast<int>(ModelType::Ground)]);
 

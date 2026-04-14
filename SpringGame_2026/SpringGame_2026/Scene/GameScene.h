@@ -46,6 +46,9 @@ private:
 		Zonbie = 0,//ゾンビのモデル
 	};
 
+	//モデルのハンドルの配列
+	std::vector<int> m_modelHandles;
+
 	//プレイヤーモデルのハンドル
 	int m_playerMHandle = -1;
 	int m_playerCopyMHandle = -1;

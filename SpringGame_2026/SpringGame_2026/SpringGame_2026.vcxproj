@@ -145,6 +145,7 @@
     <ClCompile Include="Manager\Fade.cpp" />
     <ClCompile Include="Graphic\SkyBox.cpp" />
     <ClCompile Include="Main\Application.cpp" />
+    <ClCompile Include="ResourceLoader.cpp" />
     <ClCompile Include="Scene\Scene.cpp" />
     <ClCompile Include="Scene\SceneController.cpp" />
     <ClCompile Include="Manager\EnemyFactory.cpp" />
@@ -172,6 +173,7 @@
     <ClInclude Include="Manager\Fade.h" />
     <ClInclude Include="Graphic\SkyBox.h" />
     <ClInclude Include="Main\Application.h" />
+    <ClInclude Include="ResourceLoader.h" />
     <ClInclude Include="Scene\Scene.h" />
     <ClInclude Include="Scene\SceneController.h" />
     <ClInclude Include="Constants\Size.h" />

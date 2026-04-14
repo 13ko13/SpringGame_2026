@@ -62,30 +62,30 @@ void GameScene::Init()
 	SetUseBackCulling(true);
 
 	//モデルのロード
-	m_playerMHandle = MV1LoadModel("Data/Mv1/Player.mv1");//プレイヤーのモデル
+	//m_playerMHandle = MV1LoadModel("Data/Mv1/Player.mv1");//プレイヤーのモデル
 	//敵のモデルもロードする
-	m_enemyBaseMHandles.push_back(MV1LoadModel("Data/Mv1/Enemy.mv1"));//敵のモデル
+	//m_enemyBaseMHandles.push_back(MV1LoadModel("Data/Mv1/Enemy.mv1"));//敵のモデル
 
 	//ロードに失敗した場合はアサートする
-	assert(m_playerMHandle != -1);
-	//敵のモデルも
-	assert(m_enemyBaseMHandles[static_cast<int>(EnemyModelType::Zonbie)] != -1);
+	//assert(m_playerMHandle != -1);
+	////敵のモデルも
+	//assert(m_enemyBaseMHandles[static_cast<int>(EnemyModelType::Zonbie)] != -1);
 
-	//----スカイボックス-----
-	//skyboxのテクスチャのロード
-	m_skyFrontHandle = LoadGraph("Data/SkyBox/skybox_front.png");
-	m_skyBackHandle = LoadGraph("Data/SkyBox/skybox_back.png");
-	m_skyLeftHandle = LoadGraph("Data/SkyBox/skybox_left.png");
-	m_skyRightHandle = LoadGraph("Data/SkyBox/skybox_right.png");
-	m_skyUpHandle = LoadGraph("Data/SkyBox/skybox_up.png");
-	m_skyDownHandle = LoadGraph("Data/SkyBox/skybox_down.png");
+	////----スカイボックス-----
+	////skyboxのテクスチャのロード
+	//m_skyFrontHandle = LoadGraph("Data/SkyBox/skybox_front.png");
+	//m_skyBackHandle = LoadGraph("Data/SkyBox/skybox_back.png");
+	//m_skyLeftHandle = LoadGraph("Data/SkyBox/skybox_left.png");
+	//m_skyRightHandle = LoadGraph("Data/SkyBox/skybox_right.png");
+	//m_skyUpHandle = LoadGraph("Data/SkyBox/skybox_up.png");
+	//m_skyDownHandle = LoadGraph("Data/SkyBox/skybox_down.png");
 
-	assert(m_skyFrontHandle != -1);
-	assert(m_skyBackHandle != -1);
-	assert(m_skyLeftHandle != -1);
-	assert(m_skyRightHandle != -1);
-	assert(m_skyUpHandle != -1);
-	assert(m_skyDownHandle != -1);
+	//assert(m_skyFrontHandle != -1);
+	//assert(m_skyBackHandle != -1);
+	//assert(m_skyLeftHandle != -1);
+	//assert(m_skyRightHandle != -1);
+	//assert(m_skyUpHandle != -1);
+	//assert(m_skyDownHandle != -1);
 
 	//skyboxの実体を確保
 	m_pSkyBox = std::make_shared<SkyBox>(
@@ -99,11 +99,11 @@ void GameScene::Init()
 
 	//--------エフェクト--------
 	//エフェクトのロード
-	m_deathEffectHandle = LoadEffekseerEffect("Data/Effect/Death.efk");//敵の死亡エフェクト
-	assert(m_deathEffectHandle != -1);
+	//m_deathEffectHandle = LoadEffekseerEffect("Data/Effect/Death..");//敵の死亡エフェクト
+	//assert(m_deathEffectHandle != -1);
 
-	m_attackFieldEffectHandle = LoadEffekseerEffect("Data/Effect/AttackField.efk", attack_ef_scale);//攻撃エフェクト
-	assert(m_attackFieldEffectHandle != -1);
+	//m_attackFieldEffectHandle = LoadEffekseerEffect("Data/Effect/AttackField.efk", attack_ef_scale);//攻撃エフェクト
+	//assert(m_attackFieldEffectHandle != -1);
 
 	//エフェクトマネージャーの実体を確保
 	m_pEffectManager = std::make_shared<EffectManager>(m_deathEffectHandle, m_attackFieldEffectHandle);
@@ -119,9 +119,9 @@ void GameScene::Init()
 	m_playerCopyMHandle = MV1DuplicateModel(m_playerMHandle);
 	m_pPlayer = std::make_shared<Player>(m_playerCopyMHandle, m_pEffectManager);
 
-	//地面のモデルをロード
-	m_groundMHandle = MV1LoadModel("Data/Mv1/Ground.mv1");
-	MV1SetPosition(m_groundMHandle, ground_pos.ToDxLib());
+	////地面のモデルをロード
+	//m_groundMHandle = MV1LoadModel("Data/Mv1/Ground.mv1");
+	//MV1SetPosition(m_groundMHandle, ground_pos.ToDxLib());
 
 	//カメラの実体を確保
 	m_pCamera = std::make_shared<Camera>(m_pPlayer->GetPos());
