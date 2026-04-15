@@ -75,7 +75,7 @@ void TitleScene::Init()
 void TitleScene::Update(Input& input)
 {
 	//プレイヤーの更新
-	m_pPlayer->Update(input, m_pCamera->GetAngleY(), stage_size);
+	m_pPlayer->Update(input, m_pCamera->GetAngleY(), stage_size, false);
 
 	//何かしらのボタンが押されたらゲームシーンに遷移する
 	if (input.IsTriggered("ok"))

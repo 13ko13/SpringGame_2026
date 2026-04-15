@@ -30,6 +30,9 @@ namespace
 
 	//敵が移動するときの最低限のvelocityの大きさ
 	constexpr float min_velocity = 0.1f;
+
+	//歩きアニメーションの再生速度
+	constexpr float walk_anim_speed = 1.5f;
 }
 
 Enemy::Enemy(const int modelHandle, const Vector3& pos, std::shared_ptr<EffectManager> pManager) :
@@ -37,10 +40,25 @@ Enemy::Enemy(const int modelHandle, const Vector3& pos, std::shared_ptr<EffectMa
 	m_animator(modelHandle),
 	m_pEffectManager(pManager)
 {
-	MV1SetPosition(m_modelHandle, m_pos.ToDxLib());
+	//平行移動行列を作成
+	Matrix4x4 transMtx = Matrix4x4::Translate(m_pos);
+	//拡大縮小行列を作成
+	Matrix4x4 scaleMtx = Matrix4x4::Scale(model_size);
+	//平行移動行列と拡大縮小行列を合成した行列を作成
+	Matrix4x4 mtx = scaleMtx * transMtx;
+
+	//モデルに拡大縮小行列をかける
+	MV1SetMatrix(m_modelHandle, mtx.ToDxLib());
+
+	//敵のアニメーションが同じタイミングで始まるのを防ぐために、アニメーションの開始フレームをランダムにする
+	//アニメーションの総再生時間を取得する
+	float totalTime = MV1GetAnimTotalTime(m_modelHandle, MV1GetAnimIndex(m_modelHandle, idle_anim_name));
+	//0からtotalTimeまでのランダムな値を生成する
+	//RAND_MAXはrand()が返すことのできる最大値
+	float startFrame = static_cast<float>(rand()) / RAND_MAX * totalTime;
 
 	//初期アニメーションはidleにする
-	m_animator.Play(MV1GetAnimIndex(m_modelHandle, idle_anim_name), true);
+	m_animator.Play(MV1GetAnimIndex(m_modelHandle, idle_anim_name), true, 1.0f, startFrame);
 }
 
 Enemy::~Enemy()
@@ -75,10 +93,18 @@ void Enemy::Update()
 	m_sphere.Update(m_pos + enemy_to_sphere, sphere_r);
 }
 
-void Enemy::Update(const Vector3& playerPos, const Vector3& stageSize)
+void Enemy::Update(const Vector3& playerPos, const Vector3& stageSize, bool isCanMove)
 {
 	//基本的な更新処理
 	Update();
+
+	//移動が許可されていないなら
+	//移動ベクトルを0にして処理を飛ばす
+	if (isCanMove == false)
+	{
+		m_velocity = { 0.0f,0.0f,0.0f };
+		return;
+	}
 
 	if (m_currentState != State::Dead)
 	{
@@ -181,20 +207,27 @@ void Enemy::ChangeState(State next)
 	//ステートを切り替える
 	m_currentState = next;
 
+	//敵のアニメーションが同じタイミングで始まるのを防ぐために、アニメーションの開始フレームをランダムにする
+	//アニメーションの総再生時間を取得する
+	float totalTime = MV1GetAnimTotalTime(m_modelHandle, MV1GetAnimIndex(m_modelHandle, idle_anim_name));
+	//0からtotalTimeまでのランダムな値を生成する
+	//RAND_MAXはrand()が返すことのできる最大値
+	float startFrame = static_cast<float>(rand()) / RAND_MAX * totalTime;
+
 	//ステートに応じてアニメーションを変更
 	switch (m_currentState)
 	{
 	case State::Idle:
-		m_animator.Play(MV1GetAnimIndex(m_modelHandle, idle_anim_name), true);
+		m_animator.Play(MV1GetAnimIndex(m_modelHandle, idle_anim_name), true, 1.0f, startFrame);
 		break;
 	case State::Hit:
-		m_animator.Play(MV1GetAnimIndex(m_modelHandle, hit_anim_name), false);
+		m_animator.Play(MV1GetAnimIndex(m_modelHandle, hit_anim_name), false, 1.0f, startFrame);
 		break;
 	case State::Dead:
-		m_animator.Play(MV1GetAnimIndex(m_modelHandle, dead_anim_name), false);
+		m_animator.Play(MV1GetAnimIndex(m_modelHandle, dead_anim_name), false, 1.0f, startFrame);
 		break;
 	case State::Walk:
-		m_animator.Play(MV1GetAnimIndex(m_modelHandle, walk_anim_name), true);
+		m_animator.Play(MV1GetAnimIndex(m_modelHandle, walk_anim_name), true, walk_anim_speed, startFrame);
 		break;
 	}
 }
@@ -232,10 +265,4 @@ bool Enemy::IsDeadAnimEnd() const
 
 	//死亡状態でない（生きている）ときはtrueを返す
 	return true;
-}
-
-void Enemy::OnPushBack(const Vector3& pushVector)
-{
-	//押し戻しのベクトルを加算する
-	m_pos += pushVector;
 }

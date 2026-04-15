@@ -37,6 +37,9 @@ Camera::Camera(const Vector3& targetPos) :
 	//カメラの遠近感の範囲を設定する
 	SetCameraNearFar(camera_near, camera_far);
 	m_targetPos = targetPos;
+
+	//最初のカメラの上下回転角を-20度にする
+	m_angleX = -DX_PI_F / 9.0f;
 }
 
 Camera::~Camera()

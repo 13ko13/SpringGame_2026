@@ -28,7 +28,7 @@ void SceneController::ChangeScene(std::shared_ptr<Scene> scene, float fadeFrame)
 
 void SceneController::PushScene(std::shared_ptr<Scene> scene)
 {
-	//新しいシーンを末尾に積みます(下から積む？)
+	//新しいシーンを末尾に積みます(下から積むイメージ)
 	m_scenes.push_back(scene);
 }
 

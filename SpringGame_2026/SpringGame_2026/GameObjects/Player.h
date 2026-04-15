@@ -24,7 +24,7 @@ public:
 	/// </summary>
 	/// <param name="input">入力情報</param>
 	/// <param name="angle">カメラの回転角</param>
-	void Update(Input input, float angle, const Vector3& stageSize);
+	void Update(Input input, float angle, const Vector3& stageSizeis, bool isCanMove);
 
 	/// <summary>
 	/// 描画
@@ -126,7 +126,8 @@ private:
 	/// ステートを切り替えるときに使う
 	/// </summary>
 	/// <param name="next">切り替えたいステート</param>
-	void ChangeState(State next);
+	/// <param name="force">強制的に切り替えるかどうか</param>
+	void ChangeState(State next, bool force = false);
 
 	/// <summary>
 	/// 当たり判定用の球の位置と半径を更新する

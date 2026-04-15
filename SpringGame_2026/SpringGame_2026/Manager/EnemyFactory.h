@@ -42,7 +42,7 @@ public:
 	/// 敵全員の更新処理
 	/// </summary>
 	/// <param name="playerPos">プレイヤーの位置</param>
-	void Update(const Vector3& playerPos, const Vector3& stageSize);
+	void Update(const Vector3& playerPos, const Vector3& stageSize, bool isCanMove);
 
 	/// <summary>
 	/// 敵全員のDraw

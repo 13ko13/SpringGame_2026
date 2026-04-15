@@ -38,3 +38,9 @@ GameObject::~GameObject()
 		m_modelHandle = -1;
 	}
 }
+
+void GameObject::OnPushBack(const Vector3& pushVector)
+{
+	//押し戻しのベクトルを加算する
+	m_pos += pushVector;
+}

@@ -36,8 +36,7 @@ void CollisionManager::Update(std::shared_ptr<Player>& pPlayer,
 		}
 	}
 
-	//敵とプレイヤーの当たり判定を行う
-	//敵一体一体とプレイヤーの攻撃判定用の球との当たり判定を行う
+	//敵の当たり判定を行う
 	for (auto& pEnemy : enemies)
 	{
 		//敵が死亡済み、または死亡アニメーション中なら
@@ -50,6 +49,18 @@ void CollisionManager::Update(std::shared_ptr<Player>& pPlayer,
 			//敵とプレイヤーが当たっているときの処理を行わせる
 			OnHitEnemyAndPlayer(pPlayer, pEnemy);
 		}
+
+		//敵一体一体の押し戻しの処理
+		for (auto& other : enemies)
+		{
+			pushBackEnemy(pEnemy, other);
+		}
+	}
+
+	//プレイヤーと敵の押し戻しの処理
+	for (auto& pEnemy : enemies)
+	{
+		pushBackPlayer(pPlayer, pEnemy);
 	}
 }
 
@@ -75,4 +86,51 @@ void CollisionManager::OnHitEnemyAndPlayer(std::shared_ptr<Player>& pPlayer,
 void CollisionManager::OnHitEnemyAndPlayerAttack(std::shared_ptr<Player>& pPlayer, std::shared_ptr<Enemy>& pEnemy)
 {
 	pEnemy->OnDead();
+}
+
+void CollisionManager::pushBackEnemy(std::shared_ptr<Enemy>& pEnemy, std::shared_ptr<Enemy>& other)
+{
+	//自分自身との押し戻しは行わない
+	if (pEnemy == other) return;
+	//2体の距離ベクトルを求める
+	Vector3 toOther = other->GetPos() - pEnemy->GetPos();
+	//そのベクトルの長さを求める
+	float distance = toOther.Length();
+
+	//自分の球の半径
+	const float myRadius = pEnemy->GetSphere().GetRadius();
+	//他の敵の球の半径
+	const float otherRadius = other->GetSphere().GetRadius();
+
+	//距離がそれぞれの円の半径の和より小さいとき、押し戻しの処理を行う
+	if (distance < myRadius + otherRadius)
+	{
+		//押し戻す方向と強さを表すベクトルを求める
+		Vector3 pushVector = toOther.Normalized() * (myRadius + otherRadius - distance);
+		//押し戻す処理を行う
+		pEnemy->OnPushBack(-pushVector);
+		other->OnPushBack(pushVector);
+	}
+}
+
+void CollisionManager::pushBackPlayer(std::shared_ptr<Player>& pPlayer, std::shared_ptr<Enemy>& pEnemy)
+{
+	//2体の距離ベクトルを求める
+	Vector3 toEnemy = pEnemy->GetPos() - pPlayer->GetPos();
+	//そのベクトルの長さを求める
+	float distance = toEnemy.Length();
+
+	//プレイヤーの球の半径
+	const float playerRadius = pPlayer->GetSphere().GetRadius();
+	//敵の球の半径
+	const float enemyRadius = pEnemy->GetSphere().GetRadius();
+
+	//距離がそれぞれの円の半径の和より小さいとき、押し戻しの処理を行う
+	if (distance < playerRadius + enemyRadius)
+	{
+		//押し戻す方向と強さを表すベクトルを求める
+		Vector3 pushVector = toEnemy.Normalized() * (playerRadius + enemyRadius - distance);
+		//押し戻す処理を行う
+		pPlayer->OnPushBack(-pushVector);
+	}
 }

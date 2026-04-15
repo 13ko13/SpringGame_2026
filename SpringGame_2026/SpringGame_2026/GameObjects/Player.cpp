@@ -31,6 +31,8 @@ namespace
 
 	//ジャンプ攻撃のアニメーションの速度
 	constexpr float jump_attack_anim_speed = 1.4f;
+	//ダメージを受けたときのアニメーションの速度
+	constexpr float damage_anim_speed = 1.5f;
 
 	//球の半径
 	constexpr float sphere_r = 70.0f;
@@ -51,7 +53,7 @@ namespace
 	constexpr float lerp_t = 0.15f;
 
 	//無敵になる時間
-	constexpr int invincible_time = 240;
+	constexpr int invincible_time = 90;//1.5秒
 
 	//エフェクトのオフセット
 	const Vector3 effect_offset = { 0.0f, -50.0f, 0.0f };
@@ -67,14 +69,10 @@ Player::Player(int modelHandle, std::shared_ptr<EffectManager> pManager) :
 	//初期状態はIdleにする
 	m_animator.Play(MV1GetAnimIndex(m_modelHandle, idle_anim_name), true);
 
-#ifdef _DEBUG
-	//モデルに含まれる全アニメーション名を出力する
-	int animNum = MV1GetAnimNum(m_modelHandle);
-	for (int i = 0; i < animNum; i++)
-	{
-		printfDx("Anim[%d]: %s\n", i, MV1GetAnimName(m_modelHandle, i));
-	}
-#endif
+	//拡大縮小行列を作成
+	Matrix4x4 mtx = Matrix4x4::Scale(model_size);
+	//モデルに拡大縮小行列をかける
+	MV1SetMatrix(m_modelHandle, mtx.ToDxLib());
 }
 
 Player::~Player()
@@ -87,8 +85,19 @@ void Player::Update()
 
 }
 
-void Player::Update(Input input, float angle,const Vector3& stageSize)
+void Player::Update(Input input, float angle, const Vector3& stageSize, bool isCanMove)
 {
+	//シーン側が移動を許可していないときは、
+	//移動アニメーションを行いたくないため移動ベクトルを0にする
+	if (isCanMove == false)
+	{
+		m_velocity = { 0.0f,0.0f,0.0f };
+	}
+
+	//シーン側がプレイヤーの移動を許可しているかどうかを受け取る
+	m_isCanMove = isCanMove;
+
+	//当たり判定球の更新
 	UpdateCollSphere();
 
 	//攻撃中
@@ -167,6 +176,9 @@ void Player::Update(Input input, float angle,const Vector3& stageSize)
 		//攻撃入力を最優先にする
 		if (input.IsPressed("attack"))
 		{
+			//動けない場合は処理を飛ばす
+			if (m_isCanMove == false) return;
+
 			Attack();
 			//攻撃入力がされたときに、攻撃エフェクトを出す
 			m_pEffectManager->Create(m_pos + effect_offset, EffectManager::EffectType::AttackField);
@@ -288,7 +300,7 @@ void Player::Update(Input input, float angle,const Vector3& stageSize)
 	if (m_pos.m_x < -stageSize.m_x) m_pos.m_x = -stageSize.m_x;
 	if (m_pos.m_x > stageSize.m_x) m_pos.m_x = stageSize.m_x;
 	if (m_pos.m_z > stageSize.m_z) m_pos.m_z = stageSize.m_z;
-	if (m_pos.m_z < -stageSize.m_z ) m_pos.m_z = -stageSize.m_z;
+	if (m_pos.m_z < -stageSize.m_z) m_pos.m_z = -stageSize.m_z;
 }
 
 void Player::Draw()
@@ -297,7 +309,6 @@ void Player::Draw()
 	MV1DrawModel(m_modelHandle);
 
 #ifdef _DEBUG
-	DrawFormatString(0, 30, 0xffffff, "PlayerState:%d", m_currentState);//ステートを画面に表示する
 	m_sphere.Draw(0xff0000);//当たり判定用の球を描画する
 	m_attackSphere.Draw(0x0000ff);//攻撃判定用の球を描画する
 #endif
@@ -374,7 +385,7 @@ void Player::Attack()
 	m_isCanMove = false;
 
 	//ステートを攻撃中に変更
-	ChangeState(State::Attack);
+	ChangeState(State::Attack, true);
 }
 
 bool const Player::IsMoving() const
@@ -391,11 +402,12 @@ bool const Player::IsMoving() const
 	}
 }
 
-void Player::ChangeState(State next)
+void Player::ChangeState(State next, bool force)
 {
 	//切り替えたいステートがすでに適用されている場合は
 	//処理を飛ばす
-	if (m_currentState == next) return;
+	if (m_currentState == next &&
+		!force) return;
 
 	//ステートを切り替える
 	m_currentState = next;
@@ -413,7 +425,7 @@ void Player::ChangeState(State next)
 		m_animator.Play(MV1GetAnimIndex(m_modelHandle, jump_attack), false, jump_attack_anim_speed);
 		break;
 	case State::Damage:
-		m_animator.Play(MV1GetAnimIndex(m_modelHandle, damage_anim_name), false);
+		m_animator.Play(MV1GetAnimIndex(m_modelHandle, damage_anim_name), false, damage_anim_speed);
 		break;
 	}
 }

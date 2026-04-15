@@ -10,7 +10,7 @@ public:
 	/// アニメーションを再生(変更)
 	/// </summary>
 	/// <param name="animIndex">再生させるアニメーション番号</param>
-	void Play(int animIndex, bool isLoop, float animSpeed = 1.0f);
+	void Play(int animIndex, bool isLoop, float animSpeed = 1.0f, float startFrame = 0.0f);
 
 	/// <summary>
 	/// アニメーションを更新
@@ -27,13 +27,13 @@ public:
 	/// <summary>
 	/// 今の再生時間を取得
 	/// </summary>
-	/// <returns>指定のアニメーションの現在の再生時間</returns>
+	/// <returns>アタッチ中のアニメーションの現在の再生時間</returns>
 	float GetPlayTime() const { return m_currentTime; }
 
 	/// <summary>
 	/// アニメーションの総再生時間を返す
 	/// </summary>
-	/// <returns>指定のアニメーションの総再生時間</returns>
+	/// <returns>アタッチ中のアニメーションの総再生時間</returns>
 	float GetAnimLength() const;
 
 private:

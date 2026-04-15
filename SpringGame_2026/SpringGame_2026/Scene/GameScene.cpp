@@ -1,6 +1,7 @@
 ﻿#include <DxLib.h>
 #include <cassert>
 #include <EffekseerForDXLib.h>
+#include <string>
 
 #include "GameScene.h"
 #include "../GameObjects/Player.h"
@@ -31,10 +32,26 @@ namespace
 	constexpr float fade_frame = 60.0f;
 
 	//フォントのサイズ
-	constexpr int font_size = 16;
+	constexpr int time_limit_font_size = 32;//残り時間のフォントサイズ
+	constexpr int game_count_font_size = 200;//ゲーム開始前のカウントダウンのフォントサイズ
 
 	//フォント名
 	const char* font_name = "玉ねぎ楷書激無料版v7改";
+
+	//ゲーム時間
+	constexpr int game_time = 60 * 60;//1分
+	//constexpr int game_time = 60 * 15;//15秒
+
+	//「残り時間」の文字列の位置を割合で指定
+	constexpr float time_text_pos_x_rate = 0.97f;
+	constexpr float time_text_pos_y_rate = 0.05f;
+
+	//「残り敵の数」の文字列の位置を割合で指定
+	constexpr float e_num_text_pos_x_rate = 0.97f;
+	constexpr float e_num_text_pos_y_rate = 0.12f;
+
+	//ゲーム開始時のカウントダウンの時間
+	constexpr int start_count_down_time = 60 * 4;//4秒
 }
 
 GameScene::GameScene(SceneController& controller) :
@@ -62,6 +79,12 @@ void GameScene::Init()
 	//カリングの設定
 	SetUseBackCulling(true);
 
+	//ゲーム時間を設定
+	m_timeLimit = game_time;//3分
+
+	//ゲーム開始時のカウントダウンの時間を設定
+	m_startCountDown = start_count_down_time;//3秒
+
 	//ResourceLoaderから必要なリソースを取得して初期化する
 	auto& resourceLoader = ResourceLoader::GetInstance();
 
@@ -84,6 +107,9 @@ void GameScene::Init()
 	//敵の生成を行う工場の初期化
 	m_pEnemyFactory->Init(stage_size);
 
+	//敵の数を保持
+	m_enemyCount = m_pEnemyFactory->GetEnemies().size();
+
 	//skyboxの実体を確保
 	m_pSkyBox = std::make_shared<SkyBox>(
 		resourceLoader.GetGraphic(ResourceLoader::GraphicID::FrontSky),
@@ -103,7 +129,8 @@ void GameScene::Init()
 	m_pCollManager = std::make_shared<CollisionManager>();
 
 	//フォントハンドルを取得する
-	m_fontHandle = CreateFontToHandle(font_name, font_size, -1, -1);
+	m_timeFontHandle = CreateFontToHandle(font_name, time_limit_font_size, -1, DX_FONTTYPE_ANTIALIASING_EDGE_4X4);
+	m_countDownFontHandle = CreateFontToHandle(font_name, game_count_font_size, -1, DX_FONTTYPE_ANTIALIASING_EDGE_4X4);
 
 	//環境光だけを最大に
 	SetGlobalAmbientLight(GetColorF(255, 255, 255, 255));
@@ -116,14 +143,45 @@ void GameScene::Update(Input& input)
 {
 	m_frameCount++;
 
-	//プレイヤーの更新
-	m_pPlayer->Update(input, m_pCamera->GetAngleY(), GetStageSize());
+	//ゲーム開始前のカウントダウン
+	m_startCountDown--;
 
 	//カメラの更新
 	m_pCamera->Update(m_pPlayer->GetTargetPos(), input);
 
-	//敵すべての更新
-	m_pEnemyFactory->Update(m_pPlayer->GetPos(), GetStageSize());
+	//カウントダウン中はプレイヤーと敵は待機モーションのみ再生させる
+	if (m_startCountDown >= 60)
+	{
+		//プレイヤーの更新
+		m_pPlayer->Update(input, m_pCamera->GetAngleY(), stage_size, false);
+		//敵すべての更新
+		m_pEnemyFactory->Update(m_pPlayer->GetPos(), GetStageSize(), false); 
+	}
+	else
+	{
+		//カウントダウンが終了したら通常の更新処理を行う
+		//プレイヤーの更新
+		m_pPlayer->Update(input, m_pCamera->GetAngleY(), stage_size, true);
+		//敵すべての更新
+		m_pEnemyFactory->Update(m_pPlayer->GetPos(), GetStageSize(), true);
+	}
+
+
+
+	//カウントダウン中はゲーム時間の更新処理を行わない
+	if (m_startCountDown >= 60) return;
+
+	//カウントダウンが終了したらゲーム時間のカウントを開始する
+	//ゲーム時間の更新
+	if (m_timeLimit > 0)
+	{
+		m_timeLimit--;
+		//ゲーム時間が終了したらリザルトシーンに遷移する
+		if (m_timeLimit == 0)
+		{
+			m_controller.ChangeScene(std::make_shared<ResultScene>(m_controller), fade_frame);
+		}
+	}
 
 	//当たり判定の更新
 	m_pCollManager->Update(m_pPlayer, m_pEnemyFactory);
@@ -157,6 +215,7 @@ void GameScene::Draw()
 #ifdef _DEBUG
 	DrawString(0, 0, "GameScene", 0xffffff);
 	DrawFormatString(0, 16, 0xffffff, "FRAME:%d", m_frameCount);
+	DrawFormatString(0, 64, 0xffffff, "Time:%d", m_timeLimit / 60);
 #endif //DEBUG
 
 	//オブジェクトの描画
@@ -175,10 +234,54 @@ void GameScene::Draw()
 	//文字の描画(仮)
 	//ウィンドウサイズを取得する
 	auto& windowSize = Application::GetInstance().GetWindowSize();
+
+	//残り時間の描画
+	//stringで描画する文字列を作成する
+	std::string timeText = "残り時間:" + std::to_string(m_timeLimit / 60) + "秒";
+
 	//表示したい文字列の横幅を取得する
-	const int strWidth = GetDrawStringWidthToHandle("Time", strlen("Time"), m_fontHandle);
-	Vector3 drawPos = { windowSize.w / 2.0f - strWidth / 2.0f, windowSize.h / 2.0f };
-	DrawStringToHandle(static_cast<int>(drawPos.m_x), static_cast<int>(drawPos.m_y), "Time", 0xffffff, m_fontHandle);
+	const int strWidth = GetDrawStringWidthToHandle("残り時間:60秒", strlen("残り時間:60秒"), m_timeFontHandle);
+	//右上に描画するため、描画位置を計算する
+	Vector3 drawPos = { 
+		static_cast<float>(windowSize.w * time_text_pos_x_rate - strWidth) ,
+		static_cast<float>(windowSize.h * time_text_pos_y_rate) };
+	DrawStringToHandle(static_cast<int>(drawPos.m_x),
+		static_cast<int>(drawPos.m_y),
+		timeText.c_str(),
+		0xffffff, m_timeFontHandle);
+
+	//残りの敵の数を描画する
+	//まず敵の数を取得する
+	int enemyCount = static_cast<int>(m_pEnemyFactory->GetEnemies().size());
+	//stringで描画する文字列を作成する
+	std::string enemyText = "残り敵数:" + std::to_string(enemyCount) + "体";
+	//敵の数が1桁になったときに文字列の位置が変わらないように、最大桁数のときの文字列の横幅を取得しておく
+	std::string maxEnemyText = "残り敵数:99体";
+	const int strMaxWidth = GetDrawStringWidthToHandle(maxEnemyText.c_str(), strlen(maxEnemyText.c_str()), m_timeFontHandle);
+	//ウィンドウの右上に描画するため、描画位置を計算する
+	drawPos = { static_cast<float>(windowSize.w * e_num_text_pos_x_rate - strMaxWidth),
+		static_cast<float>(windowSize.h * e_num_text_pos_y_rate) };
+	DrawStringToHandle(static_cast<int>(drawPos.m_x),
+		static_cast<int>(drawPos.m_y), 
+		enemyText.c_str(),
+		0xffffff, m_timeFontHandle);
+
+	//ゲーム開始時のカウントダウンの描画
+	if (m_startCountDown >= 60)
+	{
+		//stringで描画する文字列を作成する
+		std::string startTimeText = std::to_string(m_startCountDown / 60) + "秒";
+
+		//表示したい文字列の横幅を取得する
+		const int strWidth = GetDrawStringWidthToHandle(startTimeText.c_str(), strlen(startTimeText.c_str()), m_countDownFontHandle);
+		//表示したい文字の高さ
+		const int strHeight = game_count_font_size;
+
+		//ウィンドウの中心に描画するため、描画位置を計算する
+		Vector3 drawPos = { windowSize.w / 2.0f - strWidth / 2.0f, windowSize.h / 2.0f - strHeight / 2.0f };
+		DrawExtendStringToHandle(static_cast<int>(drawPos.m_x), static_cast<int>(drawPos.m_y),
+			1.0, 1.0, startTimeText.c_str(), 0xffffff, m_countDownFontHandle);
+	}
 }
 
 void GameScene::DrawGrid()
@@ -192,7 +295,7 @@ void GameScene::DrawGrid()
 	VECTOR endPos;
 
 	//ステージのサイズに合わせてグリッドを描画する
-	for (int z = static_cast<int>(- stage_size.m_z);
+	for (int z = static_cast<int>(-stage_size.m_z);
 		z <= static_cast<int>(-stage_size.m_z); z += 100)
 	{
 		startPos = VGet(-stage_size.m_x, 0.0f, static_cast<float>(z));

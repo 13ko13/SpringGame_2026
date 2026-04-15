@@ -35,7 +35,13 @@ public:
 	/// オブジェクトが死亡しているかを返す関数
 	/// </summary>
 	/// <returns>true:死んでいる,false:死んでいない</returns>
-   virtual bool IsDead() const { return m_isDead; }
+	virtual bool IsDead() const { return m_isDead; }
+
+	/// <summary>
+	/// 他のオブジェクトとの押し戻しの処理
+	/// </summary>
+	/// <param name="pushVector">押し戻す方向と強さを表すベクトル</param>
+    virtual void OnPushBack(const Vector3& pushVector);
 
 private:
 

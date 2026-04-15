@@ -17,10 +17,10 @@ ModelAnimator::~ModelAnimator()
 {
 }
 
-void ModelAnimator::Play(int animIndex, bool isLoop,float animSpeed)
+void ModelAnimator::Play(int animIndex, bool isLoop,float animSpeed, float startFrame)
 {
-	//同じアニメーション中ならアタッチしない
-	if (m_animIdx == animIndex) return;
+	//同じアニメーション中で、アニメーションが終了済みじゃないなら処理を飛ばす
+	if (m_animIdx == animIndex && !m_isEnd) return;
 
 	//アニメーション中なのでisEndをfalse
 	m_isEnd = false;
@@ -44,7 +44,8 @@ void ModelAnimator::Play(int animIndex, bool isLoop,float animSpeed)
 
 	//アニメーションをアタッチ
 	m_currentAttachIdx = MV1AttachAnim(m_modelHandle, animIndex);
-	m_currentTime = 0.0f;
+	m_currentTime = startFrame;
+	MV1SetAttachAnimTime(m_modelHandle, m_currentAttachIdx, m_currentTime);
 
 	//ブレンド中のタイマーをリセット
 	m_blendTimer = 0.0f;

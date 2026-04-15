@@ -16,7 +16,7 @@ EnemyFactory::EnemyFactory(std::vector<int> modelHandles, std::shared_ptr<Effect
 
 EnemyFactory::~EnemyFactory()
 {
-	
+
 }
 
 void EnemyFactory::Init(const Vector3& stageSize)
@@ -58,37 +58,11 @@ std::shared_ptr<Enemy> EnemyFactory::Create(const Vector3& pos, EnemyType enemyT
 	return nullptr;
 }
 
-void EnemyFactory::Update(const Vector3& playerPos, const Vector3& stageSize)
+void EnemyFactory::Update(const Vector3& playerPos, const Vector3& stageSize, bool isCanMove)
 {
 	for (auto& enemy : m_pEnemies)
 	{
-		enemy->Update(playerPos, stageSize);
-
-		//敵一体一体の押し戻しの処理
-		for (auto& other : m_pEnemies)
-		{
-			//自分自身との押し戻しは行わない
-			if (enemy == other) continue;
-			//2体の距離ベクトルを求める
-			Vector3 toOther = other->GetPos() - enemy->GetPos();
-			//そのベクトルの長さを求める
-			float distance = toOther.Length();
-
-			//自分の球の半径
-			const float myRadius = enemy->GetSphere().GetRadius();
-			//他の敵の球の半径
-			const float otherRadius = other->GetSphere().GetRadius();
-
-			//距離がそれぞれの円の半径の和より小さいとき、押し戻しの処理を行う
-			if(distance < myRadius + otherRadius)
-			{
-				//押し戻す方向と強さを表すベクトルを求める
-				Vector3 pushVector = toOther.Normalized() * (myRadius + otherRadius - distance);
-				//押し戻す処理を行う
-				enemy->OnPushBack(-pushVector);
-				other->OnPushBack(pushVector);
-			}
-		}
+		enemy->Update(playerPos, stageSize, isCanMove);
 	}
 
 	//敵が死んでいるときはリストから削除する

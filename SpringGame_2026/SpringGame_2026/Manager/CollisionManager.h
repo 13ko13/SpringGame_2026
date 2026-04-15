@@ -52,5 +52,19 @@ private:
 	/// <param name="pPlayer">プレイヤーのオブジェクト</param>
 	/// <param name="pEnemy">敵のオブジェクト</param>
 	void OnHitEnemyAndPlayerAttack(std::shared_ptr<Player>& pPlayer, std::shared_ptr<Enemy>& pEnemy);
+
+	/// <summary>
+	/// 敵同士の押し戻しの処理
+	/// </summary>
+	/// <param name="pEnemy">敵のポインタ</param>
+	/// <param name="other">他の敵のポインタ</param>
+	void pushBackEnemy(std::shared_ptr<Enemy>& pEnemy, std::shared_ptr<Enemy>& other);
+
+	/// <summary>
+	///	プレイヤーと敵の押し戻しの処理
+	/// </summary>
+	/// <param name="pPlayer">プレイヤーのオブジェクト</param>
+	/// <param name="pEnemy">敵のオブジェクト</param>
+	void pushBackPlayer(std::shared_ptr<Player>& pPlayer, std::shared_ptr<Enemy>& pEnemy);
 };
 

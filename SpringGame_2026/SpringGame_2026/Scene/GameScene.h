@@ -41,8 +41,10 @@ private:
 	int m_frameCount;
 
 	//ゲームの制限時間(フレーム数)
-	constexpr static int time_limit = 60 * 60;//1分
-	int m_timeLimit = time_limit;
+	int m_timeLimit = 0;
+
+	//ゲーム開始時のカウントダウン
+	int m_startCountDown = 0;
 
 	//プレイヤーモデルのコピーハンドル
 	int m_playerMHandle = -1;
@@ -65,8 +67,13 @@ private:
 	int m_deathEffectHandle = -1;
 	int m_attackFieldEffectHandle = -1;
 
-	//フォントのハンドル
-	int m_fontHandle = -1;
+	//残り時間フォントのハンドル
+	int m_timeFontHandle = -1;
+	//カウントダウンフォントのハンドル
+	int m_countDownFontHandle = -1;
+
+	//敵の数を保持しておく
+	int m_enemyCount = 0;
 
 	//プレイヤーの実体
 	std::shared_ptr<Player> m_pPlayer;
