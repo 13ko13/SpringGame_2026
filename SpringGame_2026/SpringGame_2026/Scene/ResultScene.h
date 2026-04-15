@@ -1,18 +1,16 @@
 ﻿#pragma once
 #include "Scene.h"
-#include "../System/SpriteAnimator.h"
-#include "../System/ModelAnimator.h"
-#include "../System/Camera.h"
-#include "../Graphic/SkyBox.h"
-#include "../GameObjects/Player.h"
 #include <memory>
 
-
-class TitleScene : public Scene
+class Player;
+class Camera;
+class SkyBox;
+class EffectManager;
+class ResultScene : public Scene
 {
 public:
-	TitleScene(SceneController& controller);
-	~TitleScene();
+	ResultScene(SceneController& controller);
+	~ResultScene();
 
 	void Init() override;
 	void Update(Input& input) override;
@@ -46,3 +44,4 @@ private:
 	//エフェクトマネージャーの実体
 	std::shared_ptr<EffectManager> m_pEffectManager;
 };
+

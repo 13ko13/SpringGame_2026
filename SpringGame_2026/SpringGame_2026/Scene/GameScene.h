@@ -40,18 +40,18 @@ private:
 	//フレームカウンター
 	int m_frameCount;
 
-	//敵のモデルの種類
-	enum class EnemyModelType : int
-	{
-		Zonbie = 0,//ゾンビのモデル
-	};
+	//ゲームの制限時間(フレーム数)
+	constexpr static int time_limit = 60 * 60;//1分
+	int m_timeLimit = time_limit;
 
-	//モデルのハンドルの配列
-	std::vector<int> m_modelHandles;
-
-	//プレイヤーモデルのハンドル
+	//プレイヤーモデルのコピーハンドル
 	int m_playerMHandle = -1;
-	int m_playerCopyMHandle = -1;
+
+	//地面のモデルのハンドル
+	int m_groundMHandle = -1;
+
+	//敵のモデルのハンドルの配列
+	std::vector<int> m_enemyMHandles;
 
 	//skyboxのテクスチャのハンドル
 	int m_skyFrontHandle = -1;
@@ -65,11 +65,8 @@ private:
 	int m_deathEffectHandle = -1;
 	int m_attackFieldEffectHandle = -1;
 
-	//地面のモデルのハンドル
-	int m_groundMHandle = -1;
-
-	//敵のモデルのハンドルの配列
-	std::vector<int> m_enemyBaseMHandles;
+	//フォントのハンドル
+	int m_fontHandle = -1;
 
 	//プレイヤーの実体
 	std::shared_ptr<Player> m_pPlayer;

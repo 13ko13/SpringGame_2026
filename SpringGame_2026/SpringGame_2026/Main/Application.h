@@ -43,26 +43,11 @@ public:
 	const Size& GetWindowSize() const;
 
 private:
-
+	Size m_windowSize;//ウィンドウサイズ
 private:
 	Application();//newも変数宣言もできなくなる
 	Application(const Application& app) = delete;//コピーコンストラクタを無効
 	void operator=(const Application& app) = delete;//代入を禁止
-
-	/// <summary>
-	/// モデルのリソースを読み込む
-	/// </summary>
-	void ModelLoad();
-
-	/// <summary>
-	/// 画像のリソースを読み込む
-	/// </summary>
-	void GraphicLoad();
-
-	/// <summary>
-	/// エフェクトのリソースを読み込む
-	/// </summary>
-	void EffectLoad();
 
 	//void SoundLoad(SoundManager& sm);
 };

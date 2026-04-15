@@ -1,12 +1,13 @@
-﻿#include "TitleScene.h"
-#include "SceneController.h"
-#include <cassert>
-#include "../System/Input.h"
-#include "../Loader/ResourceLoader.h"
-#include "GameScene.h"
+﻿#include "ResultScene.h"
 #include "../Main/Application.h"
 #include "../GameObjects/Player.h"
 #include "../Manager/EffectManager.h"
+#include "../System/Input.h"
+#include "../Loader/ResourceLoader.h"
+#include "SceneController.h"
+#include "../System/Camera.h"
+#include "../Graphic/SkyBox.h"
+#include "TitleScene.h"
 
 namespace
 {
@@ -29,19 +30,19 @@ namespace
 	const Vector3 stage_size = { 1100.0f, 0.0f, 1100.0f };
 }
 
-TitleScene::TitleScene(SceneController& controller):
+ResultScene::ResultScene(SceneController& controller) :
 	Scene(controller)
 {
 }
 
-TitleScene::~TitleScene()
+ResultScene::~ResultScene()
 {
-	
+
 }
 
-void TitleScene::Init()
+void ResultScene::Init()
 {
-    // 地面のモデルのハンドルを ResourceLoader から取得する
+	// 地面のモデルのハンドルを ResourceLoader から取得する
 	auto& loader = ResourceLoader::GetInstance();
 	int handle = loader.GetModel(ResourceLoader::ModelID::Ground);
 	// モデルのハンドルを配列に入れる
@@ -66,13 +67,9 @@ void TitleScene::Init()
 		loader.GetGraphic(ResourceLoader::GraphicID::RightSky),
 		loader.GetGraphic(ResourceLoader::GraphicID::UpSky),
 		loader.GetGraphic(ResourceLoader::GraphicID::DownSky));
-
-	//TODO:タイトルロゴの画像を読み込んだり、プレイヤーモデルを読み込んだりする
-	//タイトルロゴのハンドルを受け取る
-	m_graphHandles.push_back(loader.GetGraphic(ResourceLoader::GraphicID::TitleLogo));
 }
 
-void TitleScene::Update(Input& input)
+void ResultScene::Update(Input& input)
 {
 	//プレイヤーの更新
 	m_pPlayer->Update(input, m_pCamera->GetAngleY(), stage_size);
@@ -80,11 +77,11 @@ void TitleScene::Update(Input& input)
 	//何かしらのボタンが押されたらゲームシーンに遷移する
 	if (input.IsTriggered("ok"))
 	{
-		m_controller.ChangeScene(std::make_shared<GameScene>(m_controller), fade_frame);
+		m_controller.ChangeScene(std::make_shared<TitleScene>(m_controller), fade_frame);
 	}
 }
 
-void TitleScene::Draw()
+void ResultScene::Draw()
 {
 	//skyboxの描画
 	m_pSkyBox->Draw(m_pCamera->GetPos());
@@ -98,16 +95,7 @@ void TitleScene::Draw()
 	//プレイヤーの描画
 	m_pPlayer->Draw();
 
-	//タイトルロゴの描画
-	//ウィンドウの中心にタイトルロゴを描画する
-	const auto& windowSize = Application::GetInstance().GetWindowSize();
-	Vector3 logoPos = { windowSize.w / 2.0f, windowSize.h / 2.0f, 0.0f };
-	logoPos += title_logo_offset;//タイトルロゴの位置オフセットを加算する
-	int logoX = static_cast<int>(logoPos.m_x);
-	int logoY = static_cast<int>(logoPos.m_y);
-	DrawRotaGraph(logoX, logoY,
-		static_cast<double>(title_logo_scale), 0.0,
-		m_graphHandles[static_cast<int>(GraphType::TitleLogo)], TRUE);
-
 	//TODO:タイトルロゴの画像を描画したり、モデルを描画したりする
 }
+
+

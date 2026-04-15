@@ -18,8 +18,8 @@ namespace
 	constexpr float fov = DX_PI_F / 3.0f;
 
 	//カメラの回転角の制限
-	constexpr float rot_rimit_up = DX_PI_F / 3.0f;//真下向くときは60度以上回転しないようにする
-	constexpr float rot_rimit_down = -DX_PI_F / 6.0f;//-30度以上回転しないようにする
+	constexpr float rot_rimit_up = DX_PI_F / 18.0f;//真上向くときは10度以上回転しないようにする
+	constexpr float rot_rimit_down = -DX_PI_F / 3.0f;//真下向くときは-60度以上回転しないようにする
 
 	//カメラのLerpに使うtの値
 	constexpr float lerp_t = 0.2f;

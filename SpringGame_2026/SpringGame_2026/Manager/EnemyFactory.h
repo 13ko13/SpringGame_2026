@@ -21,6 +21,11 @@ public:
 	~EnemyFactory();
 
 	/// <summary>
+	/// 初期化
+	/// </summary>
+	void Init(const Vector3& stageSize);
+
+	/// <summary>
 	/// 敵の生成を行う
 	/// </summary>
 	/// <param name="pos">生成させる位置</param>

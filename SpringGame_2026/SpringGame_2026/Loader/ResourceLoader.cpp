@@ -3,6 +3,12 @@
 #include <cassert>
 #include <EffekseerForDXLib.h>
 
+namespace
+{
+	//エフェクトの拡大率
+	constexpr float attack_ef_scale = 10.0f;
+}
+
 ResourceLoader& ResourceLoader::GetInstance()
 {
 	//staticでインスタンスを宣言してそれを返す
@@ -54,32 +60,79 @@ void ResourceLoader::LoadAll()
 	assert(handle != -1);
 	m_graphicHandles[GraphicID::DownSky] = handle;
 
+	handle = LoadGraph("Data/Graphic/Title_Logo.png");//タイトルロゴのグラフィック
+	assert(handle != -1);
+	m_graphicHandles[GraphicID::TitleLogo] = handle;
+
 	//----エフェクト------
 	handle = LoadEffekseerEffect("Data/Effect/Death.efk");//敵の死亡エフェクト
 	assert(handle != -1);
 	m_effectHandles[EffectID::Death] = handle;
 
-	handle = LoadEffekseerEffect("Data/Effect/AttackField.efk");//攻撃フィールドのエフェクト
+	handle = LoadEffekseerEffect("Data/Effect/AttackField.efk", attack_ef_scale);//攻撃フィールドのエフェクト
 	assert(handle != -1);
 	m_effectHandles[EffectID::AttackField] = handle;
 }
 
 void ResourceLoader::ReleaseAll()
 {
-	
+	//すべてのリソースを解放する
+	//モデル
+	for (auto& modelH : m_modelHandles)
+	{
+		MV1DeleteModel(modelH.second);
+	}
+	//グラフィック
+	for (auto& graphH : m_graphicHandles)
+	{
+		DeleteGraph(graphH.second);
+	}
+	//エフェクトはEffekseerのEnd関数でまとめて解放されるため、個別に解放する必要はない
 }
 
 int ResourceLoader::GetModel(ModelID id) const
 {
-	return 0;
+	//IDをもとにハンドルを返す
+	auto it = m_modelHandles.find(id);
+	
+	if (it != m_modelHandles.end())
+	{
+		return it->second;
+	}
+	else
+	{
+		assert(false && "モデルIDが見つかりません");
+		return -1;
+	}
 }
 
 int ResourceLoader::GetGraphic(GraphicID id) const
 {
-	return 0;
+	//IDをもとにハンドルを返す
+	auto it = m_graphicHandles.find(id);
+
+	if(it != m_graphicHandles.end())
+	{
+		return it->second;
+	}
+	else
+	{
+		assert(false && "グラフィックIDが見つかりません");
+		return -1;
+	}
 }
 
 int ResourceLoader::GetEffect(EffectID id) const
 {
-	return 0;
+	auto it = m_effectHandles.find(id);
+
+	if(it != m_effectHandles.end())
+	{
+		return it->second;
+	}
+	else
+	{
+		assert(false && "エフェクトIDが見つかりません");
+		return -1;
+	}
 }

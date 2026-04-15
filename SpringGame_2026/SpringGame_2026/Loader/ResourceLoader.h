@@ -21,6 +21,8 @@ public:
 		RightSky = 3,//skyboxの右のテクスチャ
 		UpSky = 4,//skyboxの上のテクスチャ
 		DownSky = 5,//skyboxの下のテクスチャ
+
+		TitleLogo = 6,//タイトルロゴのグラフィック
 	};
 
 	//エフェクトの種類

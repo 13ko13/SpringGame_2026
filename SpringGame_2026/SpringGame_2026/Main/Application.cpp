@@ -9,6 +9,7 @@
 #include "EffekseerForDXLib.h"
 #include "../Scene/GameScene.h"
 #include "../Scene/TitleScene.h"
+#include "../Loader/ResourceLoader.h"
 
 namespace
 {
@@ -37,6 +38,9 @@ namespace
 	//constexpr int parry_volume = 255;//パリィを発動したときの音
 
 	constexpr int first_fade_frame = 60;//最初のシーンのフェードにかけるフレーム数
+
+	//フォントのファイル場所
+	const char* font_name = "Data/Fonts/tamanegi.ttf";
 }
 
 Application::Application():
@@ -71,59 +75,6 @@ Application::Application():
 //	sm.Load(SoundType::ParrySuccess, "Sound/SE/parry_success.mp3", parry_success_vol, false);
 //	sm.Load(SoundType::Parry, "Sound/SE/parry.wav", parry_volume, false);
 //}
-
-void Application::ModelLoad()
-{
-	//モデルを読み込んでハンドルを保存する
-	int handle = -1;
-
-	handle = MV1LoadModel("Data/Mv1/Player.mv1");//プレイヤーのモデル
-	assert(handle != -1);
-	m_modelHandles.push_back(handle);
-
-	handle = MV1LoadModel("Data/Mv1/Enemy.mv1");//敵のモデル
-	assert(handle != -1);
-	m_modelHandles.push_back(handle);
-
-	handle = MV1LoadModel("Data/Mv1/Ground.mv1");//地面のモデル
-	assert(handle != -1);
-	m_modelHandles.push_back(handle);
-}
-
-void Application::GraphicLoad()
-{
-	//skyboxのテクスチャのロード
-	int handle = -1;
-
-	handle = LoadGraph("Data/SkyBox/skybox_front.png");//skyboxの前のテクスチャ
-	assert(handle != -1);
-	m_graphHandles.push_back(handle);
-
-	handle = LoadGraph("Data/SkyBox/skybox_back.png");//skyboxの後ろのテクスチャ
-	assert(handle != -1);
-	m_graphHandles.push_back(handle);
-
-	handle = LoadGraph("Data/SkyBox/skybox_left.png");//skyboxの左のテクスチャ
-	assert(handle != -1);
-	m_graphHandles.push_back(handle);
-
-	handle = LoadGraph("Data/SkyBox/skybox_right.png");//skyboxの右のテクスチャ
-	assert(handle != -1);
-	m_graphHandles.push_back(handle);
-}
-
-void Application::EffectLoad()
-{
-	int handle = -1;
-
-	handle = LoadEffekseerEffect("Data/Effect/Death.efk");//敵の死亡エフェクト
-	assert(handle != -1);
-	m_effectHandles.push_back(handle);
-
-	handle = LoadEffekseerEffect("Data/Effect/AttackField.efk");//攻撃フィールドのエフェクト
-	assert(handle != -1);
-	m_effectHandles.push_back(handle);
-}
 
 Application::~Application()
 {
@@ -162,6 +113,14 @@ bool Application::Init()
 		return false;
 	}
 
+	//Effekseer_Initの後に呼ばないとエフェクトロードに失敗する
+	//リソースローダーのインスタンスを作成して
+	//リソースをロードする
+	ResourceLoader::GetInstance().LoadAll();
+
+	//ウィンドウズ内にフォントを追加する
+	AddFontResourceEx(font_name, FR_PRIVATE, NULL);
+
 	// フルスクリーンウインドウの切り替えでリソースが消えるのを防ぐ。
 	// Effekseerを使用する場合は必ず設定する。
 	SetChangeScreenModeGraphicsSystemResetFlag(FALSE);
@@ -184,12 +143,7 @@ void Application::Run()
 	SetDrawScreen(DX_SCREEN_BACK);
 	Input input;//入力のためのオブジェクト 
 	SceneController controller;//シーンを管理するオブジェクト
-	controller.ChangeScene(std::make_shared<GameScene>(controller), first_fade_frame);
-
-	//モデルやグラフィック、エフェクトのリソースを読み込む
-	ModelLoad();
-	GraphicLoad();
-	EffectLoad();
+	controller.ChangeScene(std::make_shared<TitleScene>(controller), first_fade_frame);
 
 	while (ProcessMessage() != -1)
 	{
@@ -218,7 +172,10 @@ void Application::Run()
 
 void Application::Terminate()
 {
-	//RemoveFontResourceEx("data/Melonano_Ver.1.31.ttf", FR_PRIVATE, NULL);
+	//リソースを解放する
+	ResourceLoader::GetInstance().ReleaseAll();
+
+	RemoveFontResourceEx(font_name, FR_PRIVATE, NULL);
 	Effkseer_End();// Effekseerを終了する。
 	DxLib_End();
 }
