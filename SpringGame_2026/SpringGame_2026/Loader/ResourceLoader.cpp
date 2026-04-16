@@ -36,33 +36,37 @@ void ResourceLoader::LoadAll()
 
 	//----グラフィック------
 	//skyboxのテクスチャのロード
-	handle = LoadGraph("Data/SkyBox/skybox_front.png");//skyboxの前のテクスチャ
+	handle = LoadGraph("Data/SkyBox/Cloudy_SkyBox_3/skybox_front.png");//skyboxの前のテクスチャ
 	assert(handle != -1);
 	m_graphicHandles[GraphicID::FrontSky] = handle;
 
-	handle = LoadGraph("Data/SkyBox/skybox_back.png");//skyboxの後ろのテクスチャ
+	handle = LoadGraph("Data/SkyBox/Cloudy_SkyBox_3/skybox_back.png");//skyboxの後ろのテクスチャ
 	assert(handle != -1);
 	m_graphicHandles[GraphicID::BackSky] = handle;
 
-	handle = LoadGraph("Data/SkyBox/skybox_left.png");//skyboxの左のテクスチャ
+	handle = LoadGraph("Data/SkyBox/Cloudy_SkyBox_3/skybox_left.png");//skyboxの左のテクスチャ
 	assert(handle != -1);
 	m_graphicHandles[GraphicID::LeftSky] = handle;
 
-	handle = LoadGraph("Data/SkyBox/skybox_right.png");//skyboxの右のテクスチャ
+	handle = LoadGraph("Data/SkyBox/Cloudy_SkyBox_3/skybox_right.png");//skyboxの右のテクスチャ
 	assert(handle != -1);
 	m_graphicHandles[GraphicID::RightSky] = handle;
 
-	handle = LoadGraph("Data/SkyBox/skybox_up.png");//skyboxの上のテクスチャ
+	handle = LoadGraph("Data/SkyBox/Cloudy_SkyBox_3/skybox_up.png");//skyboxの上のテクスチャ
 	assert(handle != -1);
 	m_graphicHandles[GraphicID::UpSky] = handle;
 
-	handle = LoadGraph("Data/SkyBox/skybox_down.png");//skyboxの下のテクスチャ
+	handle = LoadGraph("Data/SkyBox/Cloudy_SkyBox_3/skybox_down.png");//skyboxの下のテクスチャ
 	assert(handle != -1);
 	m_graphicHandles[GraphicID::DownSky] = handle;
 
-	handle = LoadGraph("Data/Graphic/Title_Logo.png");//タイトルロゴのグラフィック
+	handle = LoadGraph("Data/Graphic/Title_Logo_3.png");//タイトルロゴのグラフィック
 	assert(handle != -1);
 	m_graphicHandles[GraphicID::TitleLogo] = handle;
+
+	handle = LoadGraph("Data/Graphic/Title_Logo_Effect.png");//タイトルロゴのエフェクトのグラフィック
+	assert(handle != -1);
+	m_graphicHandles[GraphicID::TitleLogoEffect] = handle;
 
 	//----エフェクト------
 	handle = LoadEffekseerEffect("Data/Effect/Death.efk");//敵の死亡エフェクト

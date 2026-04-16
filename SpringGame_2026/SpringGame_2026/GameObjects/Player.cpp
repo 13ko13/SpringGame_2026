@@ -42,7 +42,7 @@ namespace
 	const Vector3 player_to_sphere = { 0.0f,125.0f,0.0f };
 
 	//プレイヤーのジャンプ攻撃が当たり始める時間
-	constexpr float jump_attack_hit_start = 0.4f;
+	constexpr float jump_attack_hit_start = 0.5f;
 	//プレイヤーのジャンプ攻撃が当たり終わる時間
 	constexpr float jump_attack_hit_end = 0.7f;
 

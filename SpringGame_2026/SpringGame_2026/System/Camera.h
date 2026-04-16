@@ -29,6 +29,12 @@ public:
 	/// </summary>
 	/// <returns>Y軸回転角</returns>
 	float GetAngleY() const { return m_angleY; }
+
+	/// <summary>
+	/// 自身の正面ベクトルを取得する
+	/// </summary>
+	/// <returns>正面ベクトル</returns>
+	Vector3 const GetForward() const;
 	
 private:
 	float m_angleX = 0.0f;//カメラの回転角横

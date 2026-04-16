@@ -9,7 +9,7 @@ class EffectManager;
 class ResultScene : public Scene
 {
 public:
-	ResultScene(SceneController& controller);
+	ResultScene(SceneController& controller,const int score);
 	~ResultScene();
 
 	void Init() override;
@@ -32,6 +32,11 @@ private:
 	//モデルハンドルの配列
 	std::vector<int> m_modelHandles;
 
+	//スコア表示時のフォントハンドル
+	int m_scoreFontHandle = -1;
+
+	//スコア
+	int m_score = 0;
 	//カメラの実体
 	std::shared_ptr<Camera> m_pCamera;
 

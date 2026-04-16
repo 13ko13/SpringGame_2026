@@ -8,6 +8,7 @@
 #include "../System/Camera.h"
 #include "../Graphic/SkyBox.h"
 #include "TitleScene.h"
+#include "../ToKanji.h"
 
 namespace
 {
@@ -28,10 +29,17 @@ namespace
 
 	//ステージのサイズ
 	const Vector3 stage_size = { 1100.0f, 0.0f, 1100.0f };
+
+	//フォント名
+	const char* font_name = "玉ねぎ楷書激無料版v7改";
+
+	//フォントのサイズ
+	constexpr int score_font_size = 64;
 }
 
-ResultScene::ResultScene(SceneController& controller) :
-	Scene(controller)
+ResultScene::ResultScene(SceneController& controller,const int score) :
+	Scene(controller),
+	m_score(score)
 {
 }
 
@@ -67,6 +75,9 @@ void ResultScene::Init()
 		loader.GetGraphic(ResourceLoader::GraphicID::RightSky),
 		loader.GetGraphic(ResourceLoader::GraphicID::UpSky),
 		loader.GetGraphic(ResourceLoader::GraphicID::DownSky));
+
+	//フォントのハンドルを取得する
+	m_scoreFontHandle = CreateFontToHandle(font_name, score_font_size, -1, DX_FONTTYPE_ANTIALIASING_EDGE_4X4);
 }
 
 void ResultScene::Update(Input& input)
@@ -78,7 +89,7 @@ void ResultScene::Update(Input& input)
 	if (input.IsTriggered("ok"))
 	{
 		m_controller.ChangeScene(std::make_shared<TitleScene>(m_controller), fade_frame);
-	}
+	}	
 }
 
 void ResultScene::Draw()
@@ -94,6 +105,9 @@ void ResultScene::Draw()
 
 	//プレイヤーの描画
 	m_pPlayer->Draw();
+
+	//スコアの描画
+	std::string scoreText = "Score:" + ToKanji::NumToKanji(m_score) + "点";
 
 	//TODO:タイトルロゴの画像を描画したり、モデルを描画したりする
 }

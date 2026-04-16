@@ -22,7 +22,8 @@ public:
 		UpSky = 4,//skyboxの上のテクスチャ
 		DownSky = 5,//skyboxの下のテクスチャ
 
-		TitleLogo = 6,//タイトルロゴのグラフィック
+		TitleLogo = 6,//タイトルロゴの文字グラフィック
+		TitleLogoEffect = 7,//タイトルロゴのエフェクトのグラフィック
 	};
 
 	//エフェクトの種類

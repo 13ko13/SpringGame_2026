@@ -26,13 +26,20 @@ private:
 
 	enum class GraphType : int
 	{
-		TitleLogo = 0,//タイトルロゴ
+		TitleLogoMozi = 0,//タイトルロゴの文字画像
+		TitleLogoEffect = 1,//タイトルロゴのエフェクトの画像
 	};
 
 	//グラフィックハンドルの配列
 	std::vector<int> m_graphHandles;
 	//モデルハンドルの配列
 	std::vector<int> m_modelHandles;
+
+	//フォントハンドル
+	int m_startFontHandle = -1;
+
+	//エフェクトを出すためのタイマー
+	int m_effectTimer = 0;
 
 	//カメラの実体
 	std::shared_ptr<Camera> m_pCamera;

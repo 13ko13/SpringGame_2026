@@ -120,3 +120,9 @@ void Camera::Draw()
 	//DrawFormatString((int)0.0f, (int)30.0f, 0xffffff, "angleX : %f,Y : %f", m_angleX,m_angleY);
 #endif // _DEBUG
 }
+
+Vector3 const Camera::GetForward() const
+{
+	//カメラの正面ベクトルは、注視点からカメラ位置に向かうベクトルの逆向きになる
+	return (m_targetPos - m_pos).Normalized();
+}
