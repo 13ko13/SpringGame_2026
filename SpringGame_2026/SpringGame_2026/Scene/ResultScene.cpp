@@ -1,4 +1,6 @@
-﻿#include "ResultScene.h"
+﻿#include <DxLib.h>
+
+#include "ResultScene.h"
 #include "../Main/Application.h"
 #include "../GameObjects/Player.h"
 #include "../Manager/EffectManager.h"
@@ -8,7 +10,7 @@
 #include "../System/Camera.h"
 #include "../Graphic/SkyBox.h"
 #include "TitleScene.h"
-#include "../ToKanji.h"
+#include "../System/ToKanji.h"
 
 namespace
 {
@@ -34,10 +36,21 @@ namespace
 	const char* font_name = "玉ねぎ楷書激無料版v7改";
 
 	//フォントのサイズ
-	constexpr int score_font_size = 64;
+	constexpr int score_font_size = 100;
+
+	//スコアの文字が小さくなる演出にかけるフレーム数
+	constexpr int score_shrink_frame = 50;
+
+	//文字を小さくするときの最初の大きさ
+	constexpr float score_start_scale = 4.0f;
+
+	//スコアが100点のときの特別な色
+	constexpr int score_100_color = 0xff0000;
+	//最大スコア
+	constexpr int max_score = 100;
 }
 
-ResultScene::ResultScene(SceneController& controller,const int score) :
+ResultScene::ResultScene(SceneController& controller, const int score) :
 	Scene(controller),
 	m_score(score)
 {
@@ -82,14 +95,24 @@ void ResultScene::Init()
 
 void ResultScene::Update(Input& input)
 {
+	//フレームの更新
+	m_frame++;
+
 	//プレイヤーの更新
 	m_pPlayer->Update(input, m_pCamera->GetAngleY(), stage_size, false);
 
-	//何かしらのボタンが押されたらゲームシーンに遷移する
-	if (input.IsTriggered("ok"))
+	//演出が終了していて、何かしらのボタンが押されたらゲームシーンに遷移する
+	if (!m_isStageing && input.IsTriggered("ok"))
 	{
 		m_controller.ChangeScene(std::make_shared<TitleScene>(m_controller), fade_frame);
-	}	
+	}
+
+	//演出中にokボタンが押されたら、演出をスキップする
+	if (m_isStageing && input.IsTriggered("ok"))
+	{
+		m_isSkip = true;
+		m_isStageing = false;
+	}
 }
 
 void ResultScene::Draw()
@@ -107,9 +130,42 @@ void ResultScene::Draw()
 	m_pPlayer->Draw();
 
 	//スコアの描画
-	std::string scoreText = "Score:" + ToKanji::NumToKanji(m_score) + "点";
+	std::string scoreText = "成果:" + ToKanji::NumToKanji(m_score) + "点";
+	//表示したい文字列の横幅を取得する
+	int textWidth = GetDrawStringWidthToHandle(scoreText.c_str(), scoreText.length(), m_scoreFontHandle);
+	//ウィンドウの中心に描画するため、描画位置を計算する
+	auto& windowSize = Application::GetInstance().GetWindowSize();
+	Vector3 drawPos = { windowSize.w / 2.0f - textWidth / 2.0f, windowSize.h / 2.0f - score_font_size / 2.0f };
 
-	//TODO:タイトルロゴの画像を描画したり、モデルを描画したりする
+	//文字をサイズをt秒かけてn倍の大きさから当倍に(大→小)にしてスタンプのように描画する
+	float scale = (1.0f - static_cast<float>(m_frame) / score_shrink_frame) * score_start_scale;
+	if (scale < 1.0f)
+	{
+		scale = 1.0f;
+		//演出終了
+		m_isStageing = false;
+	}
+	else
+	{
+		//演出中
+		m_isStageing = true;
+		//もし演出スキップしていたら、演出終了
+		if (m_isSkip)
+		{
+			scale = 1.0f;
+			m_isStageing = false;
+		}
+	}
+
+	//スコアが百点の場合のみ、特別な色で描画する
+	if (m_score == max_score)
+	{
+		DrawExtendStringToHandle(drawPos.m_x, drawPos.m_y, scale, scale, scoreText.c_str(), score_100_color, m_scoreFontHandle);
+	}
+	else
+	{
+		DrawExtendStringToHandle(drawPos.m_x, drawPos.m_y, scale, scale, scoreText.c_str(), 0xffffff, m_scoreFontHandle);
+	}
 }
 
 

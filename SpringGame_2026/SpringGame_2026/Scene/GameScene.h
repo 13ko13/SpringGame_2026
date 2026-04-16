@@ -36,12 +36,19 @@ private:
 	/// </summary>
 	void DrawGrid();
 
+	/// <summary>
+	/// スコアを計算する
+	/// </summary>
+	/// <param name="deadEnemyNum">倒した敵の数</param>
+	/// <returns>計算されたスコア</returns>
+	int CalcScore(int deadEnemyNum) const;
+
 private:
 	//フレームカウンター
 	int m_frameCount;
 
 	//ゲームの制限時間(フレーム数)
-	int m_timeLimit = 0;
+	int m_time = 0;
 
 	//ゲーム開始時のカウントダウン
 	int m_startCountDown = 0;

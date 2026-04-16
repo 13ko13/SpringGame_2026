@@ -37,6 +37,16 @@ private:
 
 	//スコア
 	int m_score = 0;
+
+	//文字を小さくするとき用のフレームカウンター
+	int m_frame = 0;
+
+	//演出スキップするか
+	bool m_isSkip = false;
+
+	//演出中か
+	bool m_isStageing = false;
+
 	//カメラの実体
 	std::shared_ptr<Camera> m_pCamera;
 

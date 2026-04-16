@@ -164,7 +164,7 @@
     <ClCompile Include="GameObjects\Player.cpp" />
     <ClCompile Include="Scene\GameScene.cpp" />
     <ClCompile Include="Scene\TitleScene.cpp" />
-    <ClCompile Include="ToKanji.cpp" />
+    <ClCompile Include="System\ToKanji.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Effect\AttackFieldEffect.h" />
@@ -195,7 +195,7 @@
     <ClInclude Include="GameObjects\Player.h" />
     <ClInclude Include="Scene\GameScene.h" />
     <ClInclude Include="Scene\TitleScene.h" />
-    <ClInclude Include="ToKanji.h" />
+    <ClInclude Include="System\ToKanji.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

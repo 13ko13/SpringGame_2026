@@ -4,7 +4,7 @@
 namespace
 {
 	//敵を最初に生成するときの数
-	constexpr int enemy_num = 32;
+	constexpr int enemy_num = 34;
 }
 
 EnemyFactory::EnemyFactory(std::vector<int> modelHandles, std::shared_ptr<EffectManager> pEffectManager) :

@@ -1,4 +1,6 @@
-﻿#include <DxLib.h>
+﻿#define NOMINMAX
+
+#include <DxLib.h>
 #include <cassert>
 #include <EffekseerForDXLib.h>
 #include <string>
@@ -15,7 +17,7 @@
 #include "SceneController.h"
 #include "ResultScene.h"
 #include "../Main/Application.h"
-#include "../ToKanji.h"
+#include "../System/ToKanji.h"
 
 namespace
 {
@@ -49,6 +51,18 @@ namespace
 
 	//ゲーム開始時のカウントダウンの時間
 	constexpr int start_count_down_time = 60 * 4;//4秒
+
+	//敵を倒したときのスコア倍率
+	constexpr int score_rate = 3;
+
+	//残り時間に応じたスコアの減少割合
+	constexpr float time_score_rate = 0.3f;
+
+	//敵を倒すまでの時間の最大値
+	constexpr int max_time_for_kill = 60 * 99;//99秒
+
+	//最大スコア
+	constexpr int max_score = 100;
 }
 
 GameScene::GameScene(SceneController& controller) :
@@ -167,7 +181,7 @@ void GameScene::Update(Input& input)
 
 	//ゲーム時間の更新
 	//プレイヤーに討伐時間を競わせるためにカウントアップ制にする
-	m_timeLimit++;
+	m_time++;
 
 	//当たり判定の更新
 	m_pCollManager->Update(m_pPlayer, m_pEnemyFactory);
@@ -178,13 +192,23 @@ void GameScene::Update(Input& input)
 	//エフェクトマネージャーの更新
 	m_pEffectManager->Update();
 
-	//TODO:プレイヤーが死ぬ、または敵が全滅するなどの条件でリザルトシーンに遷移する
+	//プレイヤーが死ぬ、または敵が全滅するなどの条件でリザルトシーンに遷移する
 	//m_pEnemyFactoryから敵の数を取得する
 	//m_pPlayerからプレイヤーの生死を取得する
 	if (m_pEnemyFactory->GetEnemies().empty() || m_pPlayer->IsDead())
 	{
-		m_controller.ChangeScene(std::make_shared<ResultScene>(m_controller), fade_frame);
+		//スコアの計算を行う
+		int score = CalcScore(m_enemyCount - static_cast<int>(m_pEnemyFactory->GetEnemies().size()));
+		m_controller.ChangeScene(std::make_shared<ResultScene>(m_controller, score), fade_frame);
 	}
+#ifdef _DEBUG
+	if (input.IsTriggered("ok"))
+	{
+		//スコアの計算を行う
+		int score = CalcScore(m_enemyCount - static_cast<int>(m_pEnemyFactory->GetEnemies().size()));
+		m_controller.ChangeScene(std::make_shared<ResultScene>(m_controller, score), fade_frame);
+	}
+#endif // _DEBUG	
 }
 
 void GameScene::Draw()
@@ -201,7 +225,7 @@ void GameScene::Draw()
 #ifdef _DEBUG
 	DrawString(0, 0, "GameScene", 0xffffff);
 	DrawFormatString(0, 16, 0xffffff, "FRAME:%d", m_frameCount);
-	DrawFormatString(0, 64, 0xffffff, "Time:%d", m_timeLimit / 60);
+	DrawFormatString(0, 64, 0xffffff, "Time:%d", m_time / 60);
 #endif //DEBUG
 
 	//オブジェクトの描画
@@ -223,7 +247,7 @@ void GameScene::Draw()
 
 	//残り時間の描画
 	//stringで描画する文字列を作成する
-	std::string timeText = ToKanji::NumToKanji(m_timeLimit / 60) + "秒";//漢字に変換して「秒」をつける
+	std::string timeText = ToKanji::NumToKanji(m_time / 60) + "秒";//漢字に変換して「秒」をつける
 
 	//表示したい文字列の横幅を取得する
 	const int strWidth = GetDrawStringWidthToHandle("残り時間:60拍", strlen("残り時間:60拍"), m_timeFontHandle);
@@ -295,6 +319,31 @@ void GameScene::DrawGrid()
 		DrawLine3D(startPos, endPos, 0x0000ff);
 	}
 #endif
+}
+
+int GameScene::CalcScore(int deadEnemyNum) const
+{
+	//スコア
+	int score = 0;
+	//倒した敵の数に応じてスコアを加算する
+	score += deadEnemyNum * score_rate;
+	//かかった時間に応じてスコアの減少割合を計算する
+	//最大で3割減少するようにする
+	float decreaseRate = std::min(static_cast<float>(m_time) /
+		max_time_for_kill, 1.0f) * time_score_rate;
+
+	//スコアに減少割合をかける
+	score = static_cast<int>(score * (1.0f - decreaseRate));
+
+	//もし100を越えたら100点にクランプする
+	score = std::min(score, max_score);
+	//絶対に100点をとれないので95点以上あれば100点とする
+	if(score >= 95)
+	{
+		score = max_score;
+	}
+
+	return score;
 }
 
 Vector3 const GameScene::GetStageSize() const
