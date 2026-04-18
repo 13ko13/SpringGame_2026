@@ -194,8 +194,6 @@ void Enemy::OnDead()
 
 	//ステートをDeadに変更する
 	ChangeState(State::Dead);
-	//エフェクトマネージャーにエフェクトの再生を依頼する
-	m_pEffectManager->Create(m_pos, EffectManager::EffectType::EnemyDeath);
 }
 
 void Enemy::ChangeState(State next)

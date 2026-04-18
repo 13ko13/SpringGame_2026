@@ -3,8 +3,10 @@
 #include "../Math/Sphere.h"
 #include "../GameObjects/Enemy.h"
 #include "EnemyFactory.h"
+#include "EffectManager.h"
 
-CollisionManager::CollisionManager()
+CollisionManager::CollisionManager(std::shared_ptr<EffectManager> pEffectManager) :
+	m_pEffectManager(pEffectManager)
 {
 }
 
@@ -30,6 +32,9 @@ void CollisionManager::Update(std::shared_ptr<Player>& pPlayer,
 
 			if (CheckCollision(pPlayer->GetAttackSphere(), pEnemy))
 			{
+				Vector3 enemyPos = pEnemy->GetPos();
+				//エフェクトマネージャーにエフェクトの再生を依頼する
+				m_pEffectManager->Create(enemyPos, EffectManager::EffectType::EnemyDeath);
 				//敵に攻撃が当たっているときの処理を行わせる
 				pEnemy->OnDead();
 			}

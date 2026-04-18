@@ -4,6 +4,8 @@
 #include <cassert>
 #include <EffekseerForDXLib.h>
 #include <string>
+#include <cmath>
+#include <algorithm>
 
 #include "GameScene.h"
 #include "../GameObjects/Player.h"
@@ -18,7 +20,6 @@
 #include "ResultScene.h"
 #include "../Main/Application.h"
 #include "../System/ToKanji.h"
-#include <algorithm>
 
 namespace
 {
@@ -121,8 +122,12 @@ void GameScene::Init()
 	//敵のモデルは複製して EnemyFactory に渡す
 	m_enemyMHandles.push_back(MV1DuplicateModel(resourceLoader.GetModel(ResourceLoader::ModelID::Zombie)));
 	m_pEnemyFactory = std::make_shared<EnemyFactory>(m_enemyMHandles, m_pEffectManager);
+
+	//プレイヤーの実体を確保
+	m_pPlayer = std::make_shared<Player>(m_playerMHandle, m_pEffectManager);
+
 	//敵の生成を行う工場の初期化
-	m_pEnemyFactory->Init(stage_size);
+	m_pEnemyFactory->Init(stage_size, m_pPlayer->GetPos());
 
 	//敵の数を保持
 	m_enemyCount = static_cast<int>(m_pEnemyFactory->GetEnemies().size());
@@ -136,14 +141,11 @@ void GameScene::Init()
 		resourceLoader.GetGraphic(ResourceLoader::GraphicID::UpSky),
 		resourceLoader.GetGraphic(ResourceLoader::GraphicID::DownSky));
 
-	//プレイヤーの実体を確保
-	m_pPlayer = std::make_shared<Player>(m_playerMHandle, m_pEffectManager);
-
 	//カメラの実体を確保
 	m_pCamera = std::make_shared<Camera>(m_pPlayer->GetPos());
 
 	//当たり判定の管理クラスの実体を確保
-	m_pCollManager = std::make_shared<CollisionManager>();
+	m_pCollManager = std::make_shared<CollisionManager>(m_pEffectManager);
 
 	//フォントハンドルを取得する
 	m_timeFontHandle = CreateFontToHandle(font_name, time_limit_font_size, -1, DX_FONTTYPE_ANTIALIASING_EDGE_4X4);
@@ -334,16 +336,33 @@ int GameScene::CalcScore(int deadEnemyNum) const
 {
 	//スコア
 	int score = 0;
-	//
 
 	//スコアは0～100に正規化して表示する
-	float killRate = static_cast<float>(deadEnemyNum) / static_cast<float>(m_enemyCount);//敵を倒した割合
-	float elapsedTime = static_cast<float>(m_time) / ideal_time;//経過時間の割合
+	//敵を倒した割合
+	float killRate = static_cast<float>(deadEnemyNum) / static_cast<float>(m_enemyCount);
+	//どのくらい時間がかかっているか
+	float elapsedTime = static_cast<float>(std::min(m_time, max_time_for_kill));
 
-	float timeRate = std::clamp((ideal_time - elapsedTime) / ideal_time, 0.0f, 1.0f);//時間に対する割合(理想の時間からどれだけ早いか)
+	float timeRate = 0.0f;
 
-	int tempScore = static_cast<int>(kill_waight * killRate + time_waight * timeRate);//割合に重みをかけて合計する 
-	score = std::clamp(static_cast<int>(round(tempScore * max_score)), 0, max_score);//最大スコアをかけて、整数に丸めて、0～max_scoreの範囲に収める
+	// 目標時間内なら満点、それ以降は線形で減少して max_time_for_kill で 0 にする
+	if (elapsedTime <= static_cast<float>(ideal_time)) {
+		timeRate = 1.0f;
+	}
+	else {
+		float denom = static_cast<float>(max_time_for_kill - ideal_time);
+		if (denom <= 0.0f) {
+			timeRate = 0.0f;
+		}
+		else {
+			timeRate = std::clamp(1.0f - (elapsedTime - static_cast<float>(ideal_time)) / denom, 0.0f, 1.0f);
+		}
+	}
+
+	//割合に重みをかけて合計する 
+	float normalizedScore = kill_waight * killRate + time_waight * timeRate;
+	//最大スコアをかけて、整数に丸めて、0～max_scoreの範囲に収める
+	score = std::clamp(static_cast<int>(std::round(normalizedScore * max_score)), 0, max_score);
 
 	return score;
 }

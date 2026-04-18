@@ -23,7 +23,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Init(const Vector3& stageSize);
+	void Init(const Vector3& stageSize, const Vector3& playerPos);
 
 	/// <summary>
 	/// 敵の生成を行う

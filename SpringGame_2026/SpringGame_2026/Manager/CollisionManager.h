@@ -1,17 +1,17 @@
 ﻿#pragma once
 #include <memory>
-#include <list>
 
 //前方宣言
 class Player;
 class EnemyFactory;
 class Sphere;
 class Enemy;
+class EffectManager;
 
 class CollisionManager
 {
 public:
-	CollisionManager();
+	CollisionManager(std::shared_ptr<EffectManager> pEffectManager);
 	~CollisionManager();
 
 	void Update(
@@ -66,5 +66,8 @@ private:
 	/// <param name="pPlayer">プレイヤーのオブジェクト</param>
 	/// <param name="pEnemy">敵のオブジェクト</param>
 	void pushBackPlayer(std::shared_ptr<Player>& pPlayer, std::shared_ptr<Enemy>& pEnemy);
+
+private:
+	std::shared_ptr<EffectManager> m_pEffectManager;//エフェクトマネージャーへのポインタ
 };
 

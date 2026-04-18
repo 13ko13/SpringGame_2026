@@ -31,7 +31,12 @@ public:
 	/// <param name="type">エフェクトの種類</param>
 	void Create(const Vector3& pos, EffectType type);
 
-
+	/// <summary>
+	/// エフェクトが再生中かどうかを返す
+	/// </summary>
+	/// <param name="handle">エフェクトのハンドル</param>
+	/// <returns>true:再生中,false:再生中でない</returns>
+	bool IsPlaying(int handle) const;
 
 private:
 	//登録されたエフェクトを格納する配列

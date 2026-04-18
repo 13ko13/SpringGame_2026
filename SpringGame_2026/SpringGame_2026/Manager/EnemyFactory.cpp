@@ -8,6 +8,11 @@ namespace
 
 	//ステージの辺の数
 	constexpr int stage_side_num = 4;
+
+	//プレイヤーからどのくらい離れた位置に生成するかの最小距離
+	constexpr float create_enemy_min_distance = 300.0f;
+	//プレイヤーからどのくらい離れた位置に生成するかの最大距離
+	constexpr float create_enemy_max_distance = 1200.0f;
 }
 
 EnemyFactory::EnemyFactory(std::vector<int> modelHandles, std::shared_ptr<EffectManager> pEffectManager) :
@@ -22,48 +27,21 @@ EnemyFactory::~EnemyFactory()
 
 }
 
-void EnemyFactory::Init(const Vector3& stageSize)
+void EnemyFactory::Init(const Vector3& stageSize, const Vector3& playerPos)
 {
 	//敵がenemy_num体になるようにする
 	while (m_pEnemies.size() < enemy_num)
 	{
-		//敵をステージ外周のランダムな位置に生成する
-		//どの辺から生成するをかを決める
-		int randSide = rand() % stage_side_num;
-		
+		//プレイヤーから一定距離以上離れた位置にランダムに敵を生成する
 		Vector3 pos;
-
-		enum class Side
-		{
-			Left = 0,
-			Right,
-			Up,
-			Down,
-		};
-
-		switch (static_cast<Side>(randSide))
-		{
-		case Side::Left:
-			pos = { -stageSize.m_x,//左側の辺のx座標
-					0.0f,
-					static_cast<float>(rand() % static_cast<int>(stageSize.m_z * 2.0f) - stageSize.m_z) };//辺のz座標の範囲は-stageSize.m_zからstageSize.m_zまで
-			break;
-		case Side::Right:
-			pos = { stageSize.m_x,//右側の辺のx座標
-					0.0f,
-					static_cast<float>(rand() % static_cast<int>(stageSize.m_z * 2.0f) - stageSize.m_z) };//辺のz座標の範囲は-stageSize.m_zからstageSize.m_zまで
-			break;
-		case Side::Up:
-			pos = { static_cast<float>(rand() % static_cast<int>(stageSize.m_x * 2.0f) - stageSize.m_x),//辺のx座標の範囲は-stageSize.m_xからstageSize.m_xまで
-					0.0f,
-					-stageSize.m_z };//上側の辺のz座標
-			break;
-		case Side::Down:
-			pos = { static_cast<float>(rand() % static_cast<int>(stageSize.m_x * 2.0f) - stageSize.m_x),//辺のx座標の範囲は-stageSize.m_xからstageSize.m_xまで
-					0.0f,
-					stageSize.m_z };//下側の辺のz座標
-			break;
-		}
+		
+		//プレイヤーからの最小距離以上、最大距離の範囲でランダムな距離
+		float distance = create_enemy_min_distance + static_cast<float>(rand()) / RAND_MAX * (create_enemy_max_distance - create_enemy_min_distance);
+		//ランダムな角度を作る
+		float angle = static_cast<float>(rand()) / RAND_MAX * DX_TWO_PI_F;
+		//極座標(距離と角度)を直交座標(x,z)に変換する
+		pos.m_x = playerPos.m_x + distance * cosf(angle);
+		pos.m_z = playerPos.m_z + distance * sinf(angle);
 
 		Create(pos, EnemyType::Enemy1, m_handles);
 	}

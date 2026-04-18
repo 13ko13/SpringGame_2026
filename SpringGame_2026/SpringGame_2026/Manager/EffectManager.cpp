@@ -64,3 +64,8 @@ void EffectManager::Create(const Vector3& pos, EffectType type)
 		break;
 	}
 }
+
+bool EffectManager::IsPlaying(int handle) const
+{
+	return IsEffekseer3DEffectPlaying(handle) != 0;
+}
