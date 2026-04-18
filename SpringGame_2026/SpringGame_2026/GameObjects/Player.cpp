@@ -460,6 +460,9 @@ void Player::OnDamage()
 	//後ろに吹き飛ぶ力を加える
 	m_knockBackVelocity = -GetForward() * 5.0f;
 
+	//ダメージを受けた瞬間フラグを立てる
+	m_isJustDamaged = true;
+
 	//ダメージを受けたときは、攻撃判定用の球の半径を0にして、当たり判定をなくす
 	m_attackSphereR = 0.0f;
 	//移動できないようにする

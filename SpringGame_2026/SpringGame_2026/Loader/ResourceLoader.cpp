@@ -76,6 +76,11 @@ void ResourceLoader::LoadAll()
 	handle = LoadEffekseerEffect("Data/Effect/AttackField.efk", attack_ef_scale);//攻撃フィールドのエフェクト
 	assert(handle != -1);
 	m_effectHandles[EffectID::AttackField] = handle;
+
+	//----シェーダー------
+	handle = LoadPixelShader("data/Shader/Vignette.pso");//ダメージビネットのシェーダー
+	assert(handle != -1);
+	m_shaderHandles[ShaderID::DamageVignette] = handle;
 }
 
 void ResourceLoader::ReleaseAll()
@@ -92,6 +97,12 @@ void ResourceLoader::ReleaseAll()
 		DeleteGraph(graphH.second);
 	}
 	//エフェクトはEffekseerのEnd関数でまとめて解放されるため、個別に解放する必要はない
+
+	//シェーダー
+	for (auto& shaderH : m_shaderHandles)
+	{
+		DeleteShader(shaderH.second);
+	}
 }
 
 int ResourceLoader::GetModel(ModelID id) const
@@ -137,6 +148,23 @@ int ResourceLoader::GetEffect(EffectID id) const
 	else
 	{
 		assert(false && "エフェクトIDが見つかりません");
+		return -1;
+	}
+}
+
+int ResourceLoader::GetShader(ShaderID id) const
+{
+	//シェーダーのハンドルをIDをもとに返す
+	auto it = m_shaderHandles.find(id);
+
+	//見つかったときはハンドルを返す
+	if (it != m_shaderHandles.end())
+	{
+		return it->second;
+	}
+	else
+	{
+		assert(false && "シェーダーIDが見つかりません");
 		return -1;
 	}
 }

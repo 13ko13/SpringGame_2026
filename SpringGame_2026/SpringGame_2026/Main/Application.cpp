@@ -90,6 +90,9 @@ Application& Application::GetInstance()
 
 bool Application::Init()
 {
+	//DirectXのバージョンを11に設定する
+	SetUseDirect3DVersion(DX_DIRECT3D_11);
+
 	//ウィンドウモード設定
 	ChangeWindowMode(true);
 	//ゲーム名

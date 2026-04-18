@@ -13,6 +13,7 @@ class CollisionManager;
 class EnemyFactory;
 class SkyBox;
 class EffectManager;
+class DamageVignette;
 
 class GameScene :public Scene
 {
@@ -99,4 +100,7 @@ private:
 
 	//エフェクトマネージャーの実体
 	std::shared_ptr<EffectManager> m_pEffectManager;
+
+	//ダメージビネットの実体
+	std::shared_ptr<DamageVignette> m_pDamageVignette;
 };
