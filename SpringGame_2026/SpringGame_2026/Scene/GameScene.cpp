@@ -18,6 +18,7 @@
 #include "ResultScene.h"
 #include "../Main/Application.h"
 #include "../System/ToKanji.h"
+#include <algorithm>
 
 namespace
 {
@@ -63,6 +64,14 @@ namespace
 
 	//最大スコア
 	constexpr int max_score = 100;
+
+	//最大スコアを目指せる目安の時間23秒
+	constexpr int ideal_time = 60 * 23;
+
+	//敵を倒したときの割合の重み
+	constexpr float kill_waight = 0.7f;
+	//時間に対する割合の重み
+	constexpr float time_waight = 0.3f;
 }
 
 GameScene::GameScene(SceneController& controller) :
@@ -116,7 +125,7 @@ void GameScene::Init()
 	m_pEnemyFactory->Init(stage_size);
 
 	//敵の数を保持
-	m_enemyCount = m_pEnemyFactory->GetEnemies().size();
+	m_enemyCount = static_cast<int>(m_pEnemyFactory->GetEnemies().size());
 
 	//skyboxの実体を確保
 	m_pSkyBox = std::make_shared<SkyBox>(
@@ -250,7 +259,7 @@ void GameScene::Draw()
 	std::string timeText = ToKanji::NumToKanji(m_time / 60) + "秒";//漢字に変換して「秒」をつける
 
 	//表示したい文字列の横幅を取得する
-	const int strWidth = GetDrawStringWidthToHandle("残り時間:60拍", strlen("残り時間:60拍"), m_timeFontHandle);
+	const int strWidth = GetDrawStringWidthToHandle("残り時間:60拍", static_cast<int>(strlen("残り時間:60拍")), m_timeFontHandle);
 	//右上に描画するため、描画位置を計算する
 	Vector3 drawPos = {
 		static_cast<float>(windowSize.w * time_text_pos_x_rate - strWidth) ,
@@ -267,7 +276,7 @@ void GameScene::Draw()
 	std::string enemyText = "残り敵数:" + ToKanji::NumToKanji(enemyCount) + "体";//漢字に変換して「体」をつける
 	//敵の数が1桁になったときに文字列の位置が変わらないように、最大桁数のときの文字列の横幅を取得しておく
 	std::string maxEnemyText = "残り敵数:九十九体";
-	const int strMaxWidth = GetDrawStringWidthToHandle(maxEnemyText.c_str(), strlen(maxEnemyText.c_str()), m_timeFontHandle);
+	const int strMaxWidth = GetDrawStringWidthToHandle(maxEnemyText.c_str(), static_cast<int>(strlen(maxEnemyText.c_str())), m_timeFontHandle);
 	//ウィンドウの右上に描画するため、描画位置を計算する
 	drawPos = { static_cast<float>(windowSize.w * e_num_text_pos_x_rate - strMaxWidth),
 		static_cast<float>(windowSize.h * e_num_text_pos_y_rate) };
@@ -283,7 +292,7 @@ void GameScene::Draw()
 		std::string startTimeText = ToKanji::NumToKanji(m_startCountDown / 60);
 
 		//表示したい文字列の横幅を取得する
-		const int strWidth = GetDrawStringWidthToHandle(startTimeText.c_str(), strlen(startTimeText.c_str()), m_countDownFontHandle);
+		const int strWidth = GetDrawStringWidthToHandle(startTimeText.c_str(), static_cast<int>(strlen(startTimeText.c_str())), m_countDownFontHandle);
 		//表示したい文字の高さ
 		const int strHeight = game_count_font_size;
 
@@ -325,23 +334,16 @@ int GameScene::CalcScore(int deadEnemyNum) const
 {
 	//スコア
 	int score = 0;
-	//倒した敵の数に応じてスコアを加算する
-	score += deadEnemyNum * score_rate;
-	//かかった時間に応じてスコアの減少割合を計算する
-	//最大で3割減少するようにする
-	float decreaseRate = std::min(static_cast<float>(m_time) /
-		max_time_for_kill, 1.0f) * time_score_rate;
+	//
 
-	//スコアに減少割合をかける
-	score = static_cast<int>(score * (1.0f - decreaseRate));
+	//スコアは0～100に正規化して表示する
+	float killRate = static_cast<float>(deadEnemyNum) / static_cast<float>(m_enemyCount);//敵を倒した割合
+	float elapsedTime = static_cast<float>(m_time) / ideal_time;//経過時間の割合
 
-	//もし100を越えたら100点にクランプする
-	score = std::min(score, max_score);
-	//絶対に100点をとれないので95点以上あれば100点とする
-	if(score >= 95)
-	{
-		score = max_score;
-	}
+	float timeRate = std::clamp((ideal_time - elapsedTime) / ideal_time, 0.0f, 1.0f);//時間に対する割合(理想の時間からどれだけ早いか)
+
+	int tempScore = static_cast<int>(kill_waight * killRate + time_waight * timeRate);//割合に重みをかけて合計する 
+	score = std::clamp(static_cast<int>(round(tempScore * max_score)), 0, max_score);//最大スコアをかけて、整数に丸めて、0～max_scoreの範囲に収める
 
 	return score;
 }

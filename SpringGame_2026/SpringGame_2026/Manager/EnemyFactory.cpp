@@ -5,6 +5,9 @@ namespace
 {
 	//敵を最初に生成するときの数
 	constexpr int enemy_num = 34;
+
+	//ステージの辺の数
+	constexpr int stage_side_num = 4;
 }
 
 EnemyFactory::EnemyFactory(std::vector<int> modelHandles, std::shared_ptr<EffectManager> pEffectManager) :
@@ -21,15 +24,46 @@ EnemyFactory::~EnemyFactory()
 
 void EnemyFactory::Init(const Vector3& stageSize)
 {
-	//常に敵がenemy_num体になるようにする
+	//敵がenemy_num体になるようにする
 	while (m_pEnemies.size() < enemy_num)
 	{
-		//ランダムな位置に敵を生成する
-		Vector3 pos = {
-			static_cast<float>(rand() % static_cast<int>(stageSize.m_x * 2.0f) - stageSize.m_x),//-1000~1000のランダムなX座標
-			0.0f,//Y座標は地面にする
-			static_cast<float>(rand() % static_cast<int>(stageSize.m_z * 2.0f) - stageSize.m_z),//-1000~1000のランダムなZ座標
+		//敵をステージ外周のランダムな位置に生成する
+		//どの辺から生成するをかを決める
+		int randSide = rand() % stage_side_num;
+		
+		Vector3 pos;
+
+		enum class Side
+		{
+			Left = 0,
+			Right,
+			Up,
+			Down,
 		};
+
+		switch (static_cast<Side>(randSide))
+		{
+		case Side::Left:
+			pos = { -stageSize.m_x,//左側の辺のx座標
+					0.0f,
+					static_cast<float>(rand() % static_cast<int>(stageSize.m_z * 2.0f) - stageSize.m_z) };//辺のz座標の範囲は-stageSize.m_zからstageSize.m_zまで
+			break;
+		case Side::Right:
+			pos = { stageSize.m_x,//右側の辺のx座標
+					0.0f,
+					static_cast<float>(rand() % static_cast<int>(stageSize.m_z * 2.0f) - stageSize.m_z) };//辺のz座標の範囲は-stageSize.m_zからstageSize.m_zまで
+			break;
+		case Side::Up:
+			pos = { static_cast<float>(rand() % static_cast<int>(stageSize.m_x * 2.0f) - stageSize.m_x),//辺のx座標の範囲は-stageSize.m_xからstageSize.m_xまで
+					0.0f,
+					-stageSize.m_z };//上側の辺のz座標
+			break;
+		case Side::Down:
+			pos = { static_cast<float>(rand() % static_cast<int>(stageSize.m_x * 2.0f) - stageSize.m_x),//辺のx座標の範囲は-stageSize.m_xからstageSize.m_xまで
+					0.0f,
+					stageSize.m_z };//下側の辺のz座標
+			break;
+		}
 
 		Create(pos, EnemyType::Enemy1, m_handles);
 	}

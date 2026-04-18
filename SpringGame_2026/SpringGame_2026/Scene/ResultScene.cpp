@@ -132,7 +132,7 @@ void ResultScene::Draw()
 	//スコアの描画
 	std::string scoreText = "成果:" + ToKanji::NumToKanji(m_score) + "点";
 	//表示したい文字列の横幅を取得する
-	int textWidth = GetDrawStringWidthToHandle(scoreText.c_str(), scoreText.length(), m_scoreFontHandle);
+	int textWidth = GetDrawStringWidthToHandle(scoreText.c_str(), static_cast<int>(scoreText.length()), m_scoreFontHandle);
 	//ウィンドウの中心に描画するため、描画位置を計算する
 	auto& windowSize = Application::GetInstance().GetWindowSize();
 	Vector3 drawPos = { windowSize.w / 2.0f - textWidth / 2.0f, windowSize.h / 2.0f - score_font_size / 2.0f };
@@ -160,11 +160,11 @@ void ResultScene::Draw()
 	//スコアが百点の場合のみ、特別な色で描画する
 	if (m_score == max_score)
 	{
-		DrawExtendStringToHandle(drawPos.m_x, drawPos.m_y, scale, scale, scoreText.c_str(), score_100_color, m_scoreFontHandle);
+		DrawExtendStringToHandle(static_cast<int>(drawPos.m_x), static_cast<int>(drawPos.m_y), scale, scale, scoreText.c_str(), score_100_color, m_scoreFontHandle);
 	}
 	else
 	{
-		DrawExtendStringToHandle(drawPos.m_x, drawPos.m_y, scale, scale, scoreText.c_str(), 0xffffff, m_scoreFontHandle);
+		DrawExtendStringToHandle(static_cast<int>(drawPos.m_x), static_cast<int>(drawPos.m_y), scale, scale, scoreText.c_str(), 0xffffff, m_scoreFontHandle);
 	}
 }
 
