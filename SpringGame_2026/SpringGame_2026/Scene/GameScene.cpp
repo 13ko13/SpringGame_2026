@@ -20,6 +20,7 @@
 #include "ResultScene.h"
 #include "../Main/Application.h"
 #include "../System/ToKanji.h"
+#include "../Manager/SoundManager.h"
 
 namespace
 {
@@ -151,6 +152,9 @@ void GameScene::Init()
 	m_timeFontHandle = CreateFontToHandle(font_name, time_limit_font_size, -1, DX_FONTTYPE_ANTIALIASING_EDGE_4X4);
 	m_countDownFontHandle = CreateFontToHandle(font_name, game_count_font_size, -1, DX_FONTTYPE_ANTIALIASING_EDGE_4X4);
 
+	//ゲームBGMを再生する
+	SoundManager::GetInstance().PlayFadeIn(SoundManager::SoundType::GameBgm, fade_frame, true);
+
 	//環境光だけを最大に
 	SetGlobalAmbientLight(GetColorF(255, 255, 255, 255));
 
@@ -211,6 +215,9 @@ void GameScene::Update(Input& input)
 		//スコアの計算を行う
 		int score = CalcScore(m_enemyCount - static_cast<int>(m_pEnemyFactory->GetEnemies().size()));
 		m_controller.ChangeScene(std::make_shared<ResultScene>(m_controller, score), fade_frame);
+
+		//ゲームBGMをフェードアウトさせる
+		SoundManager::GetInstance().FadeOut(SoundManager::SoundType::GameBgm, fade_frame);
 	}
 #ifdef _DEBUG
 	if (input.IsTriggered("ok"))
@@ -218,6 +225,9 @@ void GameScene::Update(Input& input)
 		//スコアの計算を行う
 		int score = CalcScore(m_enemyCount - static_cast<int>(m_pEnemyFactory->GetEnemies().size()));
 		m_controller.ChangeScene(std::make_shared<ResultScene>(m_controller, score), fade_frame);
+
+		//ゲームBGMをフェードアウトさせる
+		SoundManager::GetInstance().FadeOut(SoundManager::SoundType::GameBgm, fade_frame);
 	}
 #endif // _DEBUG	
 }
