@@ -153,6 +153,7 @@
     <ClCompile Include="Manager\CollisionManager.cpp" />
     <ClCompile Include="GameObjects\Enemy.cpp" />
     <ClCompile Include="Math\Sphere.cpp" />
+    <ClCompile Include="Manager\SoundManager.cpp" />
     <ClCompile Include="System\SpriteAnimator.cpp" />
     <ClCompile Include="System\ModelAnimator.cpp" />
     <ClCompile Include="System\Camera.cpp" />
@@ -184,6 +185,7 @@
     <ClInclude Include="Manager\CollisionManager.h" />
     <ClInclude Include="GameObjects\Enemy.h" />
     <ClInclude Include="Math\Sphere.h" />
+    <ClInclude Include="Manager\SoundManager.h" />
     <ClInclude Include="System\SpriteAnimator.h" />
     <ClInclude Include="System\ModelAnimator.h" />
     <ClInclude Include="System\Camera.h" />
