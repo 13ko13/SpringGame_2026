@@ -76,6 +76,31 @@ void ResourceLoader::LoadAll()
 	handle = LoadEffekseerEffect("Data/Effect/AttackField.efk", attack_ef_scale);//攻撃フィールドのエフェクト
 	assert(handle != -1);
 	m_effectHandles[EffectID::AttackField] = handle;
+
+	//----サウンド------
+	handle = LoadSoundMem("Data/Sound/decision.mp3");//決定音
+	assert(handle != -1);
+	m_soundHandles[SoundID::Decision] = handle;
+
+	//handle = LoadSoundMem("Data/Sound/SE/attack.wav");//攻撃音
+	//assert(handle != -1);
+	//m_soundHandles[SoundID::Attack] = handle;
+
+	//handle = LoadSoundMem("Data/Sound/SE/player_damage.wav");//プレイヤーがダメージを受けたときの音
+	//assert(handle != -1);
+	//m_soundHandles[SoundID::PlayerDamage] = handle;
+
+	//handle = LoadSoundMem("Data/Sound/SE/enemy_death.wav");//敵が死んだときの音
+	//assert(handle != -1);
+	//m_soundHandles[SoundID::EnemyDeath] = handle;
+
+	handle = LoadSoundMem("Data/Sound/title_bgm.mp3");//タイトルのBGM
+	assert(handle != -1);
+	m_soundHandles[SoundID::TitleBgm] = handle;
+
+	handle = LoadSoundMem("Data/Sound/game_bgm.mp3");//ゲームシーンのBGM
+	assert(handle != -1);
+	m_soundHandles[SoundID::GameBgm] = handle;
 }
 
 void ResourceLoader::ReleaseAll()
@@ -99,6 +124,8 @@ int ResourceLoader::GetModel(ModelID id) const
 	//IDをもとにハンドルを返す
 	auto it = m_modelHandles.find(id);
 	
+	//it != m_modelHandles.end()は、idに対応するハンドルが見つかったかどうかをチェックしている
+	//end()は、マップの最後を指すイテレータで、find()が見つからなかったときに返される
 	if (it != m_modelHandles.end())
 	{
 		return it->second;
@@ -137,6 +164,21 @@ int ResourceLoader::GetEffect(EffectID id) const
 	else
 	{
 		assert(false && "エフェクトIDが見つかりません");
+		return -1;
+	}
+}
+
+int ResourceLoader::GetSound(SoundID id) const
+{
+	auto it = m_soundHandles.find(id);
+
+	if (it != m_soundHandles.end())
+	{
+		return it->second;
+	}
+	else
+	{
+		assert(false && "サウンドIDが見つかりません");
 		return -1;
 	}
 }
