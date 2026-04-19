@@ -10,6 +10,7 @@
 #include "../Scene/GameScene.h"
 #include "../Scene/TitleScene.h"
 #include "../Loader/ResourceLoader.h"
+#include "../Manager/SoundManager.h"
 
 namespace
 {
@@ -118,6 +119,9 @@ bool Application::Init()
 	//リソースをロードする
 	ResourceLoader::GetInstance().LoadAll();
 
+	//SoundManagerのインスタンスを作成して初期化する
+	SoundManager::GetInstance().Init();
+
 	//ウィンドウズ内にフォントを追加する
 	AddFontResourceEx(font_name, FR_PRIVATE, NULL);
 
@@ -151,6 +155,9 @@ void Application::Run()
 
 		ClearDrawScreen();
 		input.Update();//入力状態の更新
+
+		//サウンドマネージャーの更新
+		SoundManager::GetInstance().Update();
 
 		//シーンの更新
 		controller.Update(input);
