@@ -1,13 +1,16 @@
-﻿#include "TitleScene.h"
-#include "SceneController.h"
+﻿#include <EffekseerForDXLib.h>
 #include <cassert>
+
+#include "TitleScene.h"
+#include "SceneController.h"
 #include "../System/Input.h"
 #include "../Loader/ResourceLoader.h"
 #include "GameScene.h"
 #include "../Main/Application.h"
 #include "../GameObjects/Player.h"
 #include "../Manager/EffectManager.h"
-#include <EffekseerForDXLib.h>
+#include "../Manager/SoundManager.h"
+
 
 namespace
 {
@@ -95,7 +98,9 @@ void TitleScene::Init()
 	//タイトルロゴのハンドルを受け取る
 	m_graphHandles.push_back(loader.GetGraphic(ResourceLoader::GraphicID::TitleLogoEffect));
 	m_graphHandles.push_back(loader.GetGraphic(ResourceLoader::GraphicID::TitleLogo));
-
+	
+	//タイトルのBGMを再生する
+	SoundManager::GetInstance().PlayFadeIn(SoundManager::SoundType::TitleBgm, fade_frame, true);
 
 	//フォントのハンドルを作成する
 	m_startFontHandle = CreateFontToHandle(font_name, title_font_size, -1, DX_FONTTYPE_ANTIALIASING_EDGE_4X4);
@@ -112,6 +117,12 @@ void TitleScene::Update(Input& input)
 	//何かしらのボタンが押されたらゲームシーンに遷移する
 	if (input.IsTriggered("ok"))
 	{
+		//決定音を鳴らす
+		SoundManager::GetInstance().Play(SoundManager::SoundType::Decision);
+
+		//TitleBgmをフェードアウトさせる
+		SoundManager::GetInstance().FadeOut(SoundManager::SoundType::TitleBgm, fade_frame);
+
 		m_controller.ChangeScene(std::make_shared<GameScene>(m_controller), fade_frame);
 	}
 
