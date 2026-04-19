@@ -54,17 +54,6 @@ public:
 	/// </summary>
 	void OnDamage();
 
-	/// <summary>
-	///	攻撃を受けたときに立つフラグを返す
-	/// </summary>
-	/// <returns>true:攻撃を受けた瞬間,false:攻撃を受けていない</returns>
-	bool IsJustDamaged() const { return m_isJustDamaged; }
-
-	/// <summary>
-	/// 攻撃を受けたフラグをリセットする
-	/// </summary>
-	void ResetDamageFlag() { m_isJustDamaged = false; }
-
 private:
 	//無敵時間用のタイマー
 	int m_invincibleTimer = 0;
@@ -86,9 +75,6 @@ private:
 
 	//エフェクトを出したか
 	bool m_isCreateEffect = false;
-
-	//ダメージが当たった瞬間に一度だけ呼び出す処理を行うためのフラグ
-	bool m_isJustDamaged = false;
 
 	//現在のY軸回転角
 	float m_currentAngleY = 0.0f;

@@ -99,9 +99,6 @@
     <ClCompile Include="System\ToKanji.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="DamageVignette.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Constants\Game.h">
@@ -191,11 +188,5 @@
     <ClInclude Include="System\ToKanji.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="DamageVignette.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="data\Shader\Vignette.hlsl" />
   </ItemGroup>
 </Project>

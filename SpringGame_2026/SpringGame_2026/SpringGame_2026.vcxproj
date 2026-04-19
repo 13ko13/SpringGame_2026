@@ -117,10 +117,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)..\Dxlib_h</AdditionalLibraryDirectories>
     </Link>
-    <PostBuildEvent>
-      <Command>
-      </Command>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -141,7 +137,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="DamageVignette.cpp" />
     <ClCompile Include="Effect\AttackFieldEffect.cpp" />
     <ClCompile Include="Effect\DeathEffect.cpp" />
     <ClCompile Include="Effect\Effect.cpp" />
@@ -172,7 +167,6 @@
     <ClCompile Include="System\ToKanji.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DamageVignette.h" />
     <ClInclude Include="Effect\AttackFieldEffect.h" />
     <ClInclude Include="Effect\DeathEffect.h" />
     <ClInclude Include="Effect\Effect.h" />
@@ -202,14 +196,6 @@
     <ClInclude Include="Scene\GameScene.h" />
     <ClInclude Include="Scene\TitleScene.h" />
     <ClInclude Include="System\ToKanji.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="data\Shader\Vignette.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-    </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

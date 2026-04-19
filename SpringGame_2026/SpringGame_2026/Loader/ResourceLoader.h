@@ -33,12 +33,6 @@ public:
 		AttackField = 1,//攻撃フィールドのエフェクト
 	};
 
-	//シェーダーの種類
-	enum class ShaderID : int
-	{
-		DamageVignette = 0,//ダメージビネットのシェーダー
-	};
-
 public:
 	static ResourceLoader& GetInstance();
 
@@ -51,7 +45,6 @@ public:
 	int GetModel(ModelID id) const;
 	int GetGraphic(GraphicID id) const;
 	int GetEffect(EffectID id) const;
-	int GetShader(ShaderID id) const;
 
 private:
 	//=defaultでデフォルトコンストラクタを生成する
@@ -68,6 +61,5 @@ private:
 	std::unordered_map<ModelID, int> m_modelHandles;
 	std::unordered_map<GraphicID, int> m_graphicHandles;
 	std::unordered_map<EffectID, int> m_effectHandles;
-	std::unordered_map<ShaderID, int> m_shaderHandles;
 };
 

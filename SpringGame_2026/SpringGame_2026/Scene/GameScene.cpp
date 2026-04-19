@@ -20,7 +20,6 @@
 #include "ResultScene.h"
 #include "../Main/Application.h"
 #include "../System/ToKanji.h"
-#include "../DamageVignette.h"
 
 namespace
 {
@@ -152,10 +151,6 @@ void GameScene::Init()
 	m_timeFontHandle = CreateFontToHandle(font_name, time_limit_font_size, -1, DX_FONTTYPE_ANTIALIASING_EDGE_4X4);
 	m_countDownFontHandle = CreateFontToHandle(font_name, game_count_font_size, -1, DX_FONTTYPE_ANTIALIASING_EDGE_4X4);
 
-	//ダメージビネットの実体を確保
-	m_pDamageVignette = std::make_shared<DamageVignette>();
-	m_pDamageVignette->Init(resourceLoader.GetShader(ResourceLoader::ShaderID::DamageVignette));
-
 	//環境光だけを最大に
 	SetGlobalAmbientLight(GetColorF(255, 255, 255, 255));
 
@@ -190,15 +185,7 @@ void GameScene::Update(Input& input)
 		m_pEnemyFactory->Update(m_pPlayer->GetPos(), GetStageSize(), true);
 	}
 
-	//プレイヤーがダメージをうけたらダメージビネットのトリガーを引く
-	if (m_pPlayer->IsJustDamaged())
-	{
-		m_pDamageVignette->Trigger();
-		m_pPlayer->ResetDamageFlag();
-	}
 
-	//ダメージビネットの更新
-	m_pDamageVignette->Update();
 
 	//カウントダウン中はゲーム時間の更新処理を行わない
 	if (m_startCountDown >= 60) return;
@@ -316,9 +303,6 @@ void GameScene::Draw()
 		DrawExtendStringToHandle(static_cast<int>(drawPos.m_x), static_cast<int>(drawPos.m_y),
 			1.0, 1.0, startTimeText.c_str(), 0xffffff, m_countDownFontHandle);
 	}
-
-	//ダメージビネットの描画
-	m_pDamageVignette->Draw();
 }
 
 void GameScene::DrawGrid()
