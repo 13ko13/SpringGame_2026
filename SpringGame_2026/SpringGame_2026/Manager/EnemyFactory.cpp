@@ -12,7 +12,7 @@ namespace
 	//プレイヤーからどのくらい離れた位置に生成するかの最小距離
 	constexpr float create_enemy_min_distance = 300.0f;
 	//プレイヤーからどのくらい離れた位置に生成するかの最大距離
-	constexpr float create_enemy_max_distance = 1200.0f;
+	constexpr float create_enemy_max_distance = 1400.0f;
 }
 
 EnemyFactory::EnemyFactory(std::vector<int> modelHandles, std::shared_ptr<EffectManager> pEffectManager) :
