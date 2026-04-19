@@ -219,10 +219,10 @@ void Enemy::ChangeState(State next)
 		m_animator.Play(MV1GetAnimIndex(m_modelHandle, idle_anim_name), true, 1.0f, startFrame);
 		break;
 	case State::Hit:
-		m_animator.Play(MV1GetAnimIndex(m_modelHandle, hit_anim_name), false, 1.0f, startFrame);
+		m_animator.Play(MV1GetAnimIndex(m_modelHandle, hit_anim_name), false, 1.0f);
 		break;
 	case State::Dead:
-		m_animator.Play(MV1GetAnimIndex(m_modelHandle, dead_anim_name), false, 1.0f, startFrame);
+		m_animator.Play(MV1GetAnimIndex(m_modelHandle, dead_anim_name), false, 1.0f);
 		break;
 	case State::Walk:
 		m_animator.Play(MV1GetAnimIndex(m_modelHandle, walk_anim_name), true, walk_anim_speed, startFrame);
