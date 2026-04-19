@@ -65,6 +65,8 @@ void CollisionManager::Update(std::shared_ptr<Player>& pPlayer,
 	//プレイヤーと敵の押し戻しの処理
 	for (auto& pEnemy : enemies)
 	{
+		//敵が死亡済み、または死亡アニメーション中なら押し戻しの処理を行わない
+		if (pEnemy->IsDead() || !pEnemy->IsDeadAnimEnd()) continue;
 		pushBackPlayer(pPlayer, pEnemy);
 	}
 }
