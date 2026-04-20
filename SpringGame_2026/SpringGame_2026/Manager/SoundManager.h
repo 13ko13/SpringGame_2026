@@ -11,6 +11,9 @@ public:
 		TitleBgm,//タイトルのBGM
 		GameBgm,//ゲームシーンのBGM
 		ResultBgm,//リザルトシーンのBGM
+		CountDown,//カウントダウンの音
+		Start,//スタートの音
+		AttackStart,//攻撃開始の音
 	};
 
 public:

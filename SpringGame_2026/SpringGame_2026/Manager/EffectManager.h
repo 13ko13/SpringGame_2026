@@ -38,6 +38,11 @@ public:
 	/// <returns>true:再生中,false:再生中でない</returns>
 	bool IsPlaying(int handle) const;
 
+	/// <summary>
+	/// 全てのエフェクトを停止する
+	/// </summary>
+	void StopAllEffects();
+
 private:
 	//登録されたエフェクトを格納する配列
 	std::list<std::shared_ptr<Effect>> m_pEffects;

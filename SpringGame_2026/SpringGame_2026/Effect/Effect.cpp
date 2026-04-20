@@ -9,7 +9,12 @@ Effect::Effect(const Vector3& pos):
 
 Effect::~Effect()
 {
-
+	// インスタンスが破棄される際、まだ再生中なら停止させる
+	if (m_playingHandle >= 0)
+	{
+		StopEffekseer3DEffect(m_playingHandle);
+		m_playingHandle = -1;
+	}
 }
 
 void Effect::Update()

@@ -52,8 +52,11 @@ namespace
 	constexpr float e_num_text_pos_x_rate = 0.97f;
 	constexpr float e_num_text_pos_y_rate = 0.12f;
 
+	//1秒あたりのフレーム数
+	constexpr int frame_per_second = 60;
+
 	//ゲーム開始時のカウントダウンの時間
-	constexpr int start_count_down_time = 60 * 4;//4秒
+	constexpr int start_count_down_time = frame_per_second * 4;//4秒
 
 	//敵を倒したときのスコア倍率
 	constexpr int score_rate = 3;
@@ -62,13 +65,13 @@ namespace
 	constexpr float time_score_rate = 0.3f;
 
 	//敵を倒すまでの時間の最大値
-	constexpr int max_time_for_kill = 60 * 99;//99秒
+	constexpr int max_time_for_kill = frame_per_second * 99;//99秒
 
 	//最大スコア
 	constexpr int max_score = 100;
 
 	//最大スコアを目指せる目安の時間23秒
-	constexpr int ideal_time = 60 * 23;
+	constexpr int ideal_time = frame_per_second * 23;
 
 	//敵を倒したときの割合の重み
 	constexpr float kill_waight = 0.7f;
@@ -111,6 +114,8 @@ void GameScene::Init()
 	m_deathEffectHandle = resourceLoader.GetEffect(ResourceLoader::EffectID::Death);
 	m_attackFieldEffectHandle = resourceLoader.GetEffect(ResourceLoader::EffectID::AttackField);
 	m_pEffectManager = std::make_shared<EffectManager>(m_deathEffectHandle, m_attackFieldEffectHandle);
+	//念のため全てのエフェクトを停止しておく
+	m_pEffectManager->StopAllEffects();
 
 	//プレイヤーモデルは複製してこのシーンが所有する
 	m_playerMHandle = MV1DuplicateModel(resourceLoader.GetModel(ResourceLoader::ModelID::Player));
@@ -167,13 +172,26 @@ void GameScene::Update(Input& input)
 	m_frameCount++;
 
 	//ゲーム開始前のカウントダウン
+	//時間が3、2、1のときにカウントダウンの音を鳴らす
+	if (m_startCountDown % frame_per_second == 0 && m_startCountDown >= frame_per_second * 2)
+	{
+		//カウントダウンの音を鳴らす
+		SoundManager::GetInstance().Play(SoundManager::SoundType::CountDown);
+	}
+	else if (m_startCountDown == frame_per_second)
+	{
+		//開始時の音を鳴らす
+		SoundManager::GetInstance().Play(SoundManager::SoundType::Start);
+	}
+
 	m_startCountDown--;
+
 
 	//カメラの更新
 	m_pCamera->Update(m_pPlayer->GetTargetPos(), input);
 
 	//カウントダウン中はプレイヤーと敵は待機モーションのみ再生させる
-	if (m_startCountDown >= 60)
+	if (m_startCountDown >= 0)
 	{
 		//プレイヤーの更新
 		m_pPlayer->Update(input, m_pCamera->GetAngleY(), stage_size, false);
@@ -189,7 +207,8 @@ void GameScene::Update(Input& input)
 		m_pEnemyFactory->Update(m_pPlayer->GetPos(), GetStageSize(), true);
 	}
 
-
+	//エフェクトの更新
+	UpdateEffekseer3D();
 
 	//カウントダウン中はゲーム時間の更新処理を行わない
 	if (m_startCountDown >= 60) return;
@@ -201,8 +220,7 @@ void GameScene::Update(Input& input)
 	//当たり判定の更新
 	m_pCollManager->Update(m_pPlayer, m_pEnemyFactory);
 
-	//エフェクトの更新
-	UpdateEffekseer3D();
+	
 
 	//エフェクトマネージャーの更新
 	m_pEffectManager->Update();
@@ -308,6 +326,19 @@ void GameScene::Draw()
 		//表示したい文字の高さ
 		const int strHeight = game_count_font_size;
 
+		//ウィンドウの中心に描画するため、描画位置を計算する
+		Vector3 drawPos = { windowSize.w / 2.0f - strWidth / 2.0f, windowSize.h / 2.0f - strHeight / 2.0f };
+		DrawExtendStringToHandle(static_cast<int>(drawPos.m_x), static_cast<int>(drawPos.m_y),
+			1.0, 1.0, startTimeText.c_str(), 0xffffff, m_countDownFontHandle);
+	}
+	else if (m_startCountDown > 0)
+	{
+		//stringで描画する文字列を作成する
+		std::string startTimeText = "始めいッ!";
+		//表示したい文字列の横幅を取得する
+		const int strWidth = GetDrawStringWidthToHandle(startTimeText.c_str(), static_cast<int>(strlen(startTimeText.c_str())), m_countDownFontHandle);
+		//表示したい文字の高さ
+		const int strHeight = game_count_font_size;
 		//ウィンドウの中心に描画するため、描画位置を計算する
 		Vector3 drawPos = { windowSize.w / 2.0f - strWidth / 2.0f, windowSize.h / 2.0f - strHeight / 2.0f };
 		DrawExtendStringToHandle(static_cast<int>(drawPos.m_x), static_cast<int>(drawPos.m_y),

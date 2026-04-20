@@ -43,6 +43,9 @@ public:
 		TitleBgm = 4,//タイトルのBGM
 		GameBgm = 5,//ゲームシーンのBGM
 		ResultBgm = 6,//リザルトシーンのBGM
+		Countdown = 7,//カウントダウンの音
+		Start = 8,//スタートの音
+		AttackStart = 9,//攻撃開始の音
 	};
 
 public:

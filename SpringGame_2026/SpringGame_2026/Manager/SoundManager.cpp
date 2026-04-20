@@ -62,8 +62,29 @@ void SoundManager::Init()
 	resultBgm.handle = loader.GetSound(ResourceLoader::SoundID::ResultBgm);//リソースローダーからリザルトシーンのBGMのハンドルを取得して設定
 	resultBgm.loaded = true;//ロード済みフラグを立てる
 	resultBgm.volume = title_bgm_volume;//音量を最大にする
-	gameBgm.isLoop = true;//ループする
+	resultBgm.isLoop = true;//ループする
 	ChangeVolumeSoundMem(resultBgm.volume, resultBgm.handle);//音量を変更する
+
+	auto& countDown = m_sounds[SoundType::CountDown];
+	countDown.handle = loader.GetSound(ResourceLoader::SoundID::Countdown);//リソースローダーからカウントダウンの音のハンドルを取得して設定
+	countDown.loaded = true;//ロード済みフラグを立てる
+	countDown.volume = desition_volume;//音量を最大にする
+	countDown.isLoop = false;//ループしない
+	ChangeVolumeSoundMem(countDown.volume, countDown.handle);//音量を変更する
+
+	auto& start = m_sounds[SoundType::Start];
+	start.handle = loader.GetSound(ResourceLoader::SoundID::Start);//リソースローダーからスタートの音のハンドルを取得して設定(カウントダウンの音と同じものを使う)
+	start.loaded = true;//ロード済みフラグを立てる
+	start.volume = desition_volume;//音量を最大にする
+	start.isLoop = false;//ループしない
+	ChangeVolumeSoundMem(start.volume, start.handle);//音量を変更する
+
+	auto& attackStart = m_sounds[SoundType::AttackStart];
+	attackStart.handle = loader.GetSound(ResourceLoader::SoundID::AttackStart);//リソースローダーから攻撃開始の音のハンドルを取得して設定
+	attackStart.loaded = true;//ロード済みフラグを立てる
+	attackStart.volume = desition_volume;//音量を最大にする
+	attackStart.isLoop = false;//ループしない
+	ChangeVolumeSoundMem(attackStart.volume, attackStart.handle);//音量を変更する
 }
 
 void SoundManager::Update()

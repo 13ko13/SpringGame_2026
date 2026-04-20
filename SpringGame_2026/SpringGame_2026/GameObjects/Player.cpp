@@ -3,6 +3,7 @@
 #include "../System/Input.h"
 #include "../Math/Matrix4x4.h"
 #include "../Manager/EffectManager.h"
+#include "../Manager/SoundManager.h"
 
 namespace
 {
@@ -383,6 +384,8 @@ void Player::Attack()
 {
 	//動けなくする
 	m_isCanMove = false;
+	//攻撃開始音を鳴らす
+	SoundManager::GetInstance().Play(SoundManager::SoundType::AttackStart);
 
 	//ステートを攻撃中に変更
 	ChangeState(State::Attack, true);

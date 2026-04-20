@@ -105,6 +105,18 @@ void ResourceLoader::LoadAll()
 	handle = LoadSoundMem("Data/Sound/result_bgm.mp3");//リザルトシーンのBGM
 	assert(handle != -1);
 	m_soundHandles[SoundID::ResultBgm] = handle;
+
+	handle = LoadSoundMem("Data/Sound/countdown.mp3");//カウントダウンの音
+	assert(handle != -1);
+	m_soundHandles[SoundID::Countdown] = handle;
+
+	handle = LoadSoundMem("Data/Sound/start_sound.mp3");//スタートの音
+	assert(handle != -1);
+	m_soundHandles[SoundID::Start] = handle;
+
+	handle = LoadSoundMem("Data/Sound/attack_start.mp3");//攻撃開始の音
+	assert(handle != -1);
+	m_soundHandles[SoundID::AttackStart] = handle;
 }
 
 void ResourceLoader::ReleaseAll()

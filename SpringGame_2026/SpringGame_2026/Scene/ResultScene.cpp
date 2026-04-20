@@ -12,6 +12,7 @@
 #include "TitleScene.h"
 #include "../System/ToKanji.h"
 #include "../Manager/SoundManager.h"
+#include <EffekseerForDXLib.h>
 
 namespace
 {
@@ -118,6 +119,9 @@ void ResultScene::Update(Input& input)
 		m_isSkip = true;
 		m_isStageing = false;
 	}
+
+	//エフェクトの更新
+	UpdateEffekseer3D();
 }
 
 void ResultScene::Draw()

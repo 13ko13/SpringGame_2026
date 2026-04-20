@@ -13,7 +13,15 @@ EffectManager::EffectManager(const int deathEffectHandle, const int attackFieldE
 
 EffectManager::~EffectManager()
 {
-	//処理なし
+	//再生中の全エフェクトを停止してクリア
+	for(auto& effect : m_pEffects)
+	{
+		if (effect && effect->GetPlayingHandle() >= 0)
+		{
+			StopEffekseer3DEffect(effect->GetPlayingHandle());
+		}
+	}
+	m_pEffects.clear();
 }
 
 void EffectManager::Update()
@@ -68,4 +76,17 @@ void EffectManager::Create(const Vector3& pos, EffectType type)
 bool EffectManager::IsPlaying(int handle) const
 {
 	return IsEffekseer3DEffectPlaying(handle) != 0;
+}
+
+void EffectManager::StopAllEffects()
+{
+	//再生中の全エフェクトを停止してクリア
+	for (auto& effect : m_pEffects)
+	{
+		if (effect && effect->GetPlayingHandle() >= 0)
+		{
+			StopEffekseer3DEffect(effect->GetPlayingHandle());
+		}
+	}
+	m_pEffects.clear();
 }

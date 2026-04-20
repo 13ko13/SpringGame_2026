@@ -10,7 +10,7 @@
 #include "../GameObjects/Player.h"
 #include "../Manager/EffectManager.h"
 #include "../Manager/SoundManager.h"
-
+#include "../Effect/DeathEffect.h"
 
 namespace
 {
@@ -60,7 +60,8 @@ TitleScene::TitleScene(SceneController& controller) :
 
 TitleScene::~TitleScene()
 {
-
+	//エフェクトを全て停止する
+	m_pEffectManager->StopAllEffects();
 }
 
 void TitleScene::Init()
