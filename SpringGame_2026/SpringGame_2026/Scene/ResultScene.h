@@ -47,6 +47,9 @@ private:
 	//演出中か
 	bool m_isStageing = false;
 
+	//タイトルに戻るボタンを押したか
+	bool m_isReturnTitle = false;
+
 	//カメラの実体
 	std::shared_ptr<Camera> m_pCamera;
 

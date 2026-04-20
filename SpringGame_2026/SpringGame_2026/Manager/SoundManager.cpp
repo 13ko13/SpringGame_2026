@@ -11,6 +11,27 @@ namespace
 
 	//決定音の音量
 	constexpr int desition_volume = 255;
+
+	//ゲームシーンのBGMの音量
+	constexpr int game_bgm_volume = 200;
+
+	//リザルトシーンのBGMの音量
+	constexpr int result_bgm_volume = 200;
+
+	//カウントダウンの音の音量
+	constexpr int count_down_volume = 255;
+
+	//スタートの音の音量
+	constexpr int start_volume = 255;
+
+	//攻撃開始の音の音量
+	constexpr int attack_start_volume = 255;
+
+	//着地の音の音量
+	constexpr int on_ground_volume = 255;
+
+	//敵が死んだときの音の音量
+	constexpr int dead_enemy_volume = 190;
 }
 
 SoundManager::SoundManager()
@@ -54,37 +75,51 @@ void SoundManager::Init()
 	auto& gameBgm = m_sounds[SoundType::GameBgm];
 	gameBgm.handle = loader.GetSound(ResourceLoader::SoundID::GameBgm);//リソースローダーからゲームシーンのBGMのハンドルを取得して設定
 	gameBgm.loaded = true;//ロード済みフラグを立てる
-	gameBgm.volume = title_bgm_volume;//音量を最大にする
+	gameBgm.volume = game_bgm_volume;//音量を最大にする
 	gameBgm.isLoop = true;//ループする
 	ChangeVolumeSoundMem(gameBgm.volume, gameBgm.handle);//音量を変更する
 
 	auto& resultBgm = m_sounds[SoundType::ResultBgm];
 	resultBgm.handle = loader.GetSound(ResourceLoader::SoundID::ResultBgm);//リソースローダーからリザルトシーンのBGMのハンドルを取得して設定
 	resultBgm.loaded = true;//ロード済みフラグを立てる
-	resultBgm.volume = title_bgm_volume;//音量を最大にする
+	resultBgm.volume = result_bgm_volume;//音量を最大にする
 	resultBgm.isLoop = true;//ループする
 	ChangeVolumeSoundMem(resultBgm.volume, resultBgm.handle);//音量を変更する
 
 	auto& countDown = m_sounds[SoundType::CountDown];
 	countDown.handle = loader.GetSound(ResourceLoader::SoundID::Countdown);//リソースローダーからカウントダウンの音のハンドルを取得して設定
 	countDown.loaded = true;//ロード済みフラグを立てる
-	countDown.volume = desition_volume;//音量を最大にする
+	countDown.volume = count_down_volume;//音量を最大にする
 	countDown.isLoop = false;//ループしない
 	ChangeVolumeSoundMem(countDown.volume, countDown.handle);//音量を変更する
 
 	auto& start = m_sounds[SoundType::Start];
 	start.handle = loader.GetSound(ResourceLoader::SoundID::Start);//リソースローダーからスタートの音のハンドルを取得して設定(カウントダウンの音と同じものを使う)
 	start.loaded = true;//ロード済みフラグを立てる
-	start.volume = desition_volume;//音量を最大にする
+	start.volume = start_volume;//音量を最大にする
 	start.isLoop = false;//ループしない
 	ChangeVolumeSoundMem(start.volume, start.handle);//音量を変更する
 
 	auto& attackStart = m_sounds[SoundType::AttackStart];
 	attackStart.handle = loader.GetSound(ResourceLoader::SoundID::AttackStart);//リソースローダーから攻撃開始の音のハンドルを取得して設定
 	attackStart.loaded = true;//ロード済みフラグを立てる
-	attackStart.volume = desition_volume;//音量を最大にする
+	attackStart.volume = attack_start_volume;//音量を最大にする
 	attackStart.isLoop = false;//ループしない
 	ChangeVolumeSoundMem(attackStart.volume, attackStart.handle);//音量を変更する
+
+	auto& onGround = m_sounds[SoundType::OnGround];
+	onGround.handle = loader.GetSound(ResourceLoader::SoundID::OnGround);//リソースローダーから着地の音のハンドルを取得して設定
+	onGround.loaded = true;//ロード済みフラグを立てる
+	onGround.volume = on_ground_volume;//音量を最大にする
+	onGround.isLoop = false;//ループしない
+	ChangeVolumeSoundMem(onGround.volume, onGround.handle);//音量を変更する
+
+	auto& deadEnemy = m_sounds[SoundType::DeadEnemy];
+	deadEnemy.handle = loader.GetSound(ResourceLoader::SoundID::EnemyDeath);//リソースローダーから敵が死んだときの音のハンドルを取得して設定
+	deadEnemy.loaded = true;//ロード済みフラグを立てる
+	deadEnemy.volume = dead_enemy_volume;//音量を最大にする
+	deadEnemy.isLoop = false;//ループしない
+	ChangeVolumeSoundMem(deadEnemy.volume, deadEnemy.handle);//音量を変更する
 }
 
 void SoundManager::Update()

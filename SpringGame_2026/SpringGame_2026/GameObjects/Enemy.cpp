@@ -1,7 +1,9 @@
-﻿#include "Enemy.h"
+﻿#include <cmath>
+
+#include "Enemy.h"
 #include "../Math/Matrix4x4.h"
-#include <cmath>
 #include "../Manager/EffectManager.h"
+#include "../Manager/SoundManager.h"
 
 namespace
 {
@@ -33,6 +35,9 @@ namespace
 
 	//歩きアニメーションの再生速度
 	constexpr float walk_anim_speed = 1.5f;
+
+	//敵の死亡アニメーションの倒れている状態の時間
+	constexpr float dead_anim_time = 0.7f;
 }
 
 Enemy::Enemy(const int modelHandle, const Vector3& pos, std::shared_ptr<EffectManager> pManager) :
@@ -83,6 +88,19 @@ void Enemy::Update()
 	//Deadアニメーションが終わったらisDeadをtrueにする
 	if (m_currentState == State::Dead)
 	{
+		//アニメーションの再生時間と総再生時間を取得する
+		float animLength = m_animator.GetAnimLength();
+		float playTime = m_animator.GetPlayTime();
+
+		//アニメーションの再生率を求める
+		float rate = playTime / animLength;
+		if (rate >= dead_anim_time && !m_isPlayDeadSE)
+		{
+			//倒れるときの効果音を出す
+			SoundManager::GetInstance().Play(SoundManager::SoundType::DeadEnemy);
+			m_isPlayDeadSE = true;
+		}
+
 		if (m_animator.IsEnd())
 		{
 			m_isDead = true;
@@ -191,6 +209,9 @@ void Enemy::OnDead()
 {
 	//既にステートがDeadの場合は処理を飛ばす
 	if (m_currentState == State::Dead) return;
+
+	//死亡SEを鳴らすときのフラグをリセットする
+	m_isPlayDeadSE = false;
 
 	//ステートをDeadに変更する
 	ChangeState(State::Dead);

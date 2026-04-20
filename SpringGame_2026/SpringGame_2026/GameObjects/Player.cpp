@@ -45,7 +45,7 @@ namespace
 	//プレイヤーのジャンプ攻撃が当たり始める時間
 	constexpr float jump_attack_hit_start = 0.5f;
 	//プレイヤーのジャンプ攻撃が当たり終わる時間
-	constexpr float jump_attack_hit_end = 0.7f;
+	constexpr float jump_attack_hit_end = 0.6f;
 
 	//プレイヤーがダメージを受けて吹き飛んで地面につくときの時間
 	constexpr float damage_fly_time = 0.3f;
@@ -120,6 +120,14 @@ void Player::Update(Input input, float angle, const Vector3& stageSize, bool isC
 			//それ以外なら
 			m_isAttacking = false;//フラグを降ろす
 			m_attackSphereR = 0.0f;//攻撃判定用の球の半径を0にする
+		}
+
+		//ジャンプ攻撃の着地時に着地音を鳴らす
+		if (rate >= jump_attack_hit_end && !m_isPlayLandSE)
+		{
+			//着地音を鳴らす
+			SoundManager::GetInstance().Play(SoundManager::SoundType::OnGround);
+			m_isPlayLandSE = true;
 		}
 
 		//攻撃アニメーションがおわるまで　
@@ -386,6 +394,7 @@ void Player::Attack()
 	m_isCanMove = false;
 	//攻撃開始音を鳴らす
 	SoundManager::GetInstance().Play(SoundManager::SoundType::AttackStart);
+	m_isPlayLandSE = false;//着地音を鳴らせるようにする
 
 	//ステートを攻撃中に変更
 	ChangeState(State::Attack, true);

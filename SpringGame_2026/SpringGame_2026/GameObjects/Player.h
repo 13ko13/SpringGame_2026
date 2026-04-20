@@ -79,6 +79,9 @@ private:
 	//現在のY軸回転角
 	float m_currentAngleY = 0.0f;
 
+	//着地音を出したか
+	bool m_isPlayLandSE = false;
+
 	//ステート
 	enum class State : int
 	{

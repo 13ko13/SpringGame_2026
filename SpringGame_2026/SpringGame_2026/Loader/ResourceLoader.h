@@ -46,6 +46,7 @@ public:
 		Countdown = 7,//カウントダウンの音
 		Start = 8,//スタートの音
 		AttackStart = 9,//攻撃開始の音
+		OnGround = 10,//着地の音
 	};
 
 public:

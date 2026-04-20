@@ -50,6 +50,9 @@ private:
 	//Hitアニメーションをおこなったか
 	bool m_isHitAnim = false;
 
+	//死亡SEを出したか
+	bool m_isPlayDeadSE = false;
+
 	//現在のY軸回転角
 	float m_currentAngleY = 0.0f;
 

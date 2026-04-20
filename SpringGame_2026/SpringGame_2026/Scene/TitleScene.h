@@ -41,6 +41,9 @@ private:
 	//エフェクトを出すためのタイマー
 	int m_effectTimer = 0;
 
+	//Aボタンを押したかどうか
+	bool m_isStart = false;
+
 	//カメラの実体
 	std::shared_ptr<Camera> m_pCamera;
 

@@ -90,9 +90,9 @@ void ResourceLoader::LoadAll()
 	//assert(handle != -1);
 	//m_soundHandles[SoundID::PlayerDamage] = handle;
 
-	//handle = LoadSoundMem("Data/Sound/SE/enemy_death.wav");//敵が死んだときの音
-	//assert(handle != -1);
-	//m_soundHandles[SoundID::EnemyDeath] = handle;
+	handle = LoadSoundMem("Data/Sound//dead_enemy.mp3");//敵が死んだときの音
+	assert(handle != -1);
+	m_soundHandles[SoundID::EnemyDeath] = handle;
 
 	handle = LoadSoundMem("Data/Sound/title_bgm.mp3");//タイトルのBGM
 	assert(handle != -1);
@@ -117,6 +117,10 @@ void ResourceLoader::LoadAll()
 	handle = LoadSoundMem("Data/Sound/attack_start.mp3");//攻撃開始の音
 	assert(handle != -1);
 	m_soundHandles[SoundID::AttackStart] = handle;
+
+	handle = LoadSoundMem("Data/Sound/on_ground.mp3");//着地の音
+	assert(handle != -1);
+	m_soundHandles[SoundID::OnGround] = handle;
 }
 
 void ResourceLoader::ReleaseAll()

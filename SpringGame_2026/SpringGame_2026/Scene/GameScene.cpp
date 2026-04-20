@@ -26,7 +26,7 @@ namespace
 {
 	//カメラのnearとfar
 	constexpr float camera_near = 200.0f;
-	constexpr float camera_far = 1500.0f;
+	constexpr float camera_far = 1800.0f;
 
 	//ステージのサイズ
 	const Vector3 stage_size = { 1400.0f, 0.0f, 1400.0f };
@@ -36,6 +36,8 @@ namespace
 
 	//フェードにかけるフレーム数
 	constexpr float fade_frame = 60.0f;
+	//リザルトへの遷移にかけるフレーム数
+	constexpr float to_result_fade_frame = 120.0f;
 
 	//フォントのサイズ
 	constexpr int time_limit_font_size = 32;//残り時間のフォントサイズ
@@ -169,6 +171,8 @@ void GameScene::Init()
 
 void GameScene::Update(Input& input)
 {
+	
+
 	m_frameCount++;
 
 	//ゲーム開始前のカウントダウン
@@ -215,12 +219,11 @@ void GameScene::Update(Input& input)
 
 	//ゲーム時間の更新
 	//プレイヤーに討伐時間を競わせるためにカウントアップ制にする
-	m_time++;
+	//敵が生きていたら、更新処理を行う
+	if (!m_pEnemyFactory->GetEnemies().empty()) m_time++;
 
 	//当たり判定の更新
 	m_pCollManager->Update(m_pPlayer, m_pEnemyFactory);
-
-	
 
 	//エフェクトマネージャーの更新
 	m_pEffectManager->Update();
@@ -232,20 +235,20 @@ void GameScene::Update(Input& input)
 	{
 		//スコアの計算を行う
 		int score = CalcScore(m_enemyCount - static_cast<int>(m_pEnemyFactory->GetEnemies().size()));
-		m_controller.ChangeScene(std::make_shared<ResultScene>(m_controller, score), fade_frame);
+		m_controller.ChangeScene(std::make_shared<ResultScene>(m_controller, score), to_result_fade_frame);
 
 		//ゲームBGMをフェードアウトさせる
-		SoundManager::GetInstance().FadeOut(SoundManager::SoundType::GameBgm, fade_frame);
+		SoundManager::GetInstance().FadeOut(SoundManager::SoundType::GameBgm, to_result_fade_frame);
 	}
 #ifdef _DEBUG
 	if (input.IsTriggered("ok"))
 	{
 		//スコアの計算を行う
 		int score = CalcScore(m_enemyCount - static_cast<int>(m_pEnemyFactory->GetEnemies().size()));
-		m_controller.ChangeScene(std::make_shared<ResultScene>(m_controller, score), fade_frame);
+		m_controller.ChangeScene(std::make_shared<ResultScene>(m_controller, score), to_result_fade_frame);
 
 		//ゲームBGMをフェードアウトさせる
-		SoundManager::GetInstance().FadeOut(SoundManager::SoundType::GameBgm, fade_frame);
+		SoundManager::GetInstance().FadeOut(SoundManager::SoundType::GameBgm, to_result_fade_frame);
 	}
 #endif // _DEBUG	
 }

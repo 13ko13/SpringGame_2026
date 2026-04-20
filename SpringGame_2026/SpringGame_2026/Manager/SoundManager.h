@@ -1,4 +1,5 @@
 ﻿#pragma once
+#pragma once
 #include <string>
 #include <map>
 
@@ -14,6 +15,8 @@ public:
 		CountDown,//カウントダウンの音
 		Start,//スタートの音
 		AttackStart,//攻撃開始の音
+		OnGround,//着地の音
+		DeadEnemy,//敵が死んだときの音
 	};
 
 public:

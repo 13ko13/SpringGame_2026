@@ -116,8 +116,10 @@ void TitleScene::Update(Input& input)
 	m_pPlayer->Update(input, m_pCamera->GetAngleY(), stage_size, false);
 
 	//何かしらのボタンが押されたらゲームシーンに遷移する
-	if (input.IsTriggered("ok"))
+	if (input.IsTriggered("ok") && !m_isStart)
 	{
+		m_isStart = true;
+
 		//決定音を鳴らす
 		SoundManager::GetInstance().Play(SoundManager::SoundType::Decision);
 

@@ -1,4 +1,5 @@
 ﻿#include <DxLib.h>
+#include <EffekseerForDXLib.h>
 
 #include "ResultScene.h"
 #include "../Main/Application.h"
@@ -12,7 +13,7 @@
 #include "TitleScene.h"
 #include "../System/ToKanji.h"
 #include "../Manager/SoundManager.h"
-#include <EffekseerForDXLib.h>
+#include "../Manager/SoundManager.h"
 
 namespace
 {
@@ -108,9 +109,12 @@ void ResultScene::Update(Input& input)
 	m_pPlayer->Update(input, m_pCamera->GetAngleY(), stage_size, false);
 
 	//演出が終了していて、何かしらのボタンが押されたらゲームシーンに遷移する
-	if (!m_isStageing && input.IsTriggered("ok"))
+	if (!m_isStageing && input.IsTriggered("ok") && !m_isReturnTitle)
 	{
+		m_isReturnTitle = true;
 		m_controller.ChangeScene(std::make_shared<TitleScene>(m_controller), fade_frame);
+		//決定音を鳴らす
+		SoundManager::GetInstance().Play(SoundManager::SoundType::Decision);
 	}
 
 	//演出中にokボタンが押されたら、演出をスキップする
