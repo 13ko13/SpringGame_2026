@@ -10,6 +10,7 @@ public:
 		Decision,//決定
 		TitleBgm,//タイトルのBGM
 		GameBgm,//ゲームシーンのBGM
+		ResultBgm,//リザルトシーンのBGM
 	};
 
 public:

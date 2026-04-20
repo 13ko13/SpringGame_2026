@@ -101,6 +101,10 @@ void ResourceLoader::LoadAll()
 	handle = LoadSoundMem("Data/Sound/game_bgm.mp3");//ゲームシーンのBGM
 	assert(handle != -1);
 	m_soundHandles[SoundID::GameBgm] = handle;
+
+	handle = LoadSoundMem("Data/Sound/result_bgm.mp3");//リザルトシーンのBGM
+	assert(handle != -1);
+	m_soundHandles[SoundID::ResultBgm] = handle;
 }
 
 void ResourceLoader::ReleaseAll()

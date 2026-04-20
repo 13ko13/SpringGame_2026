@@ -11,6 +11,7 @@
 #include "../Graphic/SkyBox.h"
 #include "TitleScene.h"
 #include "../System/ToKanji.h"
+#include "../Manager/SoundManager.h"
 
 namespace
 {
@@ -58,7 +59,8 @@ ResultScene::ResultScene(SceneController& controller, const int score) :
 
 ResultScene::~ResultScene()
 {
-
+	//BGＭをフェードアウトする
+	SoundManager::GetInstance().FadeOut(SoundManager::SoundType::ResultBgm, fade_frame);
 }
 
 void ResultScene::Init()
@@ -91,6 +93,9 @@ void ResultScene::Init()
 
 	//フォントのハンドルを取得する
 	m_scoreFontHandle = CreateFontToHandle(font_name, score_font_size, -1, DX_FONTTYPE_ANTIALIASING_EDGE_4X4);
+
+	//リザルトシーンのBGMを再生する
+	SoundManager::GetInstance().PlayFadeIn(SoundManager::SoundType::ResultBgm, fade_frame, true);
 }
 
 void ResultScene::Update(Input& input)

@@ -57,6 +57,13 @@ void SoundManager::Init()
 	gameBgm.volume = title_bgm_volume;//音量を最大にする
 	gameBgm.isLoop = true;//ループする
 	ChangeVolumeSoundMem(gameBgm.volume, gameBgm.handle);//音量を変更する
+
+	auto& resultBgm = m_sounds[SoundType::ResultBgm];
+	resultBgm.handle = loader.GetSound(ResourceLoader::SoundID::ResultBgm);//リソースローダーからリザルトシーンのBGMのハンドルを取得して設定
+	resultBgm.loaded = true;//ロード済みフラグを立てる
+	resultBgm.volume = title_bgm_volume;//音量を最大にする
+	gameBgm.isLoop = true;//ループする
+	ChangeVolumeSoundMem(resultBgm.volume, resultBgm.handle);//音量を変更する
 }
 
 void SoundManager::Update()

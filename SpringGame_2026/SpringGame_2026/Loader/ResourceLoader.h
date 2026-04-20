@@ -42,6 +42,7 @@ public:
 		EnemyDeath = 3,//敵が死んだとき
 		TitleBgm = 4,//タイトルのBGM
 		GameBgm = 5,//ゲームシーンのBGM
+		ResultBgm = 6,//リザルトシーンのBGM
 	};
 
 public:
