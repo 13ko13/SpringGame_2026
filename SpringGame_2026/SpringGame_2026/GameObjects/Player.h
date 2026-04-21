@@ -54,6 +54,13 @@ public:
 	/// </summary>
 	void OnDamage();
 
+	/// <summary>
+	/// 敵に攻撃が当たった時の処理
+	/// </summary>
+	/// <param name="enemyPos">敵の位置</param>
+	/// <param name="hitEnemyNum">攻撃が当たった敵の数</param>
+	void OnHitEnemy(const Vector3& enemyPos);
+
 private:
 	//無敵時間用のタイマー
 	int m_invincibleTimer = 0;

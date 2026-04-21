@@ -4,6 +4,13 @@
 #include "../GameObjects/Enemy.h"
 #include "EnemyFactory.h"
 #include "EffectManager.h"
+#include "SoundManager.h"
+
+namespace
+{
+	//何体ヒットまでなら処理をおこなうか
+	constexpr int max_hit_enemy_num = 3;
+}
 
 CollisionManager::CollisionManager(std::shared_ptr<EffectManager> pEffectManager) :
 	m_pEffectManager(pEffectManager)
@@ -24,6 +31,9 @@ void CollisionManager::Update(std::shared_ptr<Player>& pPlayer,
 	//攻撃中のみ当たり判定を行う
 	if (pPlayer->IsAttacking())
 	{
+		//攻撃が当たった敵の数をリセットする
+		m_hitEnemyNum = 0;
+
 		//敵一体一体とプレイヤーの攻撃判定用の球との当たり判定を行う
 		for (auto& pEnemy : enemies)
 		{
@@ -32,9 +42,19 @@ void CollisionManager::Update(std::shared_ptr<Player>& pPlayer,
 
 			if (CheckCollision(pPlayer->GetAttackSphere(), pEnemy))
 			{
+				//敵の位置を取得する
 				Vector3 enemyPos = pEnemy->GetPos();
-				//エフェクトマネージャーにエフェクトの再生を依頼する
-				m_pEffectManager->Create(enemyPos, EffectManager::EffectType::EnemyDeath);
+
+				//攻撃に当たった敵の数を数える
+				m_hitEnemyNum++;
+				
+				//攻撃が3体目の敵までは当たった処理を行う
+				if (m_hitEnemyNum <= max_hit_enemy_num)
+				{
+					//プレイヤーの敵に攻撃が当たったときの処理を行わせる
+					pPlayer->OnHitEnemy(enemyPos);
+				}
+				
 				//敵に攻撃が当たっているときの処理を行わせる
 				pEnemy->OnDead();
 			}

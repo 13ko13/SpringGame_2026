@@ -17,6 +17,10 @@ public:
 		AttackStart,//攻撃開始の音
 		OnGround,//着地の音
 		DeadEnemy,//敵が死んだときの音
+		HitPlayer,//プレイヤーが攻撃を受けたときの音
+		Thunder,//雷の音
+		ScorePop,//スコアポップの音
+		RunPlayer,//プレイヤーの足音
 	};
 
 public:
@@ -65,7 +69,7 @@ public:
 	/// 指定の音を停止する
 	/// </summary>
 	/// <param name="type">音の種類</param>
-	void StopSound(SoundType type);
+	void Stop(SoundType type);
 
 	/// <summary>
 	/// すべての音を停止させる

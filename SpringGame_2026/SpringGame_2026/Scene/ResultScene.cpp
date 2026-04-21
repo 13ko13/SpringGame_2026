@@ -150,6 +150,16 @@ void ResultScene::Draw()
 		scale = 1.0f;
 		//演出終了
 		m_isStageing = false;
+
+		//点数が出るときの音を鳴らす
+		if (!m_isSkip)
+		{
+			if (!m_isPlayScoreSE)
+			{
+				SoundManager::GetInstance().Play(SoundManager::SoundType::ScorePop);
+				m_isPlayScoreSE = true;
+			}
+		}
 	}
 	else
 	{
@@ -158,8 +168,15 @@ void ResultScene::Draw()
 		//もし演出スキップしていたら、演出終了
 		if (m_isSkip)
 		{
+			//スコアの文字の大きさを当倍にする
 			scale = 1.0f;
 			m_isStageing = false;
+			//点数が出るときの音を鳴らす
+			if (!m_isPlayScoreSE)
+			{
+				SoundManager::GetInstance().Play(SoundManager::SoundType::ScorePop);
+				m_isPlayScoreSE = true;
+			}
 		}
 	}
 

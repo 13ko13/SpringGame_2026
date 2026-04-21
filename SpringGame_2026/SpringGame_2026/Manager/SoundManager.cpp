@@ -32,6 +32,18 @@ namespace
 
 	//敵が死んだときの音の音量
 	constexpr int dead_enemy_volume = 190;
+
+	//プレイヤーが攻撃を受けたときの音の音量
+	constexpr int hit_player_volume = 255;
+
+	//雷の音の音量
+	constexpr int thunder_volume = 255;
+
+	//スコアポップの音の音量
+	constexpr int score_pop_volume = 255;
+
+	//プレイヤーの足音の音量
+	constexpr int run_player_volume = 255;
 }
 
 SoundManager::SoundManager()
@@ -94,7 +106,7 @@ void SoundManager::Init()
 	ChangeVolumeSoundMem(countDown.volume, countDown.handle);//音量を変更する
 
 	auto& start = m_sounds[SoundType::Start];
-	start.handle = loader.GetSound(ResourceLoader::SoundID::Start);//リソースローダーからスタートの音のハンドルを取得して設定(カウントダウンの音と同じものを使う)
+	start.handle = loader.GetSound(ResourceLoader::SoundID::Start);//リソースローダーからスタートの音のハンドルを取得して設定
 	start.loaded = true;//ロード済みフラグを立てる
 	start.volume = start_volume;//音量を最大にする
 	start.isLoop = false;//ループしない
@@ -120,6 +132,35 @@ void SoundManager::Init()
 	deadEnemy.volume = dead_enemy_volume;//音量を最大にする
 	deadEnemy.isLoop = false;//ループしない
 	ChangeVolumeSoundMem(deadEnemy.volume, deadEnemy.handle);//音量を変更する
+
+	auto& hitPlayer = m_sounds[SoundType::HitPlayer];
+	hitPlayer.handle = loader.GetSound(ResourceLoader::SoundID::PlayerDamage);//リソースローダーからプレイヤーが攻撃を受けたときの音のハンドルを取得して設定
+	hitPlayer.loaded = true;//ロード済みフラグを立てる
+	hitPlayer.volume = hit_player_volume;//音量を最大にする
+	hitPlayer.isLoop = false;//ループしない
+	ChangeVolumeSoundMem(hitPlayer.volume, hitPlayer.handle);//音量を変更する
+
+	auto& thunder = m_sounds[SoundType::Thunder];
+	thunder.handle = loader.GetSound(ResourceLoader::SoundID::Thunder);//リソースローダーから雷の音のハンドルを取得して設定
+	thunder.handle = loader.GetSound(ResourceLoader::SoundID::Thunder);//リソースローダーから雷の音のハンドルを取得して設定
+	thunder.loaded = true;//ロード済みフラグを立てる
+	thunder.volume = thunder_volume;//音量を最大にする
+	thunder.isLoop = false;//ループしない
+	ChangeVolumeSoundMem(thunder.volume, thunder.handle);//音量を変更する
+
+	auto& scorePop = m_sounds[SoundType::ScorePop];
+	scorePop.handle = loader.GetSound(ResourceLoader::SoundID::ScorePop);//リソースローダーからスコアポップの音のハンドルを取得して設定
+	scorePop.loaded = true;//ロード済みフラグを立てる
+	scorePop.volume = score_pop_volume;//音量を最大にする
+	scorePop.isLoop = false;//ループしない
+	ChangeVolumeSoundMem(scorePop.volume, scorePop.handle);//音量を変更する
+
+	auto& runPlayer = m_sounds[SoundType::RunPlayer];
+	runPlayer.handle = loader.GetSound(ResourceLoader::SoundID::RunPlayer);//リソースローダーからプレイヤーの足音のハンドルを取得して設定
+	runPlayer.loaded = true;//ロード済みフラグを立てる
+	runPlayer.volume = run_player_volume;//音量を最大にする
+	runPlayer.isLoop = true;//ループする
+	ChangeVolumeSoundMem(runPlayer.volume, runPlayer.handle);//音量を変更する
 }
 
 void SoundManager::Update()
@@ -214,14 +255,17 @@ void SoundManager::Play(SoundType soundType, bool loop)
 	if (it == m_sounds.end() || !it->second.loaded) return;
 
 	const auto& data = it->second;
-	//音を再生する
+
+	//既に再生中なら再生しない
+	if (data.isLoop && CheckSoundMem(data.handle) == 1) return;
+
 	PlaySoundMem(
 		data.handle,
-		loop ? DX_PLAYTYPE_LOOP : DX_PLAYTYPE_BACK,//loopがtrueならループそうじゃないならバック再生
+		loop ? DX_PLAYTYPE_LOOP : DX_PLAYTYPE_BACK,
 		true);
 }
 
-void SoundManager::StopSound(SoundType type)
+void SoundManager::Stop(SoundType type)
 {
 	auto it = m_sounds.find(type);
 	if (it == m_sounds.end() || !it->second.loaded) return;

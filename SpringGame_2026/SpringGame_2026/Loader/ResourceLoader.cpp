@@ -82,14 +82,6 @@ void ResourceLoader::LoadAll()
 	assert(handle != -1);
 	m_soundHandles[SoundID::Decision] = handle;
 
-	//handle = LoadSoundMem("Data/Sound/SE/attack.wav");//攻撃音
-	//assert(handle != -1);
-	//m_soundHandles[SoundID::Attack] = handle;
-
-	//handle = LoadSoundMem("Data/Sound/SE/player_damage.wav");//プレイヤーがダメージを受けたときの音
-	//assert(handle != -1);
-	//m_soundHandles[SoundID::PlayerDamage] = handle;
-
 	handle = LoadSoundMem("Data/Sound//dead_enemy.mp3");//敵が死んだときの音
 	assert(handle != -1);
 	m_soundHandles[SoundID::EnemyDeath] = handle;
@@ -121,6 +113,22 @@ void ResourceLoader::LoadAll()
 	handle = LoadSoundMem("Data/Sound/on_ground.mp3");//着地の音
 	assert(handle != -1);
 	m_soundHandles[SoundID::OnGround] = handle;
+
+	handle = LoadSoundMem("Data/Sound/hit_player.mp3");//プレイヤーが攻撃を受けたときの音
+	assert(handle != -1);
+	m_soundHandles[SoundID::PlayerDamage] = handle;
+
+	handle = LoadSoundMem("Data/Sound/thunder.mp3");//雷の音
+	assert(handle != -1);
+	m_soundHandles[SoundID::Thunder] = handle;
+
+	handle = LoadSoundMem("Data/Sound/score_pop.mp3");//スコアポップの音
+	assert(handle != -1);
+	m_soundHandles[SoundID::ScorePop] = handle;
+
+	handle = LoadSoundMem("Data/Sound/run.mp3");//プレイヤーの足音
+	assert(handle != -1);
+	m_soundHandles[SoundID::RunPlayer] = handle;
 }
 
 void ResourceLoader::ReleaseAll()

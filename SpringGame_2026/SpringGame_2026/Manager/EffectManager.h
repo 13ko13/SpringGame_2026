@@ -18,7 +18,7 @@ public:
 	//エフェクトの種類
 	enum class EffectType
 	{
-		EnemyDeath,//敵の死亡エフェクト
+		HitEnemy,//敵の死亡エフェクト
 		AttackField,//攻撃エフェクト
 
 		EffectTypeNum,//エフェクトの種類の数

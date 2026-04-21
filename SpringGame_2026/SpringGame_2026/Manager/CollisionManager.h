@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include <memory>
+#include <list>
 
 //前方宣言
 class Player;
@@ -69,5 +70,6 @@ private:
 
 private:
 	std::shared_ptr<EffectManager> m_pEffectManager;//エフェクトマネージャーへのポインタ
+	int m_hitEnemyNum = 0;//攻撃が当たった敵の数
 };
 

@@ -53,8 +53,8 @@ void EffectManager::Create(const Vector3& pos, EffectType type)
 	//エフェクトの種類に応じてエフェクトを作成する
 	switch (type)
 	{
-	case EffectType::EnemyDeath:
-		m_pEffects.push_back(std::make_shared<DeathEffect>(m_handles[static_cast<int>(EffectType::EnemyDeath)], pos));
+	case EffectType::HitEnemy:
+		m_pEffects.push_back(std::make_shared<DeathEffect>(m_handles[static_cast<int>(EffectType::HitEnemy)], pos));
 		break;
 	case EffectType::AttackField:
 	{

@@ -58,6 +58,9 @@ namespace
 
 	//エフェクトのオフセット
 	const Vector3 effect_offset = { 0.0f, -50.0f, 0.0f };
+
+	//ダメージ時のノックバックの強さ
+	constexpr float knock_back_power = 5.0f;
 }
 
 Player::Player(int modelHandle, std::shared_ptr<EffectManager> pManager) :
@@ -100,6 +103,18 @@ void Player::Update(Input input, float angle, const Vector3& stageSize, bool isC
 
 	//当たり判定球の更新
 	UpdateCollSphere();
+
+	//移動中に走っているときの音を鳴らす
+	if (m_currentState == State::Move)
+	{
+		//走っているときの音を鳴らす
+		SoundManager::GetInstance().Play(SoundManager::SoundType::RunPlayer,true);
+	}
+	else
+	{
+		//走っているときの音を止める
+		SoundManager::GetInstance().Stop(SoundManager::SoundType::RunPlayer);
+	}
 
 	//攻撃中
 	if (m_currentState == State::Attack)
@@ -466,16 +481,29 @@ void Player::OnDamage()
 {
 	//プレイヤーが攻撃中または
 	//無敵中なら処理を飛ばす
+	//被弾中は処理を飛ばす
 	if (m_currentState == State::Attack ||
-		m_isInvincible) return;
+		m_isInvincible || m_currentState == State::Damage) return;
 
 	//後ろに吹き飛ぶ力を加える
-	m_knockBackVelocity = -GetForward() * 5.0f;
+	m_knockBackVelocity = -GetForward() * knock_back_power;
 
 	//ダメージを受けたときは、攻撃判定用の球の半径を0にして、当たり判定をなくす
 	m_attackSphereR = 0.0f;
 	//移動できないようにする
 	m_isCanMove = false;
+
+	//音を鳴らす
+	SoundManager::GetInstance().Play(SoundManager::SoundType::HitPlayer);
+
 	//ステートをダメージにする
 	ChangeState(State::Damage);
+}
+
+void Player::OnHitEnemy(const Vector3& enemyPos)
+{
+	//攻撃が当たった時の音
+	SoundManager::GetInstance().Play(SoundManager::SoundType::Thunder);
+	//エフェクトマネージャーにエフェクトの再生を依頼する
+	m_pEffectManager->Create(enemyPos, EffectManager::EffectType::HitEnemy);
 }

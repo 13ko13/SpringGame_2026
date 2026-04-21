@@ -47,6 +47,9 @@ public:
 		Start = 8,//スタートの音
 		AttackStart = 9,//攻撃開始の音
 		OnGround = 10,//着地の音
+		Thunder = 11,//雷の音
+		ScorePop = 12,//スコアポップの音
+		RunPlayer = 13,//プレイヤーの足音
 	};
 
 public:

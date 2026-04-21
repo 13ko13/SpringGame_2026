@@ -142,7 +142,7 @@ void TitleScene::Update(Input& input)
 		//X軸を少しランダムに動かす
 		effectPos.m_x += (rand() % static_cast<int>(effect_x_offset_range) * 2 - static_cast<int>(effect_x_offset_range));
 
-		m_pEffectManager->Create(effectPos, EffectManager::EffectType::EnemyDeath);
+		m_pEffectManager->Create(effectPos, EffectManager::EffectType::HitEnemy);
 	}
 
 	//DxLibのカメラ設定をEffekseerに同期する

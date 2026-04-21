@@ -50,6 +50,9 @@ private:
 	//タイトルに戻るボタンを押したか
 	bool m_isReturnTitle = false;
 
+	//スコアを表示する音を鳴らしたか
+	bool m_isPlayScoreSE = false;
+
 	//カメラの実体
 	std::shared_ptr<Camera> m_pCamera;
 
