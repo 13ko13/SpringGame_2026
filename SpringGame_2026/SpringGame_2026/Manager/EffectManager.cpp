@@ -75,6 +75,7 @@ void EffectManager::Create(const Vector3& pos, EffectType type)
 
 bool EffectManager::IsPlaying(int handle) const
 {
+	//エフェクトが再生中かどうかを返す
 	return IsEffekseer3DEffectPlaying(handle) != 0;
 }
 

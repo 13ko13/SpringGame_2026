@@ -116,6 +116,7 @@ void GameScene::Init()
 	m_deathEffectHandle = resourceLoader.GetEffect(ResourceLoader::EffectID::Death);
 	m_attackFieldEffectHandle = resourceLoader.GetEffect(ResourceLoader::EffectID::AttackField);
 	m_pEffectManager = std::make_shared<EffectManager>(m_deathEffectHandle, m_attackFieldEffectHandle);
+
 	//念のため全てのエフェクトを停止しておく
 	m_pEffectManager->StopAllEffects();
 
@@ -171,8 +172,7 @@ void GameScene::Init()
 
 void GameScene::Update(Input& input)
 {
-	
-
+	//フレームカウンターの更新
 	m_frameCount++;
 
 	//ゲーム開始前のカウントダウン
@@ -188,6 +188,7 @@ void GameScene::Update(Input& input)
 		SoundManager::GetInstance().Play(SoundManager::SoundType::Start);
 	}
 
+	//カウントダウンの更新
 	m_startCountDown--;
 
 

@@ -13,7 +13,6 @@
 #include "TitleScene.h"
 #include "../System/ToKanji.h"
 #include "../Manager/SoundManager.h"
-#include "../Manager/SoundManager.h"
 
 namespace
 {
@@ -22,12 +21,6 @@ namespace
 
 	//ゲームシーンに遷移するときのフェードにかけるフレーム数
 	constexpr float fade_frame = 60.0f;
-
-	//タイトルロゴの位置オフセット
-	const Vector3 title_logo_offset = { 0.0f, -150.0f, 0.0f };
-
-	//タイトルロゴの大きさ
-	constexpr float title_logo_scale = 0.5f;
 
 	//カメラのターゲットの位置
 	const Vector3 camera_target_pos = { 0.0f, 400.0f, 0.0f };
