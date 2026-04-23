@@ -34,6 +34,8 @@ private:
 
 	//スコア表示時のフォントハンドル
 	int m_scoreFontHandle = -1;
+	//タイトルに戻るフォントハンドル
+	int m_backToTitleFontHandle = -1;
 
 	//スコア
 	int m_score = 0;
@@ -52,6 +54,9 @@ private:
 
 	//スコアを表示する音を鳴らしたか
 	bool m_isPlayScoreSE = false;
+
+	//文字を点滅させるときのフレームカウンター
+	int m_blinkFrame = 0;
 
 	//カメラの実体
 	std::shared_ptr<Camera> m_pCamera;

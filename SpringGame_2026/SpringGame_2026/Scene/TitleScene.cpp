@@ -184,14 +184,14 @@ void TitleScene::Draw()
 		m_graphHandles[static_cast<int>(GraphType::TitleLogoEffect)], TRUE);
 
 	//画面下部に「Press A Button」の文字を描画する
-	std::string startText = "Press A Button";
+	std::string startText = "Aボタンで開始";
 	//描画する文字列の横幅を取得する
 	int textWidth = GetDrawStringWidthToHandle(startText.c_str(), static_cast<int>(startText.length()), m_startFontHandle);
 	//画面下部の中心に描画するため、描画位置を計算する
 	Vector3 textPos = { windowSize.w / 2.0f - textWidth / 2.0f, windowSize.h * title_logo_pos_y_rate, 0.0f };
 	//描画する
 	DrawStringToHandle(static_cast<int>(textPos.m_x), static_cast<int>(textPos.m_y),
-		startText.c_str(), 0xffffff, m_startFontHandle);
+		startText.c_str(), 0x000000, m_startFontHandle, 0xffffff);
 
 	//TODO:タイトルロゴの画像を描画したり、モデルを描画したりする
 }

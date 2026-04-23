@@ -33,6 +33,8 @@ namespace
 
 	//フォントのサイズ
 	constexpr int score_font_size = 100;
+	//スコアの文字のエッジの太さ
+	constexpr int score_font_edge_size = 5;
 
 	//スコアの文字が小さくなる演出にかけるフレーム数
 	constexpr int score_shrink_frame = 50;
@@ -44,6 +46,16 @@ namespace
 	constexpr int score_100_color = 0xff0000;
 	//最大スコア
 	constexpr int max_score = 100;
+
+	//タイトルに戻るフォントのサイズ
+	constexpr int title_font_size = 60;
+
+	//タイトルに戻るフォントのエッジの太さ
+	constexpr int title_font_edge_size = 3;
+
+	//タイトルに戻る文字列の位置
+	const float back_to_title_pos_x_rate = 0.5f;
+	const float back_to_title_pos_y_rate = 0.7f;
 }
 
 ResultScene::ResultScene(SceneController& controller, const int score) :
@@ -87,7 +99,9 @@ void ResultScene::Init()
 		loader.GetGraphic(ResourceLoader::GraphicID::DownSky));
 
 	//フォントのハンドルを取得する
-	m_scoreFontHandle = CreateFontToHandle(font_name, score_font_size, -1, DX_FONTTYPE_ANTIALIASING_EDGE_4X4);
+	m_scoreFontHandle = CreateFontToHandle(font_name, score_font_size, -1, DX_FONTTYPE_ANTIALIASING_EDGE_4X4,-1, score_font_edge_size);
+	//フォントのハンドルを作成する
+	m_backToTitleFontHandle = CreateFontToHandle(font_name, title_font_size, -1, DX_FONTTYPE_ANTIALIASING_EDGE_4X4,-1, title_font_edge_size);
 
 	//リザルトシーンのBGMを再生する
 	SoundManager::GetInstance().PlayFadeIn(SoundManager::SoundType::ResultBgm, fade_frame, true);
@@ -97,6 +111,9 @@ void ResultScene::Update(Input& input)
 {
 	//フレームの更新
 	m_frame++;
+
+	//文字点滅用のタイマーの更新
+	m_blinkFrame++;
 
 	//プレイヤーの更新
 	m_pPlayer->Update(input, m_pCamera->GetAngleY(), stage_size, false);
@@ -183,12 +200,43 @@ void ResultScene::Draw()
 	//スコアが百点の場合のみ、特別な色で描画する
 	if (m_score == max_score)
 	{
-		DrawExtendStringToHandle(static_cast<int>(drawPos.m_x), static_cast<int>(drawPos.m_y), scale, scale, scoreText.c_str(), score_100_color, m_scoreFontHandle);
+		DrawExtendStringToHandle(
+			static_cast<int>(drawPos.m_x),
+			static_cast<int>(drawPos.m_y),
+			scale, scale, scoreText.c_str(),
+			score_100_color, m_scoreFontHandle);
 	}
 	else
 	{
-		DrawExtendStringToHandle(static_cast<int>(drawPos.m_x), static_cast<int>(drawPos.m_y), scale, scale, scoreText.c_str(), 0xffffff, m_scoreFontHandle);
+		DrawExtendStringToHandle(
+			static_cast<int>(drawPos.m_x),
+			static_cast<int>(drawPos.m_y),
+			scale, scale, scoreText.c_str(),
+			0x000000, m_scoreFontHandle,
+			0xffffff);
 	}
+
+	//タイトルに戻るの文字の描画
+	std::string backToTitleText = "Aボタンでタイトルに戻る";
+	//描画する文字列の横幅を取得する
+	int backToTitleTextWidth = GetDrawStringWidthToHandle(backToTitleText.c_str(), static_cast<int>(backToTitleText.length()), m_backToTitleFontHandle);
+	//画面下部の中心に描画するため、描画位置を計算する
+	Vector3 backToTitleTextPos = { windowSize.w * back_to_title_pos_x_rate - backToTitleTextWidth / 2.0f,
+									windowSize.h * back_to_title_pos_y_rate, 0.0f };
+
+	//点滅させるために、透明度をsin波で変化させる
+
+	/*if (m_blinkFrame % 30 == 0)
+	{*/
+		int alpha = std::sin(static_cast<float>(m_blinkFrame) / 60 * 255);
+
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
+		//描画する
+		DrawStringToHandle(static_cast<int>(backToTitleTextPos.m_x), static_cast<int>(backToTitleTextPos.m_y),
+			backToTitleText.c_str(), 0x000000, m_backToTitleFontHandle, 0xffffff);
+
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+	//}
 }
 
 

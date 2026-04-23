@@ -47,12 +47,12 @@ namespace
 	const char* font_name = "玉ねぎ楷書激無料版v7改";
 
 	//「残り時間」の文字列の位置を割合で指定
-	constexpr float time_text_pos_x_rate = 0.97f;
+	constexpr float time_text_pos_x_rate = 0.5f;
 	constexpr float time_text_pos_y_rate = 0.05f;
 
 	//「残り敵の数」の文字列の位置を割合で指定
-	constexpr float e_num_text_pos_x_rate = 0.97f;
-	constexpr float e_num_text_pos_y_rate = 0.12f;
+	constexpr float e_num_text_pos_x_rate = 0.5f;
+	constexpr float e_num_text_pos_y_rate = 0.1f;
 
 	//1秒あたりのフレーム数
 	constexpr int frame_per_second = 60;
@@ -293,15 +293,16 @@ void GameScene::Draw()
 	std::string timeText = ToKanji::NumToKanji(m_time / 60) + "秒";//漢字に変換して「秒」をつける
 
 	//表示したい文字列の横幅を取得する
-	const int strWidth = GetDrawStringWidthToHandle("残り時間:60拍", static_cast<int>(strlen("残り時間:60拍")), m_timeFontHandle);
+	const int strWidth = GetDrawStringWidthToHandle(timeText.c_str(), static_cast<int>(strlen(timeText.c_str())), m_timeFontHandle);
 	//右上に描画するため、描画位置を計算する
 	Vector3 drawPos = {
-		static_cast<float>(windowSize.w * time_text_pos_x_rate - strWidth) ,
+		static_cast<float>(windowSize.w * time_text_pos_x_rate - strWidth / 2.0f) ,
 		static_cast<float>(windowSize.h * time_text_pos_y_rate) };
 	DrawStringToHandle(static_cast<int>(drawPos.m_x),
 		static_cast<int>(drawPos.m_y),
 		timeText.c_str(),
-		0xffffff, m_timeFontHandle);
+		0x000000, m_timeFontHandle,
+		0xffffff);
 
 	//残りの敵の数を描画する
 	//まず敵の数を取得する
@@ -312,12 +313,13 @@ void GameScene::Draw()
 	std::string maxEnemyText = "残り敵数:九十九体";
 	const int strMaxWidth = GetDrawStringWidthToHandle(maxEnemyText.c_str(), static_cast<int>(strlen(maxEnemyText.c_str())), m_timeFontHandle);
 	//ウィンドウの右上に描画するため、描画位置を計算する
-	drawPos = { static_cast<float>(windowSize.w * e_num_text_pos_x_rate - strMaxWidth),
+	drawPos = { static_cast<float>(windowSize.w * e_num_text_pos_x_rate - strMaxWidth / 2),
 		static_cast<float>(windowSize.h * e_num_text_pos_y_rate) };
 	DrawStringToHandle(static_cast<int>(drawPos.m_x),
 		static_cast<int>(drawPos.m_y),
 		enemyText.c_str(),
-		0xffffff, m_timeFontHandle);
+		0x000000, m_timeFontHandle,
+		0xffffff);
 
 	//ゲーム開始時のカウントダウンの描画
 	if (m_startCountDown >= 60)
@@ -333,7 +335,7 @@ void GameScene::Draw()
 		//ウィンドウの中心に描画するため、描画位置を計算する
 		Vector3 drawPos = { windowSize.w / 2.0f - strWidth / 2.0f, windowSize.h / 2.0f - strHeight / 2.0f };
 		DrawExtendStringToHandle(static_cast<int>(drawPos.m_x), static_cast<int>(drawPos.m_y),
-			1.0, 1.0, startTimeText.c_str(), 0xffffff, m_countDownFontHandle);
+			1.0, 1.0, startTimeText.c_str(), 0x000000, m_countDownFontHandle, 0xffffff);
 	}
 	else if (m_startCountDown > 0)
 	{
@@ -346,7 +348,7 @@ void GameScene::Draw()
 		//ウィンドウの中心に描画するため、描画位置を計算する
 		Vector3 drawPos = { windowSize.w / 2.0f - strWidth / 2.0f, windowSize.h / 2.0f - strHeight / 2.0f };
 		DrawExtendStringToHandle(static_cast<int>(drawPos.m_x), static_cast<int>(drawPos.m_y),
-			1.0, 1.0, startTimeText.c_str(), 0xffffff, m_countDownFontHandle);
+			1.0, 1.0, startTimeText.c_str(), 0x000000, m_countDownFontHandle, 0xffffff);
 	}
 }
 

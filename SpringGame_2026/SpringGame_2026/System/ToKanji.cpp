@@ -18,32 +18,6 @@ std::string ToKanji::NumToKanji(int num)
 		return kanji;//「零」を返す
 	}
 
-	////0は既に処理しているのでここからは整数部分を処理する
-	//if (num < 10)
-	//{
-	//	//num番目の漢数字を返す
-	//	kanji = kanjiDigits[num];
-	//	return kanji;
-	//}
-
-	////数字が100未満のときは十の位と一の位を処理する
-	//if (num < 100)
-	//{
-	//	int tens = num / 10;//十の位
-	//	int ones = num % 10;//一の位
-
-	//	//もし十の位が1以上なら「十」を追加する
-	//	if (tens > 1)
-	//	{
-	//		kanji += kanjiDigits[tens];
-	//	}
-	//	kanji += "十";
-	//	if (ones > 0)
-	//	{
-	//		kanji += kanjiDigits[ones];
-	//	}
-	//}
-
 	//数字が1000未満の時は百の位も処理する
 	if (num < 1000)
 	{
