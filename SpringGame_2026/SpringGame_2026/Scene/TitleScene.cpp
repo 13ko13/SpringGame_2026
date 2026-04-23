@@ -51,6 +51,20 @@ namespace
 	constexpr float thunder_effect_y_offset = 500.0f;
 	//雷のx座標のオフセットの範囲
 	constexpr float effect_x_offset_range = 1200.0f;
+
+	//フォント点滅時の最小透明度
+	constexpr int min_alpha = 50;
+	//フォント点滅時の変化幅
+	constexpr int max_alpha = 175;
+
+	//フォント点滅時の間隔
+	constexpr float blink_interval = 0.03f;
+
+
+	//スタートされたときの最大透明度
+	constexpr int start_max_alpha = 150;
+	//スタートされたときの点滅の間隔
+	constexpr float start_blink_interval = 0.5f;
 }
 
 TitleScene::TitleScene(SceneController& controller) :
@@ -111,6 +125,9 @@ void TitleScene::Update(Input& input)
 {
 	//エフェクトのタイマー更新
 	m_effectTimer++;
+
+	//フォントの点滅のタイマー更新
+	m_fontBlinkTimer++;
 
 	//プレイヤーの更新
 	m_pPlayer->Update(input, m_pCamera->GetAngleY(), stage_size, false);
@@ -189,9 +206,35 @@ void TitleScene::Draw()
 	int textWidth = GetDrawStringWidthToHandle(startText.c_str(), static_cast<int>(startText.length()), m_startFontHandle);
 	//画面下部の中心に描画するため、描画位置を計算する
 	Vector3 textPos = { windowSize.w / 2.0f - textWidth / 2.0f, windowSize.h * title_logo_pos_y_rate, 0.0f };
-	//描画する
-	DrawStringToHandle(static_cast<int>(textPos.m_x), static_cast<int>(textPos.m_y),
-		startText.c_str(), 0x000000, m_startFontHandle, 0xffffff);
+
+	//点滅させるために、透明度をsin波で変化させる　
+	//透明度を0～255の範囲で変化させる
+	//最小透明度 + 変化幅 * sin波の絶対値
+	int alpha;
+		
+	if (!m_isStart)
+	{
+		alpha = static_cast<int>(min_alpha + max_alpha * std::abs(std::sin(m_fontBlinkTimer * blink_interval)));
+
+		//描画に透明度をてきようする
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
+		//描画する
+		DrawStringToHandle(static_cast<int>(textPos.m_x), static_cast<int>(textPos.m_y),
+			startText.c_str(), 0x000000, m_startFontHandle, 0xffffff);
+		//透明度をリセット
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+	}
+	else
+	{
+		alpha = static_cast<int>(min_alpha + start_max_alpha * std::abs(std::sin(m_fontBlinkTimer * start_blink_interval)));
+		//描画に透明度をてきようする
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
+		//描画する
+		DrawStringToHandle(static_cast<int>(textPos.m_x), static_cast<int>(textPos.m_y),
+			startText.c_str(), 0x000000, m_startFontHandle, 0xffffff);
+		//透明度をリセット
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+	}
 
 	//TODO:タイトルロゴの画像を描画したり、モデルを描画したりする
 }

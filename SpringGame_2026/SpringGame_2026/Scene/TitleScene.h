@@ -41,6 +41,9 @@ private:
 	//エフェクトを出すためのタイマー
 	int m_effectTimer = 0;
 
+	//フォントを点滅させるためのタイマー
+	int m_fontBlinkTimer = 0;
+
 	//Aボタンを押したかどうか
 	bool m_isStart = false;
 

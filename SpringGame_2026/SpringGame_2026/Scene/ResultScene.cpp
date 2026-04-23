@@ -56,6 +56,13 @@ namespace
 	//タイトルに戻る文字列の位置
 	const float back_to_title_pos_x_rate = 0.5f;
 	const float back_to_title_pos_y_rate = 0.7f;
+
+	//タイトルに戻る文字列の点滅の最小透明度
+	constexpr int back_min_alpha = 50;
+	//タイトルに戻る文字列の点滅の最大透明度
+	constexpr int back_max_alpha = 185;
+	//タイトルに戻る文字列の点滅の周期
+	constexpr float back_blink_interval = 0.05f;
 }
 
 ResultScene::ResultScene(SceneController& controller, const int score) :
@@ -99,9 +106,9 @@ void ResultScene::Init()
 		loader.GetGraphic(ResourceLoader::GraphicID::DownSky));
 
 	//フォントのハンドルを取得する
-	m_scoreFontHandle = CreateFontToHandle(font_name, score_font_size, -1, DX_FONTTYPE_ANTIALIASING_EDGE_4X4,-1, score_font_edge_size);
+	m_scoreFontHandle = CreateFontToHandle(font_name, score_font_size, -1, DX_FONTTYPE_ANTIALIASING_EDGE_4X4, -1, score_font_edge_size);
 	//フォントのハンドルを作成する
-	m_backToTitleFontHandle = CreateFontToHandle(font_name, title_font_size, -1, DX_FONTTYPE_ANTIALIASING_EDGE_4X4,-1, title_font_edge_size);
+	m_backToTitleFontHandle = CreateFontToHandle(font_name, title_font_size, -1, DX_FONTTYPE_ANTIALIASING_EDGE_4X4, -1, title_font_edge_size);
 
 	//リザルトシーンのBGMを再生する
 	SoundManager::GetInstance().PlayFadeIn(SoundManager::SoundType::ResultBgm, fade_frame, true);
@@ -225,18 +232,16 @@ void ResultScene::Draw()
 									windowSize.h * back_to_title_pos_y_rate, 0.0f };
 
 	//点滅させるために、透明度をsin波で変化させる
+	//透明度を0～255の範囲で変化させる
+	//最小透明度 + 変化幅 * sin波の絶対値
+	float alpha = back_min_alpha + back_max_alpha * std::abs(std::sin(m_blinkFrame * back_blink_interval));
 
-	/*if (m_blinkFrame % 30 == 0)
-	{*/
-		int alpha = std::sin(static_cast<float>(m_blinkFrame) / 60 * 255);
+	SetDrawBlendMode(DX_BLENDMODE_ALPHA, static_cast<int>(alpha));
+	//描画する
+	DrawStringToHandle(static_cast<int>(backToTitleTextPos.m_x), static_cast<int>(backToTitleTextPos.m_y),
+		backToTitleText.c_str(), 0x000000, m_backToTitleFontHandle, 0xffffff);
 
-		SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
-		//描画する
-		DrawStringToHandle(static_cast<int>(backToTitleTextPos.m_x), static_cast<int>(backToTitleTextPos.m_y),
-			backToTitleText.c_str(), 0x000000, m_backToTitleFontHandle, 0xffffff);
-
-		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
-	//}
+	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 }
 
 

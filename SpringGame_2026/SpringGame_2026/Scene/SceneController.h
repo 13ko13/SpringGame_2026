@@ -51,6 +51,12 @@ public:
 	/// </summary>
 	void Draw();
 
+	/// <summary>
+	/// フェードマネージャーの取得
+	/// </summary>
+	/// <returns>フェードマネージャー</returns>
+	const Fade GatFade() const { return m_fade; }
+
 private:
 	//スタックに積まれているシーンを管理
 	//一番最後に積まれたシーンのUpdateのみ実行される

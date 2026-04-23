@@ -176,8 +176,10 @@ void GameScene::Update(Input& input)
 	m_frameCount++;
 
 	//ゲーム開始前のカウントダウン
-	//時間が3、2、1のときにカウントダウンの音を鳴らす
-	if (m_startCountDown % frame_per_second == 0 && m_startCountDown >= frame_per_second * 2)
+	//フェード中でなければ時間が3、2、1のときにカウントダウンの音を鳴らす
+	if (m_startCountDown % frame_per_second == 0 &&
+		m_startCountDown >= frame_per_second * 2 &&
+		!m_controller.GatFade().IsFading())
 	{
 		//カウントダウンの音を鳴らす
 		SoundManager::GetInstance().Play(SoundManager::SoundType::CountDown);
@@ -188,9 +190,13 @@ void GameScene::Update(Input& input)
 		SoundManager::GetInstance().Play(SoundManager::SoundType::Start);
 	}
 
-	//カウントダウンの更新
-	m_startCountDown--;
 
+	//フェードが終わっていればカウントダウンの更新を行う
+	if (!m_controller.GatFade().IsFading())
+	{
+		//カウントダウンの更新
+		m_startCountDown--;
+	}
 
 	//カメラの更新
 	m_pCamera->Update(m_pPlayer->GetTargetPos(), input);
@@ -322,7 +328,9 @@ void GameScene::Draw()
 		0xffffff);
 
 	//ゲーム開始時のカウントダウンの描画
-	if (m_startCountDown >= 60)
+	//4秒の時は描画を行わない
+	if (m_startCountDown >= 60 &&
+		m_startCountDown < frame_per_second * 4)
 	{
 		//stringで描画する文字列を作成する
 		std::string startTimeText = ToKanji::NumToKanji(m_startCountDown / 60);
@@ -337,7 +345,8 @@ void GameScene::Draw()
 		DrawExtendStringToHandle(static_cast<int>(drawPos.m_x), static_cast<int>(drawPos.m_y),
 			1.0, 1.0, startTimeText.c_str(), 0x000000, m_countDownFontHandle, 0xffffff);
 	}
-	else if (m_startCountDown > 0)
+	else if (m_startCountDown > 0 &&
+			m_startCountDown < frame_per_second * 4)
 	{
 		//stringで描画する文字列を作成する
 		std::string startTimeText = "始めいッ!";
