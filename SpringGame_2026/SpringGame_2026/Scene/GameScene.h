@@ -13,6 +13,7 @@ class CollisionManager;
 class EnemyFactory;
 class SkyBox;
 class EffectManager;
+class TextUI;
 
 class GameScene :public Scene
 {
@@ -42,6 +43,21 @@ private:
 	/// <param name="deadEnemyNum">倒した敵の数</param>
 	/// <returns>計算されたスコア</returns>
 	int CalcScore(int deadEnemyNum) const;
+
+	/// <summary>
+	/// 時間を描画する
+	/// </summary>
+	void DrawTime() const;
+
+	/// <summary>
+	/// 敵の数を描画する
+	/// </summary>
+	void DrawEnemyCount() const;
+
+	/// <summary>
+	/// カウントダウンを描画する
+	/// </summary>
+	void DrawCountDown() const;
 
 private:
 	//フレームカウンター
@@ -78,6 +94,13 @@ private:
 	int m_timeFontHandle = -1;
 	//カウントダウンフォントのハンドル
 	int m_countDownFontHandle = -1;
+	//敵の数フォントのハンドル
+	int m_enemyCountFontHandle = -1;
+
+	//テキスト
+	std::shared_ptr<TextUI> m_pTimeText;//残り時間テキスト
+	std::shared_ptr<TextUI> m_pCountDownText;//カウントダウンテキスト
+	std::shared_ptr<TextUI> m_pEnemyCountText;//残りの敵の数テキスト
 
 	//敵の数を保持しておく
 	int m_enemyCount = 0;

@@ -7,7 +7,7 @@
 #include "../GameObjects/Player.h"
 #include <memory>
 
-
+class TextUI;
 class TitleScene : public Scene
 {
 public:
@@ -17,6 +17,12 @@ public:
 	void Init() override;
 	void Update(Input& input) override;
 	void Draw() override;
+
+private:
+	/// <summary>
+	/// タイトルロゴを描画
+	/// </summary>
+	void DrawTitleLogo()const;
 
 private:
 	enum class ModelType : int
@@ -37,6 +43,9 @@ private:
 
 	//フォントハンドル
 	int m_startFontHandle = -1;
+
+	//テキストUI
+	std::shared_ptr<TextUI> m_pStartText;
 
 	//エフェクトを出すためのタイマー
 	int m_effectTimer = 0;

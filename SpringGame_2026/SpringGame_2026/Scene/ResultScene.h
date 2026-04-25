@@ -6,6 +6,7 @@ class Player;
 class Camera;
 class SkyBox;
 class EffectManager;
+class TextUI;
 class ResultScene : public Scene
 {
 public:
@@ -22,11 +23,6 @@ private:
 		Ground = 0,//地面
 	};
 
-	enum class GraphType : int
-	{
-		TitleLogo = 0,//タイトルロゴ
-	};
-
 	//グラフィックハンドルの配列
 	std::vector<int> m_graphHandles;
 	//モデルハンドルの配列
@@ -37,6 +33,11 @@ private:
 	//タイトルに戻るフォントハンドル
 	int m_backToTitleFontHandle = -1;
 
+	//スコアテキストUI
+	std::shared_ptr<TextUI> m_pScoreTextUI;
+	//タイトルに戻るテキストUI
+	std::shared_ptr<TextUI> m_pBackToTitleTextUI;
+
 	//スコア
 	int m_score = 0;
 
@@ -45,10 +46,8 @@ private:
 
 	//演出スキップするか
 	bool m_isSkip = false;
-
 	//演出中か
 	bool m_isStageing = false;
-
 	//タイトルに戻るボタンを押したか
 	bool m_isReturnTitle = false;
 
@@ -69,5 +68,11 @@ private:
 
 	//エフェクトマネージャーの実体
 	std::shared_ptr<EffectManager> m_pEffectManager;
+
+private:
+	/// <summary>
+	/// テキストUIを描画
+	/// </summary>
+	void DrawTextUI();
 };
 

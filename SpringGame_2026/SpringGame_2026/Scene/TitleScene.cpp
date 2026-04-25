@@ -10,7 +10,7 @@
 #include "../GameObjects/Player.h"
 #include "../Manager/EffectManager.h"
 #include "../Manager/SoundManager.h"
-#include "../Effect/DeathEffect.h"
+#include "../UI/TextUI.h"
 
 namespace
 {
@@ -40,6 +40,10 @@ namespace
 
 	//タイトルロゴの描画位置割合
 	constexpr float title_logo_pos_y_rate = 0.8f;
+
+	//Aボタンでスタートの文字列の位置割合
+	constexpr float start_text_pos_x_rate = 0.5f;
+	constexpr float start_text_pos_y_rate = 0.8f;
 
 	//後ろのほうで出す雷エフェクトの感覚
 	constexpr int thunder_effect_interval = 45;
@@ -118,7 +122,10 @@ void TitleScene::Init()
 	SoundManager::GetInstance().PlayFadeIn(SoundManager::SoundType::TitleBgm, fade_frame, true);
 
 	//フォントのハンドルを作成する
-	m_startFontHandle = CreateFontToHandle(font_name, title_font_size, -1, DX_FONTTYPE_ANTIALIASING_EDGE_4X4);
+	int fontType = DX_FONTTYPE_ANTIALIASING_EDGE_4X4;//エッジ付きのフォント
+	m_startFontHandle = CreateFontToHandle(font_name, title_font_size, -1, fontType);
+	//UIの実体を確保
+	m_pStartText = std::make_shared<TextUI>(m_startFontHandle,title_font_size);
 }
 
 void TitleScene::Update(Input& input)
@@ -185,27 +192,10 @@ void TitleScene::Draw()
 	m_pEffectManager->Draw();
 
 	//タイトルロゴの描画
-	//ウィンドウの中心にタイトルロゴを描画する
-	const auto& windowSize = Application::GetInstance().GetWindowSize();
-	Vector3 logoPos = { windowSize.w / 2.0f, windowSize.h / 2.0f, 0.0f };
-	logoPos += title_logo_offset;//タイトルロゴの位置オフセットを加算する
-	int logoX = static_cast<int>(logoPos.m_x);
-	int logoY = static_cast<int>(logoPos.m_y);
-	DrawRotaGraph(logoX, logoY,
-		static_cast<double>(title_logo_scale), 0.0,
-		m_graphHandles[static_cast<int>(GraphType::TitleLogoMozi)], TRUE);
-
-	//タイトルロゴのエフェクトの描画
-	DrawRotaGraph(logoX, logoY,
-		static_cast<double>(title_logo_scale), 0.0,
-		m_graphHandles[static_cast<int>(GraphType::TitleLogoEffect)], TRUE);
+	DrawTitleLogo();
 
 	//画面下部に「Press A Button」の文字を描画する
 	std::string startText = "Aボタンで開始";
-	//描画する文字列の横幅を取得する
-	int textWidth = GetDrawStringWidthToHandle(startText.c_str(), static_cast<int>(startText.length()), m_startFontHandle);
-	//画面下部の中心に描画するため、描画位置を計算する
-	Vector3 textPos = { windowSize.w / 2.0f - textWidth / 2.0f, windowSize.h * title_logo_pos_y_rate, 0.0f };
 
 	//点滅させるために、透明度をsin波で変化させる　
 	//透明度を0～255の範囲で変化させる
@@ -219,8 +209,7 @@ void TitleScene::Draw()
 		//描画に透明度をてきようする
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
 		//描画する
-		DrawStringToHandle(static_cast<int>(textPos.m_x), static_cast<int>(textPos.m_y),
-			startText.c_str(), 0x000000, m_startFontHandle, 0xffffff);
+		m_pStartText->DrawAtRate(startText, start_text_pos_x_rate, start_text_pos_y_rate, 0x000000);
 		//透明度をリセット
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 	}
@@ -230,11 +219,29 @@ void TitleScene::Draw()
 		//描画に透明度をてきようする
 		SetDrawBlendMode(DX_BLENDMODE_ALPHA, alpha);
 		//描画する
-		DrawStringToHandle(static_cast<int>(textPos.m_x), static_cast<int>(textPos.m_y),
-			startText.c_str(), 0x000000, m_startFontHandle, 0xffffff);
+		m_pStartText->DrawAtRate(startText, start_text_pos_x_rate, start_text_pos_y_rate, 0x000000);
 		//透明度をリセット
 		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 	}
 
 	//TODO:タイトルロゴの画像を描画したり、モデルを描画したりする
+}
+
+void TitleScene::DrawTitleLogo() const
+{
+	//タイトルロゴの描画
+	//ウィンドウの中心にタイトルロゴを描画する
+	const auto& windowSize = Application::GetInstance().GetWindowSize();
+	Vector3 logoPos = { windowSize.m_width / 2.0f, windowSize.m_height / 2.0f, 0.0f };
+	logoPos += title_logo_offset;//タイトルロゴの位置オフセットを加算する
+	int logoX = static_cast<int>(logoPos.m_x);
+	int logoY = static_cast<int>(logoPos.m_y);
+	DrawRotaGraph(logoX, logoY,
+		static_cast<double>(title_logo_scale), 0.0,
+		m_graphHandles[static_cast<int>(GraphType::TitleLogoMozi)], TRUE);
+
+	//タイトルロゴのエフェクトの描画
+	DrawRotaGraph(logoX, logoY,
+		static_cast<double>(title_logo_scale), 0.0,
+		m_graphHandles[static_cast<int>(GraphType::TitleLogoEffect)], TRUE);
 }

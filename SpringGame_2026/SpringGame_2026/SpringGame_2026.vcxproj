@@ -166,6 +166,8 @@
     <ClCompile Include="Scene\GameScene.cpp" />
     <ClCompile Include="Scene\TitleScene.cpp" />
     <ClCompile Include="System\ToKanji.cpp" />
+    <ClCompile Include="UI\TextUI.cpp" />
+    <ClCompile Include="Math\Vector2.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Effect\AttackFieldEffect.h" />
@@ -180,12 +182,12 @@
     <ClInclude Include="Scene\ResultScene.h" />
     <ClInclude Include="Scene\Scene.h" />
     <ClInclude Include="Scene\SceneController.h" />
-    <ClInclude Include="Constants\Size.h" />
     <ClInclude Include="Manager\EnemyFactory.h" />
     <ClInclude Include="Manager\CollisionManager.h" />
     <ClInclude Include="GameObjects\Enemy.h" />
     <ClInclude Include="Math\Sphere.h" />
     <ClInclude Include="Manager\SoundManager.h" />
+    <ClInclude Include="Math\Size.h" />
     <ClInclude Include="System\SpriteAnimator.h" />
     <ClInclude Include="System\ModelAnimator.h" />
     <ClInclude Include="System\Camera.h" />
@@ -198,6 +200,8 @@
     <ClInclude Include="Scene\GameScene.h" />
     <ClInclude Include="Scene\TitleScene.h" />
     <ClInclude Include="System\ToKanji.h" />
+    <ClInclude Include="UI\TextUI.h" />
+    <ClInclude Include="Math\Vector2.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

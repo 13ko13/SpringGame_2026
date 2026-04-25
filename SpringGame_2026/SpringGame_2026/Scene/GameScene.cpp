@@ -21,6 +21,7 @@
 #include "../Main/Application.h"
 #include "../System/ToKanji.h"
 #include "../Manager/SoundManager.h"
+#include "../UI/TextUI.h"
 
 namespace
 {
@@ -42,6 +43,7 @@ namespace
 	//フォントのサイズ
 	constexpr int time_limit_font_size = 32;//残り時間のフォントサイズ
 	constexpr int game_count_font_size = 200;//ゲーム開始前のカウントダウンのフォントサイズ
+	constexpr int m_enemyCountFontSize = 32;//残り敵の数のフォントサイズ
 
 	//フォント名
 	const char* font_name = "玉ねぎ楷書激無料版v7改";
@@ -157,8 +159,15 @@ void GameScene::Init()
 	m_pCollManager = std::make_shared<CollisionManager>(m_pEffectManager);
 
 	//フォントハンドルを取得する
-	m_timeFontHandle = CreateFontToHandle(font_name, time_limit_font_size, -1, DX_FONTTYPE_ANTIALIASING_EDGE_4X4);
-	m_countDownFontHandle = CreateFontToHandle(font_name, game_count_font_size, -1, DX_FONTTYPE_ANTIALIASING_EDGE_4X4);
+	int fontType = DX_FONTTYPE_ANTIALIASING_EDGE_4X4;
+	m_timeFontHandle = CreateFontToHandle(font_name, time_limit_font_size, -1, fontType);
+	m_countDownFontHandle = CreateFontToHandle(font_name, game_count_font_size, -1, fontType);
+	m_enemyCountFontHandle = CreateFontToHandle(font_name, m_enemyCountFontSize, -1, fontType);
+
+	//テキストUIの実体を確保
+	m_pTimeText = std::make_shared<TextUI>(m_timeFontHandle, time_limit_font_size);
+	m_pCountDownText = std::make_shared<TextUI>(m_countDownFontHandle, game_count_font_size);
+	m_pEnemyCountText = std::make_shared<TextUI>(m_enemyCountFontHandle, m_enemyCountFontSize);
 
 	//ゲームBGMを再生する
 	SoundManager::GetInstance().PlayFadeIn(SoundManager::SoundType::GameBgm, fade_frame, true);
@@ -179,7 +188,7 @@ void GameScene::Update(Input& input)
 	//フェード中でなければ時間が3、2、1のときにカウントダウンの音を鳴らす
 	if (m_startCountDown % frame_per_second == 0 &&
 		m_startCountDown >= frame_per_second * 2 &&
-		!m_controller.GatFade().IsFading())
+		!m_controller.GetFade().IsFading())
 	{
 		//カウントダウンの音を鳴らす
 		SoundManager::GetInstance().Play(SoundManager::SoundType::CountDown);
@@ -192,7 +201,7 @@ void GameScene::Update(Input& input)
 
 
 	//フェードが終わっていればカウントダウンの更新を行う
-	if (!m_controller.GatFade().IsFading())
+	if (!m_controller.GetFade().IsFading())
 	{
 		//カウントダウンの更新
 		m_startCountDown--;
@@ -294,71 +303,14 @@ void GameScene::Draw()
 	//ウィンドウサイズを取得する
 	auto& windowSize = Application::GetInstance().GetWindowSize();
 
-	//残り時間の描画
-	//stringで描画する文字列を作成する
-	std::string timeText = ToKanji::NumToKanji(m_time / 60) + "秒";//漢字に変換して「秒」をつける
+	//時間の描画
+	DrawTime();
 
-	//表示したい文字列の横幅を取得する
-	const int strWidth = GetDrawStringWidthToHandle(timeText.c_str(), static_cast<int>(strlen(timeText.c_str())), m_timeFontHandle);
-	//右上に描画するため、描画位置を計算する
-	Vector3 drawPos = {
-		static_cast<float>(windowSize.w * time_text_pos_x_rate - strWidth / 2.0f) ,
-		static_cast<float>(windowSize.h * time_text_pos_y_rate) };
-	DrawStringToHandle(static_cast<int>(drawPos.m_x),
-		static_cast<int>(drawPos.m_y),
-		timeText.c_str(),
-		0x000000, m_timeFontHandle,
-		0xffffff);
+	//敵の数の描画
+	DrawEnemyCount();
 
-	//残りの敵の数を描画する
-	//まず敵の数を取得する
-	int enemyCount = static_cast<int>(m_pEnemyFactory->GetEnemies().size());
-	//stringで描画する文字列を作成する
-	std::string enemyText = "残り敵数:" + ToKanji::NumToKanji(enemyCount) + "体";//漢字に変換して「体」をつける
-	//敵の数が1桁になったときに文字列の位置が変わらないように、最大桁数のときの文字列の横幅を取得しておく
-	std::string maxEnemyText = "残り敵数:九十九体";
-	const int strMaxWidth = GetDrawStringWidthToHandle(maxEnemyText.c_str(), static_cast<int>(strlen(maxEnemyText.c_str())), m_timeFontHandle);
-	//ウィンドウの右上に描画するため、描画位置を計算する
-	drawPos = { static_cast<float>(windowSize.w * e_num_text_pos_x_rate - strMaxWidth / 2),
-		static_cast<float>(windowSize.h * e_num_text_pos_y_rate) };
-	DrawStringToHandle(static_cast<int>(drawPos.m_x),
-		static_cast<int>(drawPos.m_y),
-		enemyText.c_str(),
-		0x000000, m_timeFontHandle,
-		0xffffff);
-
-	//ゲーム開始時のカウントダウンの描画
-	//4秒の時は描画を行わない
-	if (m_startCountDown >= 60 &&
-		m_startCountDown < frame_per_second * 4)
-	{
-		//stringで描画する文字列を作成する
-		std::string startTimeText = ToKanji::NumToKanji(m_startCountDown / 60);
-
-		//表示したい文字列の横幅を取得する
-		const int strWidth = GetDrawStringWidthToHandle(startTimeText.c_str(), static_cast<int>(strlen(startTimeText.c_str())), m_countDownFontHandle);
-		//表示したい文字の高さ
-		const int strHeight = game_count_font_size;
-
-		//ウィンドウの中心に描画するため、描画位置を計算する
-		Vector3 drawPos = { windowSize.w / 2.0f - strWidth / 2.0f, windowSize.h / 2.0f - strHeight / 2.0f };
-		DrawExtendStringToHandle(static_cast<int>(drawPos.m_x), static_cast<int>(drawPos.m_y),
-			1.0, 1.0, startTimeText.c_str(), 0x000000, m_countDownFontHandle, 0xffffff);
-	}
-	else if (m_startCountDown > 0 &&
-			m_startCountDown < frame_per_second * 4)
-	{
-		//stringで描画する文字列を作成する
-		std::string startTimeText = "始めいッ!";
-		//表示したい文字列の横幅を取得する
-		const int strWidth = GetDrawStringWidthToHandle(startTimeText.c_str(), static_cast<int>(strlen(startTimeText.c_str())), m_countDownFontHandle);
-		//表示したい文字の高さ
-		const int strHeight = game_count_font_size;
-		//ウィンドウの中心に描画するため、描画位置を計算する
-		Vector3 drawPos = { windowSize.w / 2.0f - strWidth / 2.0f, windowSize.h / 2.0f - strHeight / 2.0f };
-		DrawExtendStringToHandle(static_cast<int>(drawPos.m_x), static_cast<int>(drawPos.m_y),
-			1.0, 1.0, startTimeText.c_str(), 0x000000, m_countDownFontHandle, 0xffffff);
-	}
+	//カウントダウンの描画
+	DrawCountDown();
 }
 
 void GameScene::DrawGrid()
@@ -421,6 +373,48 @@ int GameScene::CalcScore(int deadEnemyNum) const
 	score = std::clamp(static_cast<int>(std::round(normalizedScore * max_score)), 0, max_score);
 
 	return score;
+}
+
+void GameScene::DrawTime() const
+{
+	//残り時間の描画
+	//stringで描画する文字列を作成する
+	std::string timeText = ToKanji::NumToKanji(m_time / 60) + "秒";//漢字に変換して「秒」をつける
+	//ウィンドウの上部中央に描画するため、TextUIのDrawAtRateを使用する
+	m_pTimeText->DrawAtRate(timeText, time_text_pos_x_rate, time_text_pos_y_rate, 0x000000, 1.0, 1.0, 0xffffff);
+}
+
+void GameScene::DrawEnemyCount() const
+{
+	//残りの敵の数を描画する
+	//まず敵の数を取得する
+	int enemyCount = static_cast<int>(m_pEnemyFactory->GetEnemies().size());
+	//stringで描画する文字列を作成する
+	std::string enemyText = "残り敵数:" + ToKanji::NumToKanji(enemyCount) + "体";//漢字に変換して「体」をつける
+	//ウィンドウの上部中央に描画するため、TextUIのDrawAtRateを使用する
+	m_pEnemyCountText->DrawAtRate(enemyText, e_num_text_pos_x_rate, e_num_text_pos_y_rate, 0x000000, 1.0, 1.0, 0xffffff);
+}
+
+void GameScene::DrawCountDown() const
+{
+	//ゲーム開始時のカウントダウンの描画
+	//4秒の時は描画を行わない
+	if (m_startCountDown >= 60 &&
+		m_startCountDown < start_count_down_time)
+	{
+		//stringで描画する文字列を作成する
+		std::string startTimeText = ToKanji::NumToKanji(m_startCountDown / 60);
+		//ウィンドウの中央に描画するため、TextUIのDrawCenterを使用する
+		m_pCountDownText->DrawCenter(startTimeText, 0x000000, 1.0, 1.0, 0xffffff);
+	}
+	else if (m_startCountDown > 0 &&
+			m_startCountDown < start_count_down_time)
+	{
+		//stringで描画する文字列を作成する
+		std::string startTimeText = "始めいッ!";
+		//ウィンドウの中央に描画するため、TextUIのDrawCenterを使用する
+		m_pCountDownText->DrawCenter(startTimeText, 0x000000, 1.0, 1.0, 0xffffff);
+	}
 }
 
 Vector3 const GameScene::GetStageSize() const

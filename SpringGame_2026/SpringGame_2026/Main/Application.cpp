@@ -96,7 +96,7 @@ bool Application::Init()
 	//ゲーム名
 	SetWindowText("轟-TODOROKI");
 	//画面サイズと色数を設定
-	SetGraphMode(m_windowSize.w, m_windowSize.h, Game::color_bit_num);
+	SetGraphMode(m_windowSize.m_width, m_windowSize.m_height, Game::color_bit_num);
 
 	//エフェクトを描画するためにDirect3D11を使用するように設定（DxLib_Initの前に呼ぶ必要がある）
 	SetUseDirect3DVersion(DX_DIRECT3D_11);

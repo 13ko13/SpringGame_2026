@@ -55,7 +55,7 @@ public:
 	/// フェードマネージャーの取得
 	/// </summary>
 	/// <returns>フェードマネージャー</returns>
-	const Fade GatFade() const { return m_fade; }
+	const Fade GetFade() const { return m_fade; }
 
 private:
 	//スタックに積まれているシーンを管理

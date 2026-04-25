@@ -13,6 +13,7 @@
 #include "TitleScene.h"
 #include "../System/ToKanji.h"
 #include "../Manager/SoundManager.h"
+#include "../UI/TextUI.h"
 
 namespace
 {
@@ -110,20 +111,31 @@ void ResultScene::Init()
 	//フォントのハンドルを作成する
 	m_backToTitleFontHandle = CreateFontToHandle(font_name, title_font_size, -1, DX_FONTTYPE_ANTIALIASING_EDGE_4X4, -1, title_font_edge_size);
 
+	//スコアテキストUIの実体を確保
+	m_pScoreTextUI = std::make_shared<TextUI>(m_scoreFontHandle, score_font_size);
+	//タイトルに戻るテキストUIの実体を確保
+	m_pBackToTitleTextUI = std::make_shared<TextUI>(m_backToTitleFontHandle, title_font_size);
+
 	//リザルトシーンのBGMを再生する
 	SoundManager::GetInstance().PlayFadeIn(SoundManager::SoundType::ResultBgm, fade_frame, true);
 }
 
 void ResultScene::Update(Input& input)
 {
+	//エフェクトの更新
+	UpdateEffekseer3D();
+
+	//プレイヤーの更新
+	m_pPlayer->Update(input, m_pCamera->GetAngleY(), stage_size, false);
+
+	//フェードが終わっていなければ処理を飛ばす
+	if (m_controller.GetFade().IsFading()) return;
+
 	//フレームの更新
 	m_frame++;
 
 	//文字点滅用のタイマーの更新
 	m_blinkFrame++;
-
-	//プレイヤーの更新
-	m_pPlayer->Update(input, m_pCamera->GetAngleY(), stage_size, false);
 
 	//演出が終了していて、何かしらのボタンが押されたらゲームシーンに遷移する
 	if (!m_isStageing && input.IsTriggered("ok") && !m_isReturnTitle)
@@ -141,8 +153,7 @@ void ResultScene::Update(Input& input)
 		m_isStageing = false;
 	}
 
-	//エフェクトの更新
-	UpdateEffekseer3D();
+	
 }
 
 void ResultScene::Draw()
@@ -159,15 +170,18 @@ void ResultScene::Draw()
 	//プレイヤーの描画
 	m_pPlayer->Draw();
 
+	//フェードが終わっていればテキストUIの描画をおこなう
+	if (m_controller.GetFade().IsFading()) return;
+	//テキストUIの描画
+	DrawTextUI();
+}
+
+void ResultScene::DrawTextUI()
+{
 	//スコアの描画
 	std::string scoreText = "成果:" + ToKanji::NumToKanji(m_score) + "点";
-	//表示したい文字列の横幅を取得する
-	int textWidth = GetDrawStringWidthToHandle(scoreText.c_str(), static_cast<int>(scoreText.length()), m_scoreFontHandle);
-	//ウィンドウの中心に描画するため、描画位置を計算する
-	auto& windowSize = Application::GetInstance().GetWindowSize();
-	Vector3 drawPos = { windowSize.w / 2.0f - textWidth / 2.0f, windowSize.h / 2.0f - score_font_size / 2.0f };
 
-	//文字をサイズをt秒かけてn倍の大きさから当倍に(大→小)にしてスタンプのように描画する
+	//文字のサイズをt秒かけてn倍の大きさから当倍に(大→小)にしてスタンプのように描画する
 	float scale = (1.0f - static_cast<float>(m_frame) / score_shrink_frame) * score_start_scale;
 	if (scale < 1.0f)
 	{
@@ -207,29 +221,15 @@ void ResultScene::Draw()
 	//スコアが百点の場合のみ、特別な色で描画する
 	if (m_score == max_score)
 	{
-		DrawExtendStringToHandle(
-			static_cast<int>(drawPos.m_x),
-			static_cast<int>(drawPos.m_y),
-			scale, scale, scoreText.c_str(),
-			score_100_color, m_scoreFontHandle);
+		m_pScoreTextUI->DrawCenter(scoreText, score_100_color, scale, scale, 0x000000);
 	}
 	else
 	{
-		DrawExtendStringToHandle(
-			static_cast<int>(drawPos.m_x),
-			static_cast<int>(drawPos.m_y),
-			scale, scale, scoreText.c_str(),
-			0x000000, m_scoreFontHandle,
-			0xffffff);
+		m_pScoreTextUI->DrawCenter(scoreText, 0x000000, scale, scale, 0xffffff);
 	}
 
 	//タイトルに戻るの文字の描画
 	std::string backToTitleText = "Aボタンでタイトルに戻る";
-	//描画する文字列の横幅を取得する
-	int backToTitleTextWidth = GetDrawStringWidthToHandle(backToTitleText.c_str(), static_cast<int>(backToTitleText.length()), m_backToTitleFontHandle);
-	//画面下部の中心に描画するため、描画位置を計算する
-	Vector3 backToTitleTextPos = { windowSize.w * back_to_title_pos_x_rate - backToTitleTextWidth / 2.0f,
-									windowSize.h * back_to_title_pos_y_rate, 0.0f };
 
 	//点滅させるために、透明度をsin波で変化させる
 	//透明度を0～255の範囲で変化させる
@@ -238,8 +238,7 @@ void ResultScene::Draw()
 
 	SetDrawBlendMode(DX_BLENDMODE_ALPHA, static_cast<int>(alpha));
 	//描画する
-	DrawStringToHandle(static_cast<int>(backToTitleTextPos.m_x), static_cast<int>(backToTitleTextPos.m_y),
-		backToTitleText.c_str(), 0x000000, m_backToTitleFontHandle, 0xffffff);
+	m_pBackToTitleTextUI->DrawAtRate(backToTitleText, back_to_title_pos_x_rate, back_to_title_pos_y_rate, 0x000000, 1.0, 1.0, 0xffffff);
 
 	SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
 }
