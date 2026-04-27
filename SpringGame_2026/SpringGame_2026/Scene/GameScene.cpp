@@ -443,6 +443,7 @@ void GameScene::Draw()
 			if (!m_isRyouSE)
 			{
 				SoundManager::GetInstance().Play(SoundManager::SoundType::ScorePop);
+				m_isRyouSE = true;
 			}
 		}
 	}
