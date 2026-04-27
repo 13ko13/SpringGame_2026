@@ -4,7 +4,7 @@
 namespace
 {
 	//敵を最初に生成するときの数
-	constexpr int enemy_num = 34;
+	constexpr int enemy_num = 1;
 
 	//ステージの辺の数
 	constexpr int stage_side_num = 4;

@@ -38,7 +38,7 @@ namespace
 	//フェードにかけるフレーム数
 	constexpr float fade_frame = 60.0f;
 	//リザルトへの遷移にかけるフレーム数
-	constexpr float to_result_fade_frame = 120.0f;
+	constexpr float to_result_fade_frame = 80.0f;
 
 	//フォントのサイズ
 	constexpr int time_limit_font_size = 32;//残り時間のフォントサイズ
@@ -81,6 +81,15 @@ namespace
 	constexpr float kill_waight = 0.7f;
 	//時間に対する割合の重み
 	constexpr float time_waight = 0.3f;
+
+	//討伐完了フォントのサイズ
+	constexpr int clear_font_size = 240;
+	//討伐完了の1文字を出すときのフレーム数
+	constexpr int clear_shrink_frame = 50;
+	//討伐完了の最初の大きさ
+	constexpr float clear_start_scale = 4.0f;
+	//討伐完了の縁のサイズ
+	constexpr int clear_font_edge_size = 20;
 }
 
 GameScene::GameScene(SceneController& controller) :
@@ -163,11 +172,13 @@ void GameScene::Init()
 	m_timeFontHandle = CreateFontToHandle(font_name, time_limit_font_size, -1, fontType);
 	m_countDownFontHandle = CreateFontToHandle(font_name, game_count_font_size, -1, fontType);
 	m_enemyCountFontHandle = CreateFontToHandle(font_name, m_enemyCountFontSize, -1, fontType);
+	m_clearFontHandle = CreateFontToHandle(font_name, clear_font_size, -1, fontType, -1, clear_font_edge_size);
 
 	//テキストUIの実体を確保
 	m_pTimeText = std::make_shared<TextUI>(m_timeFontHandle, time_limit_font_size);
 	m_pCountDownText = std::make_shared<TextUI>(m_countDownFontHandle, game_count_font_size);
 	m_pEnemyCountText = std::make_shared<TextUI>(m_enemyCountFontHandle, m_enemyCountFontSize);
+	m_pClearText = std::make_shared<TextUI>(m_clearFontHandle, clear_font_size);
 
 	//ゲームBGMを再生する
 	SoundManager::GetInstance().PlayFadeIn(SoundManager::SoundType::GameBgm, fade_frame, true);
@@ -244,10 +255,15 @@ void GameScene::Update(Input& input)
 	//エフェクトマネージャーの更新
 	m_pEffectManager->Update();
 
+	if (m_pEnemyFactory->GetEnemies().empty())
+	{
+		m_clearFrame++;
+	}
+
 	//プレイヤーが死ぬ、または敵が全滅するなどの条件でリザルトシーンに遷移する
 	//m_pEnemyFactoryから敵の数を取得する
 	//m_pPlayerからプレイヤーの生死を取得する
-	if (m_pEnemyFactory->GetEnemies().empty() || m_pPlayer->IsDead())
+	if (m_isEndRyou)
 	{
 		//スコアの計算を行う
 		int score = CalcScore(m_enemyCount - static_cast<int>(m_pEnemyFactory->GetEnemies().size()));
@@ -311,6 +327,125 @@ void GameScene::Draw()
 
 	//カウントダウンの描画
 	DrawCountDown();
+
+	//敵がすべて倒されたときの「討伐完了」の描画
+	if (m_pEnemyFactory->GetEnemies().empty())
+	{
+		//文字のサイズをt秒かけてn倍の大きさから当倍に(大→小)にしてスタンプのように描画する
+		float scale = (1.0f - static_cast<float>(m_clearFrame) / clear_shrink_frame) * clear_start_scale;
+		if (!m_isEndTou)
+		{
+			std::string clearText = "討";
+			m_pClearText->DrawAtRate(clearText, 0.2f, 0.5f, 0xff0000, scale, scale, 0x000000);
+			if (scale < 1.0f)
+			{
+				scale = 1.0f;
+				m_isEndTou = true;
+				m_clearFrame = 0;//フレーム数をリセットして次の文字の描画に備える
+			}
+		}
+		else
+		{
+			scale = 1.0f;
+			std::string clearText = "討";
+			m_pClearText->DrawAtRate(clearText, 0.2f, 0.5f, 0xff0000, scale, scale, 0x000000);
+			//討のSEを鳴らす
+			if (!m_isTouSE)
+			{
+				SoundManager::GetInstance().Play(SoundManager::SoundType::ScorePop);
+				m_isTouSE = true;
+			}
+		}
+	}
+	//敵がすべて倒されたときの「討伐完了」の描画
+	if (m_pEnemyFactory->GetEnemies().empty() &&
+			m_isEndTou)
+	{
+		//文字のサイズをt秒かけてn倍の大きさから当倍に(大→小)にしてスタンプのように描画する
+		float scale = (1.0f - static_cast<float>(m_clearFrame) / clear_shrink_frame) * clear_start_scale;
+		if (!m_isEndBatsu)
+		{
+			std::string clearText = "伐";
+			m_pClearText->DrawAtRate(clearText, 0.4f, 0.5f, 0xff0000, scale, scale, 0x000000);
+			if (scale < 1.0f)
+			{
+				scale = 1.0f;
+				m_isEndBatsu = true;
+				m_clearFrame = 0;//フレーム数をリセットして次の文字の描画に備える
+			}
+		}
+		else
+		{
+			scale = 1.0f;
+			std::string clearText = "伐";
+			m_pClearText->DrawAtRate(clearText, 0.4f, 0.5f, 0xff0000, scale, scale, 0x000000);
+			//伐のSEを鳴らす
+			if (!m_isBatsuSE)
+			{
+				SoundManager::GetInstance().Play(SoundManager::SoundType::ScorePop);
+				m_isBatsuSE = true;
+			}
+		}
+	}
+	//敵がすべて倒されたときの「討伐完了」の描画
+	if (m_pEnemyFactory->GetEnemies().empty() &&
+			m_isEndBatsu)
+	{
+		//文字のサイズをt秒かけてn倍の大きさから当倍に(大→小)にしてスタンプのように描画する
+		float scale = (1.0f - static_cast<float>(m_clearFrame) / clear_shrink_frame) * clear_start_scale;
+		if (!m_isEndKan)
+		{
+			std::string clearText = "完";
+			m_pClearText->DrawAtRate(clearText, 0.6f, 0.5f, 0xff0000, scale, scale, 0x000000);
+			if (scale < 1.0f)
+			{
+				scale = 1.0f;
+				m_isEndKan = true;
+				m_clearFrame = 0;//フレーム数をリセットして次の文字の描画に備える
+			}
+		}
+		else
+		{
+			scale = 1.0f;
+			std::string clearText = "完";
+			m_pClearText->DrawAtRate(clearText, 0.6f, 0.5f, 0xff0000, scale, scale, 0x000000);
+			//完のSEを鳴らす
+			if (!m_isKanSE)
+			{
+				SoundManager::GetInstance().Play(SoundManager::SoundType::ScorePop);
+				m_isKanSE = true;
+			}
+		}
+	}
+	//敵がすべて倒されたときの「討伐完了」の描画
+	if (m_pEnemyFactory->GetEnemies().empty() &&
+			m_isEndKan)
+	{
+		//文字のサイズをt秒かけてn倍の大きさから当倍に(大→小)にしてスタンプのように描画する
+		float scale = (1.0f - static_cast<float>(m_clearFrame) / clear_shrink_frame) * clear_start_scale;
+		if (!m_isEndRyou)
+		{
+			std::string clearText = "了";
+			m_pClearText->DrawAtRate(clearText, 0.8f, 0.5f, 0xff0000, scale, scale, 0x000000);
+			if (scale < 1.0f)
+			{
+				scale = 1.0f;
+				m_isEndRyou = true;
+				m_clearFrame = 0;//フレーム数をリセットして次の文字の描画に備える
+			}
+		}
+		else
+		{
+			scale = 1.0f;
+			std::string clearText = "了";
+			m_pClearText->DrawAtRate(clearText, 0.8f, 0.5f, 0xff0000, scale, scale, 0x000000);
+			//了のSEを鳴らす
+			if (!m_isRyouSE)
+			{
+				SoundManager::GetInstance().Play(SoundManager::SoundType::ScorePop);
+			}
+		}
+	}
 }
 
 void GameScene::DrawGrid()

@@ -33,7 +33,7 @@ namespace
 	const char* font_name = "玉ねぎ楷書激無料版v7改";
 
 	//フォントのサイズ
-	constexpr int score_font_size = 100;
+	constexpr int score_font_size = 180;
 	//スコアの文字のエッジの太さ
 	constexpr int score_font_edge_size = 5;
 
@@ -41,12 +41,15 @@ namespace
 	constexpr int score_shrink_frame = 50;
 
 	//文字を小さくするときの最初の大きさ
-	constexpr float score_start_scale = 4.0f;
+	constexpr float clear_start_scale = 4.0f;
 
 	//スコアが100点のときの特別な色
 	constexpr int score_100_color = 0xff0000;
 	//最大スコア
 	constexpr int max_score = 100;
+	//スコアを表示するときの画面割合
+	constexpr float score_pos_x_rate = 0.5f;
+	constexpr float score_pos_y_rate = 0.4f;
 
 	//タイトルに戻るフォントのサイズ
 	constexpr int title_font_size = 60;
@@ -182,7 +185,7 @@ void ResultScene::DrawTextUI()
 	std::string scoreText = "成果:" + ToKanji::NumToKanji(m_score) + "点";
 
 	//文字のサイズをt秒かけてn倍の大きさから当倍に(大→小)にしてスタンプのように描画する
-	float scale = (1.0f - static_cast<float>(m_frame) / score_shrink_frame) * score_start_scale;
+	float scale = (1.0f - static_cast<float>(m_frame) / score_shrink_frame) * clear_start_scale;
 	if (scale < 1.0f)
 	{
 		scale = 1.0f;
@@ -221,11 +224,11 @@ void ResultScene::DrawTextUI()
 	//スコアが百点の場合のみ、特別な色で描画する
 	if (m_score == max_score)
 	{
-		m_pScoreTextUI->DrawCenter(scoreText, score_100_color, scale, scale, 0x000000);
+		m_pScoreTextUI->DrawAtRate(scoreText, score_pos_x_rate, score_pos_y_rate, score_100_color, scale, scale, 0x000000);
 	}
 	else
 	{
-		m_pScoreTextUI->DrawCenter(scoreText, 0x000000, scale, scale, 0xffffff);
+		m_pScoreTextUI->DrawAtRate(scoreText, score_pos_x_rate, score_pos_y_rate, 0x000000, scale, scale, 0xffffff);
 	}
 
 	//タイトルに戻るの文字の描画

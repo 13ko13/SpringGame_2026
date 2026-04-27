@@ -90,17 +90,32 @@ private:
 	int m_deathEffectHandle = -1;
 	int m_attackFieldEffectHandle = -1;
 
+	//敵全員を倒してからの経過時間
+	int m_clearFrame = 0;
 	//残り時間フォントのハンドル
 	int m_timeFontHandle = -1;
 	//カウントダウンフォントのハンドル
 	int m_countDownFontHandle = -1;
 	//敵の数フォントのハンドル
 	int m_enemyCountFontHandle = -1;
+	//討伐完了フォントのハンドル
+	int m_clearFontHandle = -1;
+
+	bool m_isEndTou = false; //討を表示したかどうか
+	bool m_isEndBatsu = false; //伐を表示したかどうか
+	bool m_isEndKan = false; //完を表示したかどうか
+	bool m_isEndRyou = false;//了を表示したかどうか
+
+	bool m_isTouSE = false; //討のSEを鳴らしたかどうか
+	bool m_isBatsuSE = false; //伐のSEを鳴らしたかどうか
+	bool m_isKanSE = false; //完のSEを鳴らしたかどうか
+	bool m_isRyouSE = false; //了のSEを鳴らしたかどうか
 
 	//テキスト
 	std::shared_ptr<TextUI> m_pTimeText;//残り時間テキスト
 	std::shared_ptr<TextUI> m_pCountDownText;//カウントダウンテキスト
 	std::shared_ptr<TextUI> m_pEnemyCountText;//残りの敵の数テキスト
+	std::shared_ptr<TextUI> m_pClearText;//討伐完了テキスト
 
 	//敵の数を保持しておく
 	int m_enemyCount = 0;

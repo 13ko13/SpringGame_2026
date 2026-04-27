@@ -67,36 +67,3 @@ void TextUI::DrawAtRate(
 		scaleX, scaleY, text.c_str(),
 		color, handle, edgeColor);
 }
-
-void TextUI::StartStamp(
-	const std::string& text,
-	float interval,
-	float stampFrame,
-	float startScale)
-{
-	//スタンプ演出を開始するための初期化処理
-	m_fullText = text;
-	m_interval = interval;
-	m_stampFrame = stampFrame;
-	m_startScale = startScale;
-	m_frame = 0;
-}
-
-int TextUI::CountUTF8Chars(const std::string& str) const
-{
-	//UTF-8文字列の文字数を数える関数
-	int count = 0;
-	//string型はunsigned charの配列として扱うことができるため、各バイトをunsigned charとして処理する
-	for (unsigned char byte : str)
-	{
-		//UTF-8の先頭バイトは0xxxxxxx、110xxxxx、1110xxxx、11110xxxのいずれかの形式をとるため、先頭バイトを見て文字数をカウントする
-		//0xCO = 11000000(上位2ビットを取り出す)
-		//0x80 = 10000000(先頭バイトでないことを示すビットパターン)
-		//つまり上位2ビットで先頭バイトかどうかを判定している
-		if((byte & 0xC0) != 0x80)
-		{
-			count++;
-		}
-	}
-	return count;
-}
