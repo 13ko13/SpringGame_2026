@@ -97,12 +97,11 @@ void TitleScene::Init()
 	m_pEffectManager = std::make_shared<EffectManager>(
 		loader.GetEffect(ResourceLoader::EffectID::Death), loader.GetEffect(ResourceLoader::EffectID::AttackField));
 
+	//カメラの実体を確保
+	m_pCamera = std::make_shared<Camera>(camera_target_pos);
 	//プレイヤーのモデルのハンドルをResourceLoaderから取得する
 	handle = MV1DuplicateModel(loader.GetModel(ResourceLoader::ModelID::Player));
-	m_pPlayer = std::make_shared<Player>(handle, m_pEffectManager);
-	//カメラの実体を確保
-	//まだプレイヤーがいないので、仮で注視点の位置を(0,400,0)にしておく
-	m_pCamera = std::make_shared<Camera>(camera_target_pos);
+	m_pPlayer = std::make_shared<Player>(handle, m_pEffectManager, m_pCamera);
 
 	//skyboxの実体を確保
 	m_pSkyBox = std::make_shared<SkyBox>(

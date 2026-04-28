@@ -3,7 +3,7 @@
 #include "../Math/Matrix4x4.h"
 #include "../../../Dxlib_h/EffekseerForDXLib.h"
 
-namespace 
+namespace
 {
 	constexpr float camera_near = 200.0f;//カメラのNear
 	constexpr float camera_far = 3500.0f;//カメラのFar
@@ -59,7 +59,7 @@ void Camera::Update(const Vector3& targetPos, const Input input)
 	{
 		m_angleY -= camera_rotate_speed;
 	}
-	else if(input.GetRightStickDir().m_x < -camera_rot_dead_zone)
+	else if (input.GetRightStickDir().m_x < -camera_rot_dead_zone)
 	{
 		m_angleY += camera_rotate_speed;
 	}
@@ -98,6 +98,9 @@ void Camera::Update(const Vector3& targetPos, const Input input)
 	//カメラの位置を求める
 	m_pos += tempCameraPos;
 
+	//カメラの揺れを更新して、カメラの位置に加算する
+	m_pos += UpdateShake();
+
 	//ターゲットの位置も補間する
 	Vector3 targetDelta = targetPos - m_targetPos;
 	targetDelta *= lerp_t;
@@ -125,4 +128,30 @@ Vector3 const Camera::GetForward() const
 {
 	//カメラの正面ベクトルは、注視点からカメラ位置に向かうベクトルの逆向きになる
 	return (m_targetPos - m_pos).Normalized();
+}
+
+void Camera::OnShake(float power, int frame)
+{
+	m_shakePower = power;
+	m_shakeFrame = frame;
+}
+
+Vector3 Camera::UpdateShake()
+{
+	if (m_shakeFrame < 0)
+	{
+		return Vector3(0.0f, 0.0f, 0.0f);
+	}
+
+	m_shakeFrame--;
+	//ランダムな方向のベクトルを作る
+	float randX = (static_cast<float>(rand()) / RAND_MAX - 0.5f) * 2.0f;//-1.0f～1.0fの乱数
+	float randY = (static_cast<float>(rand()) / RAND_MAX - 0.5f) * 2.0f;
+	float randZ = (static_cast<float>(rand()) / RAND_MAX - 0.5f) * 2.0f;
+
+	Vector3 shakeVec = { randX,randY,randZ };
+	//ベクトルを正規化して、m_shakePowerをかける
+	shakeVec.Normalize();
+	shakeVec *= m_shakePower;
+	return shakeVec;
 }

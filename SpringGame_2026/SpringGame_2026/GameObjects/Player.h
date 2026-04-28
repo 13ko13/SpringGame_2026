@@ -7,11 +7,12 @@
 
 class Input;
 class EffectManager;
+class Camera;
 
 class Player : public GameObject
 {
 public:
-	Player(int modelHandle, std::shared_ptr<EffectManager> pManager);
+	Player(int modelHandle, std::shared_ptr<EffectManager> pManager, std::shared_ptr<Camera> pCamera);
 	~Player();
 
 	/// <summary>
@@ -112,6 +113,9 @@ private:
 
 	//エフェクトマネージャーへのポインタ
 	std::shared_ptr<EffectManager> m_pEffectManager;
+
+	//カメラへのポインタ
+	std::shared_ptr<Camera> m_pCamera;
 
 private:
 	/// <summary>

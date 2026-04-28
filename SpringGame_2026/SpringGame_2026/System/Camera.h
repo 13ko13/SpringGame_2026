@@ -35,11 +35,29 @@ public:
 	/// </summary>
 	/// <returns>正面ベクトル</returns>
 	Vector3 const GetForward() const;
+
+	/// <summary>
+	/// カメラの揺れの開始
+	/// </summary>
+	/// <param name="power">揺れるときの力</param>
+	/// <param name="frame">揺れの持続フレーム数</param>
+	void OnShake(float power, int frame);
 	
 private:
 	float m_angleX = 0.0f;//カメラの回転角横
 	float m_angleY = 0.0f;//カメラの回転角縦
 
+	//揺れ
+	float m_shakePower = 0.0f;//揺れるときの力
+	int m_shakeFrame = 0;//揺れの持続フレーム数
+
 	//ターゲットの位置
 	Vector3 m_targetPos;
+
+private:
+	/// <summary>
+	/// 揺れの更新
+	/// </summary>
+	/// <returns>揺れの速度ベクトル</returns>
+	Vector3 UpdateShake();
 };

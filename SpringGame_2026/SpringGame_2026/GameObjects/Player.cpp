@@ -4,6 +4,7 @@
 #include "../Math/Matrix4x4.h"
 #include "../Manager/EffectManager.h"
 #include "../Manager/SoundManager.h"
+#include "../System/Camera.h"
 
 namespace
 {
@@ -61,13 +62,18 @@ namespace
 
 	//ダメージ時のノックバックの強さ
 	constexpr float knock_back_power = 5.0f;
+
+	//攻撃した時のカメラの揺れの力と時間
+	constexpr float attack_shake_power = 10.0f;
+	constexpr int attack__shake_frame = 5;
 }
 
-Player::Player(int modelHandle, std::shared_ptr<EffectManager> pManager) :
+Player::Player(int modelHandle, std::shared_ptr<EffectManager> pManager, std::shared_ptr<Camera> pCamera) :
 	GameObject(modelHandle, first_pos),
 	m_animator(modelHandle),
 	m_attackSphere(m_pos),
-	m_pEffectManager(pManager)
+	m_pEffectManager(pManager),
+	m_pCamera(pCamera)
 {
 	//再生するアニメーション番号を引数に入れて、それを再生する
 	//初期状態はIdleにする
@@ -129,6 +135,9 @@ void Player::Update(Input input, float angle, const Vector3& stageSize, bool isC
 		{
 			m_isAttacking = true;//攻撃が当たる時間帯のときは攻撃中フラグを立てる
 			m_attackSphereR = attack_sphere_r;//攻撃判定用の球の半径を大きくする
+
+			//カメラを振動させる
+			m_pCamera->OnShake(attack_shake_power, attack__shake_frame);
 		}
 		else
 		{

@@ -90,6 +90,9 @@ namespace
 	constexpr float clear_start_scale = 4.0f;
 	//討伐完了の縁のサイズ
 	constexpr int clear_font_edge_size = 20;
+
+	//カメラのターゲットの位置
+	const Vector3 camera_target_pos = { 0.0f, 400.0f, 0.0f };
 }
 
 GameScene::GameScene(SceneController& controller) :
@@ -143,8 +146,11 @@ void GameScene::Init()
 	m_enemyMHandles.push_back(MV1DuplicateModel(resourceLoader.GetModel(ResourceLoader::ModelID::Zombie)));
 	m_pEnemyFactory = std::make_shared<EnemyFactory>(m_enemyMHandles, m_pEffectManager);
 
+	//カメラの実体を確保
+	m_pCamera = std::make_shared<Camera>(camera_target_pos);
+
 	//プレイヤーの実体を確保
-	m_pPlayer = std::make_shared<Player>(m_playerMHandle, m_pEffectManager);
+	m_pPlayer = std::make_shared<Player>(m_playerMHandle, m_pEffectManager, m_pCamera);
 
 	//敵の生成を行う工場の初期化
 	m_pEnemyFactory->Init(stage_size, m_pPlayer->GetPos());
@@ -160,9 +166,6 @@ void GameScene::Init()
 		resourceLoader.GetGraphic(ResourceLoader::GraphicID::RightSky),
 		resourceLoader.GetGraphic(ResourceLoader::GraphicID::UpSky),
 		resourceLoader.GetGraphic(ResourceLoader::GraphicID::DownSky));
-
-	//カメラの実体を確保
-	m_pCamera = std::make_shared<Camera>(m_pPlayer->GetPos());
 
 	//当たり判定の管理クラスの実体を確保
 	m_pCollManager = std::make_shared<CollisionManager>(m_pEffectManager);

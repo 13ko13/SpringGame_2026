@@ -22,7 +22,7 @@ void ResourceLoader::LoadAll()
 	//モデルを読み込んでハンドルを保存する
 	int handle = -1;
 
-	handle = MV1LoadModel("Data/Mv1/Fix_Player.mv1");//プレイヤーのモデル
+	handle = MV1LoadModel("Data/Mv1/Player.mv1");//プレイヤーのモデル
 	assert(handle != -1);
 	m_modelHandles[ModelID::Player] = handle;
 

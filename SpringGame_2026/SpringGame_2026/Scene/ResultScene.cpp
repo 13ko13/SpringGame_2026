@@ -95,7 +95,7 @@ void ResultScene::Init()
 
 	//プレイヤーのモデルのハンドルをResourceLoaderから取得する
 	handle = MV1DuplicateModel(loader.GetModel(ResourceLoader::ModelID::Player));
-	m_pPlayer = std::make_shared<Player>(handle, m_pEffectManager);
+	m_pPlayer = std::make_shared<Player>(handle, m_pEffectManager, m_pCamera);
 	//カメラの実体を確保
 	//まだプレイヤーがいないので、仮で注視点の位置を(0,400,0)にしておく
 	m_pCamera = std::make_shared<Camera>(camera_target_pos);
