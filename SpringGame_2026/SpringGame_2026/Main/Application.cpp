@@ -92,7 +92,7 @@ Application& Application::GetInstance()
 bool Application::Init()
 {
 	//ウィンドウモード設定
-	ChangeWindowMode(true);
+	ChangeWindowMode(false);
 	//ゲーム名
 	SetWindowText("轟-TODOROKI");
 	//画面サイズと色数を設定
