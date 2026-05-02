@@ -100,6 +100,8 @@ private:
 	int m_enemyCountFontHandle = -1;
 	//討伐完了フォントのハンドル
 	int m_clearFontHandle = -1;
+	//操作方法のフォントのハンドル
+	int m_operationFontHandle = -1;
 
 	bool m_isEndTou = false; //討を表示したかどうか
 	bool m_isEndBatsu = false; //伐を表示したかどうか
@@ -116,6 +118,7 @@ private:
 	std::shared_ptr<TextUI> m_pCountDownText;//カウントダウンテキスト
 	std::shared_ptr<TextUI> m_pEnemyCountText;//残りの敵の数テキスト
 	std::shared_ptr<TextUI> m_pClearText;//討伐完了テキスト
+	std::shared_ptr<TextUI> m_pOperationText;//操作方法テキスト
 
 	//敵の数を保持しておく
 	int m_enemyCount = 0;

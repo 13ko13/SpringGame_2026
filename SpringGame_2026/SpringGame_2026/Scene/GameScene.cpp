@@ -93,6 +93,17 @@ namespace
 
 	//カメラのターゲットの位置
 	const Vector3 camera_target_pos = { 0.0f, 400.0f, 0.0f };
+
+	//操作方法フォントのサイズ
+	constexpr int how_to_play_font_size = 24;
+
+	//スティックで移動フォントを描画する画面位置割合
+	constexpr float operation_move_text_pos_x_rate = 0.85f;
+	constexpr float operation_move_text_pos_y_rate = 0.85f;
+
+	//Yボタンで攻撃フォントを描画する画面位置割合
+	constexpr float operation_attack_text_pos_x_rate = 0.85f;
+	constexpr float operation_attack_text_pos_y_rate = 0.9f;
 }
 
 GameScene::GameScene(SceneController& controller) :
@@ -176,12 +187,14 @@ void GameScene::Init()
 	m_countDownFontHandle = CreateFontToHandle(font_name, game_count_font_size, -1, fontType);
 	m_enemyCountFontHandle = CreateFontToHandle(font_name, m_enemyCountFontSize, -1, fontType);
 	m_clearFontHandle = CreateFontToHandle(font_name, clear_font_size, -1, fontType, -1, clear_font_edge_size);
+	m_operationFontHandle = CreateFontToHandle(font_name, how_to_play_font_size, -1, fontType);
 
 	//テキストUIの実体を確保
 	m_pTimeText = std::make_shared<TextUI>(m_timeFontHandle, time_limit_font_size);
 	m_pCountDownText = std::make_shared<TextUI>(m_countDownFontHandle, game_count_font_size);
 	m_pEnemyCountText = std::make_shared<TextUI>(m_enemyCountFontHandle, m_enemyCountFontSize);
 	m_pClearText = std::make_shared<TextUI>(m_clearFontHandle, clear_font_size);
+	m_pOperationText = std::make_shared<TextUI>(m_operationFontHandle, how_to_play_font_size);
 
 	//ゲームBGMを再生する
 	SoundManager::GetInstance().PlayFadeIn(SoundManager::SoundType::GameBgm, fade_frame, true);
@@ -450,6 +463,13 @@ void GameScene::Draw()
 			}
 		}
 	}
+
+	//右下に操作方法を描画する
+	std::string operationText = "Lスティック:移動";
+	m_pOperationText->DrawAtRate(operationText, operation_move_text_pos_x_rate, operation_move_text_pos_y_rate, 0x000000, 1.0, 1.0, 0xffffff);
+	operationText = "X:攻撃";
+	m_pOperationText->DrawAtRate(operationText, operation_attack_text_pos_x_rate, operation_attack_text_pos_y_rate, 0x000000, 1.0, 1.0, 0xffffff);
+	
 }
 
 void GameScene::DrawGrid()
